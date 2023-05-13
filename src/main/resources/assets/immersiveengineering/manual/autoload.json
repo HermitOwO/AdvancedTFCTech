@@ -1,0 +1,10 @@
+{
+  "autoload_priority": 3,
+  "advancedtfctech:advancedtfctech": {
+    "category_weight": 200,
+    "entry_list": [
+      "advancedtfctech:thresher",
+      "advancedtfctech:grist_mill"
+    ]
+  }
+}

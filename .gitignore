@@ -1,0 +1,29 @@
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
+
+# idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
+
+# gradle
+build
+.gradle
+
+# other
+eclipse
+run
+libs
+resources/__pycache__
+src/generated/resources/.cache
+src/test
+
+# Files from Forge MDK
+forge*changelog.txt

@@ -1,0 +1,133 @@
+{
+  "parent": "minecraft:block/block",
+  "loader": "immersiveengineering:basic_split",
+  "dynamic": false,
+  "inner_model": {
+    "parent": "minecraft:block/block",
+    "textures": {
+      "texture": "advancedtfctech:multiblock/grist_mill",
+      "particle": "advancedtfctech:multiblock/grist_mill"
+    },
+    "loader": "forge:obj",
+    "model": "advancedtfctech:models/multiblock/obj/grist_mill_mirrored.obj",
+    "detectCullableFaces": false,
+    "flip-v": true
+  },
+  "split_parts": [
+    [
+      2,
+      0,
+      -1
+    ],
+    [
+      2,
+      0,
+      0
+    ],
+    [
+      2,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      -1
+    ],
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      -1
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1
+    ],
+    [
+      -1,
+      0,
+      -1
+    ],
+    [
+      -1,
+      0,
+      0
+    ],
+    [
+      -1,
+      0,
+      1
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      -1
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      1
+    ],
+    [
+      0,
+      1,
+      -1
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      1,
+      1
+    ],
+    [
+      -1,
+      1,
+      -1
+    ],
+    [
+      -1,
+      1,
+      0
+    ],
+    [
+      -1,
+      1,
+      1
+    ],
+    [
+      1,
+      2,
+      0
+    ]
+  ]
+}

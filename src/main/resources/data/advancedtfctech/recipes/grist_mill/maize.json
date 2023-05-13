@@ -1,0 +1,18 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "type": "advancedtfctech:grist_mill",
+  "result": {
+    "count": 3,
+    "base_ingredient": {
+      "item": "tfc:food/maize_flour"
+    }
+  },
+  "input": {
+    "type": "tfc:not_rotten",
+    "ingredient": {
+      "item": "tfc:food/maize_grain"
+    }
+  },
+  "time": 80,
+  "energy": 6400
+}

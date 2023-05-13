@@ -1,0 +1,96 @@
+{
+  "display": {
+    "firstperson_lefthand": {
+      "scale": [
+        0.185,
+        0.185,
+        0.185
+      ]
+    },
+    "firstperson_righthand": {
+      "scale": [
+        0.185,
+        0.185,
+        0.185
+      ]
+    },
+    "thirdperson_lefthand": {
+      "scale": [
+        0.185,
+        0.185,
+        0.185
+      ]
+    },
+    "thirdperson_righthand": {
+      "scale": [
+        0.185,
+        0.185,
+        0.185
+      ]
+    },
+    "head": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "translation": [
+        0,
+        7.6,
+        0
+      ],
+      "scale": [
+        0.185,
+        0.185,
+        0.185
+      ]
+    },
+    "gui": {
+      "rotation": [
+        30,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        -2,
+        0
+      ],
+      "scale": [
+        0.185,
+        0.185,
+        0.185
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        1,
+        0
+      ],
+      "scale": [
+        0.185,
+        0.185,
+        0.185
+      ]
+    },
+    "fixed": {
+      "translation": [
+        0,
+        -8,
+        0
+      ],
+      "scale": [
+        0.185,
+        0.185,
+        0.185
+      ]
+    }
+  },
+  "textures": {
+    "texture": "advancedtfctech:multiblock/grist_mill"
+  },
+  "loader": "forge:obj",
+  "model": "advancedtfctech:models/multiblock/obj/grist_mill.obj",
+  "flip-v": true
+}

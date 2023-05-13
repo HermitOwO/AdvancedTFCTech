@@ -1,0 +1,28 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "type": "advancedtfctech:thresher",
+  "result": {
+    "count": 3,
+    "base_ingredient": {
+      "item": "tfc:food/oat_grain"
+    }
+  },
+  "secondaries": [
+    {
+      "output": {
+        "count": 4,
+        "base_ingredient": {
+          "item": "tfc:straw"
+        }
+      }
+    }
+  ],
+  "input": {
+    "type": "tfc:not_rotten",
+    "ingredient": {
+      "item": "tfc:food/oat"
+    }
+  },
+  "time": 80,
+  "energy": 6400
+}

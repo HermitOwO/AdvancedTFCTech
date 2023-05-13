@@ -1,0 +1,13 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "item.advancedtfctech.pirn": "Pirn",
+  "item.advancedtfctech.fiber_winded_pirn": "Fiber-Winded Pirn",
+  "item.advancedtfctech.silk_winded_pirn": "Silk-Winded Pirn",
+  "item.advancedtfctech.wool_winded_pirn": "Wool-Winded Pirn",
+  "block.advancedtfctech.thresher": "Thresher",
+  "block.advancedtfctech.grist_mill": "Grist Mill",
+  "itemGroup.advancedtfctech": "Advanced TFC Tech",
+  "tfc.jei.thresher": "Thresher",
+  "tfc.jei.grist_mill": "Grist Mill",
+  "manual.advancedtfctech.advancedtfctech": "TerraFirmaCraft Tech"
+}

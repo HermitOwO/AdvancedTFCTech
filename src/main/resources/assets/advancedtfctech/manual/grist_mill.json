@@ -1,0 +1,6 @@
+{
+  "start": {
+    "type": "multiblock",
+    "name": "advancedtfctech:multiblocks/grist_mill"
+  }
+}
