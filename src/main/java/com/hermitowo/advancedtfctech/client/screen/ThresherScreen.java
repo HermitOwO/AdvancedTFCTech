@@ -54,7 +54,7 @@ public class ThresherScreen extends IEContainerScreen<ThresherContainer>
                 float mod = process.processTick / (float)process.getMaxTicks(tile.getLevel());
                 int dispX = (c % 3) * 32;
                 int dispY = (c / 3) * 43;
-                int h = (int)Math.max(1, mod*16);
+                int h = (int)Math.max(1, mod * 16);
                 this.blit(transform, leftPos + 77 + dispX, topPos + 54 + dispY, 198, 100, 22, h);
             }
     }

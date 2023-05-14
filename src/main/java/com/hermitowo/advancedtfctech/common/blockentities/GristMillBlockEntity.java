@@ -26,7 +26,9 @@ import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -62,6 +64,26 @@ public class GristMillBlockEntity extends PoweredMultiblockBlockEntity<GristMill
     }
 
     public float animation_driverRotation = 0;
+
+    @Override
+    public void readCustomNBT(CompoundTag nbt, boolean descPacket)
+    {
+        super.readCustomNBT(nbt, descPacket);
+        if(!descPacket)
+        {
+            ContainerHelper.loadAllItems(nbt, inventory);
+        }
+    }
+
+    @Override
+    public void writeCustomNBT(CompoundTag nbt, boolean descPacket)
+    {
+        super.writeCustomNBT(nbt, descPacket);
+        if(!descPacket)
+        {
+            ContainerHelper.saveAllItems(nbt, inventory);
+        }
+    }
 
     @Override
     public void tickClient()
@@ -103,7 +125,6 @@ public class GristMillBlockEntity extends PoweredMultiblockBlockEntity<GristMill
                         {
                             usedInvSlots[i]++;
                         }
-
                     }
                 }
                 for (int slot = 0; slot < 6; slot++)
@@ -437,9 +458,7 @@ public class GristMillBlockEntity extends PoweredMultiblockBlockEntity<GristMill
         }
 
         if (main.isEmpty())
-        {
             main.add(new AABB(0, 0, 0, 1, 1, 1));
-        }
         return main;
     }
 

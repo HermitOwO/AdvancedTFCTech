@@ -53,8 +53,8 @@ public class GristMillRecipe extends ATTMultiblockRecipe
 
     public static boolean isValidRecipeInput(Level level, ItemStack stack)
     {
-        for(GristMillRecipe recipe : RECIPES.getRecipes(level))
-            if(recipe != null && recipe.isValidInput(stack))
+        for (GristMillRecipe recipe : RECIPES.getRecipes(level))
+            if (recipe != null && recipe.isValidInput(stack))
                 return true;
         return false;
     }

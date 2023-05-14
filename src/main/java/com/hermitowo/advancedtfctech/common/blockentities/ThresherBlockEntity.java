@@ -27,7 +27,9 @@ import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -69,6 +71,26 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
     }
 
     @Override
+    public void readCustomNBT(CompoundTag nbt, boolean descPacket)
+    {
+        super.readCustomNBT(nbt, descPacket);
+        if(!descPacket)
+        {
+            ContainerHelper.loadAllItems(nbt, inventory);
+        }
+    }
+
+    @Override
+    public void writeCustomNBT(CompoundTag nbt, boolean descPacket)
+    {
+        super.writeCustomNBT(nbt, descPacket);
+        if(!descPacket)
+        {
+            ContainerHelper.saveAllItems(nbt, inventory);
+        }
+    }
+
+    @Override
     public void tickClient()
     {
         boolean active = shouldRenderAsActive();
@@ -105,7 +127,6 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
                         {
                             usedInvSlots[i]++;
                         }
-
                     }
                 }
                 for (int slot = 0; slot < 6; slot++)
@@ -195,8 +216,6 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
             if (posInMultiblock == MAIN_OUT_POS)
-                return outputHandler.getAndCast();
-            if (posInMultiblock == SECONDARY_OUT_POS)
                 return outputHandler.getAndCast();
             if (new BlockPos(1, 2, 1).equals(posInMultiblock) && facing == Direction.UP)
                 return insertionHandler.getAndCast();
@@ -354,9 +373,8 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
         if (bY == 0)
         {
             if (!(bX == 1 && bZ == 0))
-            {
                 main.add(new AABB(0, 0, 0, 1, .5, 1));
-            }
+
             if (bX == 0 && bZ == 1) // Redstone Input Legs
             {
                 main.add(new AABB(.125, 0, .75, .375, 1, .875));
@@ -368,27 +386,19 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
         if (bY == 1)
         {
             if (bX == 0 && bZ == 0)
-            {
                 main.add(new AABB(.5, 0, .5625, 1, .875, 1));
-            }
             if (bX == 0 && bZ == 2)
-            {
                 main.add(new AABB(.5, 0, 0, 1, .875, .4375));
-            }
             if (bX == 2 && bZ == 0)
-            {
                 main.add(new AABB(0, 0, .5625, .5, .875, 1));
-            }
             if (bX == 2 && bZ == 2)
-            {
                 main.add(new AABB(0, 0, 0, .5, .875, .4375));
-            }
+
             if (bX == 1)
             {
                 if (bZ == 0)
-                {
                     main.add(new AABB(0, 0, .5625, 1, .875, 1));
-                }
+
                 if (bZ == 2)
                 {
                     main.add(new AABB(.125, .125, .4375, .875, .875, 1));
@@ -401,19 +411,13 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
         if (bY == 2 && bZ == 1)
         {
             if (bX == 0)
-            {
                 main.add(new AABB(.5, 0, 0.125, 1, .4375, .875));
-            }
             if (bX == 2)
-            {
                 main.add(new AABB(0, 0, 0.125, .5, .4375, .875));
-            }
         }
 
         if (main.isEmpty())
-        {
             main.add(new AABB(0, 0, 0, 1, 1, 1));
-        }
         return main;
     }
 }
