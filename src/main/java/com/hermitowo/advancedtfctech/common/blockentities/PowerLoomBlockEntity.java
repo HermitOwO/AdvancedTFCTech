@@ -134,11 +134,15 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                             PowerLoomRecipe recipe = PowerLoomRecipe.findRecipe(level, pirn, weave);
                             if (recipe != null && (this.getInventory().get(12).isEmpty() || this.getInventory().get(13).isEmpty()))
                             {
-                                MultiblockProcessInMachine<PowerLoomRecipe> process = new MultiblockProcessInMachine<>(recipe, this::getRecipeForId, i, j);
-                                if (this.addProcessToQueue(process, true))
+                                ItemStack secondary = this.getInventory().get(11);
+                                if (recipe.inputs[0].testIgnoringSize(secondary) && secondary.getCount() >= 16)
                                 {
-                                    this.addProcessToQueue(process, false);
-                                    update = true;
+                                    MultiblockProcessInMachine<PowerLoomRecipe> process = new MultiblockProcessInMachine<>(recipe, this::getRecipeForId, i, j);
+                                    if (this.addProcessToQueue(process, true))
+                                    {
+                                        this.addProcessToQueue(process, false);
+                                        update = true;
+                                    }
                                 }
                             }
                         }
@@ -269,7 +273,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                             return true;
                         }
                     }
-                    if (player.isShiftKeyDown())
+                    if (player.isShiftKeyDown() && master.processQueue.size() < master.getProcessQueueMaxLength())
                     {
                         ItemStack stack = master.inventory.get(11);
                         if (!stack.isEmpty())
