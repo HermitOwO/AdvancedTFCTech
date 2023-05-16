@@ -19,7 +19,7 @@ public class DynamicModel
 
     public DynamicModel(String desc)
     {
-        this.name = new ResourceLocation(MOD_ID, "dynamic/"+desc);
+        this.name = new ResourceLocation(MOD_ID, "dynamic/" + desc);
         ForgeModelBakery.addSpecialModel(this.name);
     }
 

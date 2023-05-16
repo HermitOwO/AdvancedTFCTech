@@ -21,7 +21,7 @@ public class ATTDataGenerator
         ExistingFileHelper exFileHelper = event.getExistingFileHelper();
         StaticTemplateManager.EXISTING_HELPER = exFileHelper;
 
-        if(event.includeClient())
+        if (event.includeClient())
         {
             MultiblockStates multiblocks = new MultiblockStates(gen, exFileHelper);
             gen.addProvider(new ATTBlockStates(gen, exFileHelper));

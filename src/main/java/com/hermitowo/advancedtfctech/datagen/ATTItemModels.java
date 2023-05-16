@@ -92,9 +92,9 @@ public class ATTItemModels extends ModelProvider<TRSRModelBuilder>
     private void doTransform(ModelBuilder<?>.TransformsBuilder transform, ItemTransforms.TransformType type, @Nullable Vector3f translation, @Nullable Vector3f rotationAngle, float scale)
     {
         ModelBuilder<?>.TransformsBuilder.TransformVecBuilder trans = transform.transform(type);
-        if(translation != null)
+        if (translation != null)
             trans.translation(translation.x(), translation.y(), translation.z());
-        if(rotationAngle != null)
+        if (rotationAngle != null)
             trans.rotation(rotationAngle.x(), rotationAngle.y(), rotationAngle.z());
         trans.scale(scale);
         trans.end();

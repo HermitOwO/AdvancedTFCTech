@@ -35,7 +35,7 @@ public class ATTBlockBase extends Block
     @Nullable
     public static <E extends BlockEntity & ATTCommonTickableBlock, A extends BlockEntity> BlockEntityTicker<A> createCommonTicker(boolean isClient, BlockEntityType<A> actual, BlockEntityType<E> expected)
     {
-        if(isClient)
+        if (isClient)
         {
             return createClientTicker(actual, expected);
         }

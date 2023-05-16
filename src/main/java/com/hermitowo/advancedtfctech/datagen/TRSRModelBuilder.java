@@ -20,7 +20,7 @@ public class TRSRModelBuilder extends ModelBuilder<TRSRModelBuilder>
         super(outputLocation, existingFileHelper);
     }
 
-    public TRSRModelBuilder transforms (ResourceLocation source)
+    public TRSRModelBuilder transforms(ResourceLocation source)
     {
         Resource transformFile;
         try
@@ -30,7 +30,7 @@ public class TRSRModelBuilder extends ModelBuilder<TRSRModelBuilder>
             transforms.addFromJson(jsonString);
             return this;
         }
-        catch(IOException e)
+        catch (IOException e)
         {
             throw new RuntimeException("While loading transforms from " + source, e);
         }
@@ -41,7 +41,7 @@ public class TRSRModelBuilder extends ModelBuilder<TRSRModelBuilder>
     {
         JsonObject ret = super.toJson();
         JsonObject transformJson = transforms.toJson();
-        if(!transformJson.entrySet().isEmpty())
+        if (!transformJson.entrySet().isEmpty())
             ret.add("transform", transformJson);
         return ret;
     }

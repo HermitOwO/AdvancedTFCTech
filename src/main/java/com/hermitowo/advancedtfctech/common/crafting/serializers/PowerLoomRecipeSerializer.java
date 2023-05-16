@@ -28,15 +28,15 @@ public class PowerLoomRecipeSerializer extends IERecipeSerializer<PowerLoomRecip
         String category = GsonHelper.getAsString(json, "category");
         Lazy<ItemStack> output = readOutput(json.get("result"));
         IngredientWithSize[] ingredients;
-        if(json.has("input"))
-            ingredients = new IngredientWithSize[]{
+        if (json.has("input"))
+            ingredients = new IngredientWithSize[] {
                 IngredientWithSize.deserialize(GsonHelper.getAsJsonObject(json, "input"))
             };
         else
         {
             JsonArray inputs = json.getAsJsonArray("inputs");
             ingredients = new IngredientWithSize[inputs.size()];
-            for(int i = 0; i < ingredients.length; i++)
+            for (int i = 0; i < ingredients.length; i++)
                 ingredients[i] = IngredientWithSize.deserialize(inputs.get(i));
         }
         int time = GsonHelper.getAsInt(json, "time");
@@ -53,7 +53,7 @@ public class PowerLoomRecipeSerializer extends IERecipeSerializer<PowerLoomRecip
         Lazy<ItemStack> output = readLazyStack(buffer);
         int inputCount = buffer.readInt();
         IngredientWithSize[] ingredients = new IngredientWithSize[inputCount];
-        for(int i = 0; i < ingredients.length; i++)
+        for (int i = 0; i < ingredients.length; i++)
             ingredients[i] = IngredientWithSize.read(buffer);
         int time = buffer.readInt();
         int energy = buffer.readInt();
@@ -67,7 +67,7 @@ public class PowerLoomRecipeSerializer extends IERecipeSerializer<PowerLoomRecip
         buffer.writeUtf(recipe.category);
         writeLazyStack(buffer, recipe.output);
         buffer.writeInt(recipe.inputs.length);
-        for(IngredientWithSize ingredient : recipe.inputs)
+        for (IngredientWithSize ingredient : recipe.inputs)
             ingredient.write(buffer);
     }
 }

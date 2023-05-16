@@ -11,6 +11,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 public class EnergyDisplay extends InfoArea
 {
     private final IEnergyStorage storage;
+
     public EnergyDisplay(int x, int y, int width, int height, IEnergyStorage storage)
     {
         super(new Rect2i(x, y, width, height));

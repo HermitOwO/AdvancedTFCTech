@@ -143,7 +143,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                         if (recipe != null && !recipe.output.get().isEmpty())
                         {
                             NonNullList<ItemStack> query = NonNullList.withSize(11, ItemStack.EMPTY);
-                            for(int i = 0; i < query.size(); i++)
+                            for (int i = 0; i < query.size(); i++)
                                 query.set(i, inventory.get(i));
                             int crafted = recipe.getMaxCrafted(query);
                             if (crafted > 0)
@@ -481,7 +481,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     {
         ItemStack stack = ATTItems.PIRN.get().getDefaultInstance();
         stack = Utils.insertStackIntoInventory(this.secondaryOutput, stack, false);
-        if(!stack.isEmpty())
+        if (!stack.isEmpty())
         {
             BlockPos pos = this.getBlockPosForPos(SECONDARY_OUT_POS).relative(getFacing().getClockWise(), 1);
             Utils.dropStackAtPos(level, pos, stack, getFacing().getClockWise());

@@ -17,7 +17,7 @@ public class ThresherContainer extends MultiblockAwareGuiContainer<ThresherBlock
         }
         for (int i = 0; i < 6; i++)
         {
-            addSlot(new ATTSlot.ItemOutput(this, this.inv, i + 6, 62 + 18 * (i % 3),74 + 18 * (i / 3)));
+            addSlot(new ATTSlot.ItemOutput(this, this.inv, i + 6, 62 + 18 * (i % 3), 74 + 18 * (i / 3)));
         }
 
         slotCount = 12;

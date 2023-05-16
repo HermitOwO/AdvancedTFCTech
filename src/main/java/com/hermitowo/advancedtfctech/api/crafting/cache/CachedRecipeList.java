@@ -82,12 +82,12 @@ public class CachedRecipeList<R extends Recipe<?>>
 
     private void updateCache(RecipeManager manager, boolean isClient)
     {
-        if(recipes!=null&&cachedAtReloadCount==reloadCount&&(!cachedDataIsClient||isClient))
+        if (recipes != null && cachedAtReloadCount == reloadCount && (!cachedDataIsClient || isClient))
             return;
         this.recipes = manager.getRecipes().stream()
-            .filter(iRecipe -> iRecipe.getType()==type.get())
+            .filter(iRecipe -> iRecipe.getType() == type.get())
             .flatMap(r -> {
-                if(r instanceof IListRecipe listRecipe)
+                if (r instanceof IListRecipe listRecipe)
                     return listRecipe.getSubRecipes().stream();
                 else
                     return Stream.of(r);

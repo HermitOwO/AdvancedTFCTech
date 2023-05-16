@@ -90,7 +90,7 @@ public class ATTBlockStates extends BlockStateProvider
     private BlockModelBuilder multiblockModel(Block block, ResourceLocation model, ResourceLocation texture, String add, TemplateMultiblock mb, boolean mirror)
     {
         UnaryOperator<BlockPos> transform = UnaryOperator.identity();
-        if(mirror)
+        if (mirror)
         {
             Vec3i size = mb.getSize(null);
             transform = p -> new BlockPos(size.getX() - p.getX() - 1, p.getY(), p.getZ());
@@ -139,19 +139,19 @@ public class ATTBlockStates extends BlockStateProvider
         VariantBlockStateBuilder builder = getVariantBuilder(b);
 
         boolean[] possibleMirrorStates;
-        if(mirroredState != null)
-            possibleMirrorStates = new boolean[]{false, true};
+        if (mirroredState != null)
+            possibleMirrorStates = new boolean[] {false, true};
         else
             possibleMirrorStates = new boolean[1];
-        for(boolean mirrored:possibleMirrorStates)
-            for(Direction dir:facing.getPossibleValues())
+        for (boolean mirrored : possibleMirrorStates)
+            for (Direction dir : facing.getPossibleValues())
             {
                 final int angleY;
                 final int angleX;
-                if(facing.getPossibleValues().contains(Direction.UP))
+                if (facing.getPossibleValues().contains(Direction.UP))
                 {
                     angleX = -90 * dir.getStepY();
-                    if(dir.getAxis() != Direction.Axis.Y)
+                    if (dir.getAxis() != Direction.Axis.Y)
                         angleY = getAngle(dir, rotationOffset);
                     else
                         angleY = 0;
@@ -167,7 +167,7 @@ public class ATTBlockStates extends BlockStateProvider
 //						.with(isSlave, false)
                     .with(facing, dir);
 
-                if(mirroredState != null)
+                if (mirroredState != null)
                     partialState = partialState.with(mirroredState, mirrored);
 
                 partialState.setModels(new ConfiguredModel(model, angleX, angleY, true));

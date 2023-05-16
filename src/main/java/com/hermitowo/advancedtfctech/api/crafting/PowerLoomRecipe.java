@@ -49,45 +49,45 @@ public class PowerLoomRecipe extends ATTMultiblockRecipe
     public int getMaxCrafted(NonNullList<ItemStack> query)
     {
         HashMap<ItemStack, Integer> queryAmount = new HashMap<>();
-        for(ItemStack q : query)
-            if(!q.isEmpty())
+        for (ItemStack q : query)
+            if (!q.isEmpty())
             {
                 boolean inc = false;
-                for(ItemStack key : queryAmount.keySet())
-                    if(ItemHandlerHelper.canItemStacksStack(q, key))
+                for (ItemStack key : queryAmount.keySet())
+                    if (ItemHandlerHelper.canItemStacksStack(q, key))
                     {
-                        queryAmount.put(key, queryAmount.get(key)+q.getCount());
+                        queryAmount.put(key, queryAmount.get(key) + q.getCount());
                         inc = true;
                     }
-                if(!inc)
+                if (!inc)
                     queryAmount.put(q, q.getCount());
             }
 
         OptionalInt maxCrafted = OptionalInt.empty();
-        for(IngredientWithSize ingr : inputs)
+        for (IngredientWithSize ingr : inputs)
         {
             int maxCraftedWithIngredient = 0;
             int req = ingr.getCount();
             Iterator<Map.Entry<ItemStack, Integer>> queryIt = queryAmount.entrySet().iterator();
-            while(queryIt.hasNext())
+            while (queryIt.hasNext())
             {
                 Map.Entry<ItemStack, Integer> e = queryIt.next();
                 ItemStack compStack = e.getKey();
-                if(ingr.test(compStack))
+                if (ingr.test(compStack))
                 {
-                    int taken = e.getValue()/req;
-                    if(taken > 0)
+                    int taken = e.getValue() / req;
+                    if (taken > 0)
                     {
-                        e.setValue(e.getValue()-taken*req);
-                        if(e.getValue() <= 0)
+                        e.setValue(e.getValue() - taken * req);
+                        if (e.getValue() <= 0)
                             queryIt.remove();
                         maxCraftedWithIngredient += taken;
                     }
                 }
             }
-            if(maxCraftedWithIngredient <= 0)
+            if (maxCraftedWithIngredient <= 0)
                 return 0;
-            else if(maxCrafted.isPresent())
+            else if (maxCrafted.isPresent())
                 maxCrafted = OptionalInt.of(Math.min(maxCrafted.getAsInt(), maxCraftedWithIngredient));
             else
                 maxCrafted = OptionalInt.of(maxCraftedWithIngredient);
@@ -98,31 +98,31 @@ public class PowerLoomRecipe extends ATTMultiblockRecipe
     public NonNullList<ItemStack> consumeInputs(NonNullList<ItemStack> query, int crafted)
     {
         List<IngredientWithSize> inputList = new ArrayList<>(inputs.length);
-        for(IngredientWithSize i : inputs)
-            if(i != null)
+        for (IngredientWithSize i : inputs)
+            if (i != null)
                 inputList.add(i);
 
         NonNullList<ItemStack> consumed = NonNullList.create();
         Iterator<IngredientWithSize> inputIt = inputList.iterator();
-        while(inputIt.hasNext())
+        while (inputIt.hasNext())
         {
             IngredientWithSize ingr = inputIt.next();
-            int inputSize = ingr.getCount()*crafted;
+            int inputSize = ingr.getCount() * crafted;
 
-            for(int i = 0; i < query.size(); i++)
+            for (int i = 0; i < query.size(); i++)
             {
                 ItemStack queryStack = query.get(i);
-                if(!queryStack.isEmpty())
-                    if(ingr.test(queryStack))
+                if (!queryStack.isEmpty())
+                    if (ingr.test(queryStack))
                     {
                         int taken = Math.min(queryStack.getCount(), inputSize);
                         consumed.add(ItemHandlerHelper.copyStackWithSize(queryStack, taken));
-                        if(taken >= queryStack.getCount() && queryStack.getItem().hasContainerItem(queryStack))
+                        if (taken >= queryStack.getCount() && queryStack.getItem().hasContainerItem(queryStack))
                             query.set(i, queryStack.getItem().getContainerItem(queryStack));
                         else
                             queryStack.shrink(taken);
                         inputSize -= taken;
-                        if(inputSize <= 0)
+                        if (inputSize <= 0)
                         {
                             inputIt.remove();
                             break;

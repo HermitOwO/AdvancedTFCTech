@@ -1,7 +1,6 @@
 package com.hermitowo.advancedtfctech.common.container;
 
 import com.hermitowo.advancedtfctech.api.crafting.GristMillRecipe;
-import com.hermitowo.advancedtfctech.api.crafting.PowerLoomRecipe;
 import com.hermitowo.advancedtfctech.api.crafting.ThresherRecipe;
 import com.hermitowo.advancedtfctech.common.items.ATTItems;
 import javax.annotation.Nonnull;

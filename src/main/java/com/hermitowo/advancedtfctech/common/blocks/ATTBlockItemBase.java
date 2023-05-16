@@ -27,15 +27,15 @@ public class ATTBlockItemBase extends BlockItem
     @Override
     public void appendHoverText(ItemStack stack, Level level, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag)
     {
-        if(stack.hasTag())
+        if (stack.hasTag())
         {
             // Display Stored Tank Information
-            if(stack.getTag().contains("tank"))
+            if (stack.getTag().contains("tank"))
             {
                 CompoundTag tank = stack.getTag().getCompound("tank");
 
                 FluidStack fluidstack = FluidStack.loadFluidStackFromNBT(tank);
-                if(fluidstack.getAmount() > 0)
+                if (fluidstack.getAmount() > 0)
                 {
                     tooltip.add(((MutableComponent) fluidstack.getDisplayName()).append(" " + fluidstack.getAmount() + "mB").withStyle(ChatFormatting.GRAY));
                 }
@@ -46,7 +46,7 @@ public class ATTBlockItemBase extends BlockItem
             }
 
             // Display Stored Energy Information
-            if(stack.getTag().contains("energy"))
+            if (stack.getTag().contains("energy"))
             {
                 CompoundTag energy = stack.getTag().getCompound("energy");
                 int flux = energy.getInt("ifluxEnergy");

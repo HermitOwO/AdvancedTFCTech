@@ -17,7 +17,8 @@ public abstract class ATTTemplateMultiblock extends IETemplateMultiblock
         this.baseState = baseState;
     }
 
-    public Block getBaseBlock(){
+    public Block getBaseBlock()
+    {
         return baseState.get();
     }
 }

@@ -25,7 +25,7 @@ public class ATTRecipeTypes
         return new TypeWithClass<>(regObj, type);
     }
 
-    public record TypeWithClass<T extends Recipe<?>> (RegistryObject<RecipeType<T>> type, Class<T> recipeClass) implements Supplier<RecipeType<T>>
+    public record TypeWithClass<T extends Recipe<?>>(RegistryObject<RecipeType<T>> type, Class<T> recipeClass) implements Supplier<RecipeType<T>>
     {
         public RecipeType<T> get()
         {

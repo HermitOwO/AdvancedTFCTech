@@ -12,6 +12,7 @@ public abstract class ATTMultiblockRecipe extends MultiblockRecipe
 {
     Lazy<Integer> totalProcessTime;
     Lazy<Integer> totalProcessEnergy;
+
     protected ATTMultiblockRecipe(ItemStack outputDummy, Supplier<? extends RecipeType<?>> type, ResourceLocation id)
     {
         super(Lazy.of(() -> outputDummy), type.get(), id);

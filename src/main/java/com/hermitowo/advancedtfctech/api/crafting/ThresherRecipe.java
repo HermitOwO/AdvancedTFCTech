@@ -44,7 +44,7 @@ public class ThresherRecipe extends ATTMultiblockRecipe
 
     public static ThresherRecipe findRecipe(Level level, ItemStack stack)
     {
-        for (ThresherRecipe recipe:RECIPES.getRecipes(level))
+        for (ThresherRecipe recipe : RECIPES.getRecipes(level))
             if (recipe.input != null && recipe.input.test(stack))
                 return recipe;
         return null;
@@ -58,8 +58,8 @@ public class ThresherRecipe extends ATTMultiblockRecipe
 
     public static boolean isValidRecipeInput(Level level, ItemStack stack)
     {
-        for(ThresherRecipe recipe : RECIPES.getRecipes(level))
-            if(recipe != null && recipe.isValidInput(stack))
+        for (ThresherRecipe recipe : RECIPES.getRecipes(level))
+            if (recipe != null && recipe.isValidInput(stack))
                 return true;
         return false;
     }

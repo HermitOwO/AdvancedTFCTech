@@ -42,15 +42,17 @@ public class ClientProxy extends CommonProxy
     @Override
     public void completed(ParallelDispatchEvent event)
     {
-        event.enqueueWork(() -> ManualHelper.addConfigGetter(str -> switch(str)
+        event.enqueueWork(() -> ManualHelper.addConfigGetter(str -> switch (str)
             {
                 case "thresher_operationcost" -> (int) (80 * ATTServerConfig.GENERAL.thresher_energyModifier.get());
                 case "gristmill_operationcost" -> (int) (80 * ATTServerConfig.GENERAL.gristMill_energyModifier.get());
                 case "powerloom_operationcost" -> (int) (80 * ATTServerConfig.GENERAL.powerLoom_energyModifier.get());
-                default -> {
+                default ->
+                {
                     // Last resort
                     Config cfg = ATTServerConfig.getRawConfig();
-                    if(cfg.contains(str)){
+                    if (cfg.contains(str))
+                    {
                         yield cfg.get(str);
                     }
                     yield null;
@@ -80,6 +82,7 @@ public class ClientProxy extends CommonProxy
     {
         registerBERenderNoContext(event, ATTBlockEntities.GRIST_MILL.master(), GristMillRenderer::new);
     }
+
     @Override
     public Level getClientWorld()
     {

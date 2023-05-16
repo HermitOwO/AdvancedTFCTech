@@ -22,7 +22,7 @@ public class GristMillRenderer extends IEBlockEntityRenderer<GristMillBlockEntit
     @Override
     public void render(GristMillBlockEntity te, float partialTicks, PoseStack matrixStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn)
     {
-        if(!te.formed || te.isDummy() || !te.getLevelNonnull().hasChunkAt(te.getBlockPos()))
+        if (!te.formed || te.isDummy() || !te.getLevelNonnull().hasChunkAt(te.getBlockPos()))
             return;
 
         Direction dir = te.getFacing();

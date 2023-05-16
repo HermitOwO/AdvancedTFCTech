@@ -3,6 +3,7 @@ package com.hermitowo.advancedtfctech.datagen;
 import java.util.Map;
 import blusunrize.immersiveengineering.data.blockstates.MultiblockStates;
 import com.hermitowo.advancedtfctech.client.render.GristMillRenderer;
+import com.hermitowo.advancedtfctech.datagen.DynamicModels.SimpleModelBuilder;
 import javax.annotation.Nonnull;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
@@ -13,7 +14,6 @@ import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.ModelProvider;
 import net.minecraftforge.client.model.generators.loaders.OBJLoaderBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import com.hermitowo.advancedtfctech.datagen.DynamicModels.SimpleModelBuilder;
 
 import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
 
@@ -36,7 +36,7 @@ public class DynamicModels extends ModelProvider<SimpleModelBuilder>
             .flipV(true)
             .end();
 
-        for(Map.Entry<Block, ModelFile> multiblock : multiblocks.unsplitModels.entrySet())
+        for (Map.Entry<Block, ModelFile> multiblock : multiblocks.unsplitModels.entrySet())
             withExistingParent(Registry.BLOCK.getKey(multiblock.getKey()).getPath(), multiblock.getValue().getLocation());
     }
 

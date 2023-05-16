@@ -7,7 +7,8 @@ import net.minecraft.resources.ResourceLocation;
 
 public abstract class ATTModel extends Model
 {
-    public ATTModel(Function<ResourceLocation, RenderType> renderTypeIn){
+    public ATTModel(Function<ResourceLocation, RenderType> renderTypeIn)
+    {
         super(renderTypeIn);
     }
 

@@ -89,6 +89,7 @@ public class ATTJEIPlugin implements IModPlugin
     {
         r.addRecipeCatalyst(new ItemStack(supplier.get()), type);
     }
+
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration r)
     {

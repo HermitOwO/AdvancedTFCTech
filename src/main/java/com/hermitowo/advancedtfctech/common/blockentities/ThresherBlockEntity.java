@@ -74,7 +74,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
     public void readCustomNBT(CompoundTag nbt, boolean descPacket)
     {
         super.readCustomNBT(nbt, descPacket);
-        if(!descPacket)
+        if (!descPacket)
         {
             ContainerHelper.loadAllItems(nbt, inventory);
         }
@@ -84,7 +84,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
     public void writeCustomNBT(CompoundTag nbt, boolean descPacket)
     {
         super.writeCustomNBT(nbt, descPacket);
-        if(!descPacket)
+        if (!descPacket)
         {
             ContainerHelper.saveAllItems(nbt, inventory);
         }
@@ -320,7 +320,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
         {
             ItemStack stack = out.get();
             stack = Utils.insertStackIntoInventory(this.secondaryOutput, stack, false);
-            if(!stack.isEmpty())
+            if (!stack.isEmpty())
             {
                 BlockPos pos = getBlockPos().offset(0, 1, 0).relative(getFacing(), -2);
                 Utils.dropStackAtPos(level, pos, stack, getFacing().getOpposite());

@@ -8,7 +8,6 @@ import blusunrize.immersiveengineering.common.blocks.multiblocks.process.Multibl
 import com.hermitowo.advancedtfctech.client.screen.elements.EnergyDisplay;
 import com.hermitowo.advancedtfctech.common.blockentities.GristMillBlockEntity;
 import com.hermitowo.advancedtfctech.common.container.GristMillContainer;
-import com.hermitowo.advancedtfctech.common.container.GristMillContainer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import javax.annotation.Nonnull;
 import net.minecraft.network.chat.Component;
@@ -48,11 +47,11 @@ public class GristMillScreen extends IEContainerScreen<GristMillContainer>
     @Override
     protected void drawContainerBackgroundPre(@Nonnull PoseStack transform, float f, int mx, int my)
     {
-        for(MultiblockProcess<?> process : tile.processQueue)
-            if(process instanceof MultiblockProcessInMachine<?>)
+        for (MultiblockProcess<?> process : tile.processQueue)
+            if (process instanceof MultiblockProcessInMachine<?>)
             {
-                float mod = process.processTick / (float)process.getMaxTicks(tile.getLevel());
-                int h = (int)Math.max(1, mod * 16);
+                float mod = process.processTick / (float) process.getMaxTicks(tile.getLevel());
+                int h = (int) Math.max(1, mod * 16);
                 this.blit(transform, leftPos + 77, topPos + 54, 198, 100, 22, h);
             }
     }

@@ -17,9 +17,9 @@ public class ATTItems
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
 
     public static final RegistryObject<Item> PIRN = register("pirn", (ATTTabs.MAIN));
-    public static final RegistryObject<Item> FIBER_WINDED_PIRN  = register("fiber_winded_pirn", (ATTTabs.MAIN));
-    public static final RegistryObject<Item> SILK_WINDED_PIRN  = register("silk_winded_pirn", (ATTTabs.MAIN));
-    public static final RegistryObject<Item> WOOL_WINDED_PIRN  = register("wool_winded_pirn", (ATTTabs.MAIN));
+    public static final RegistryObject<Item> FIBER_WINDED_PIRN = register("fiber_winded_pirn", (ATTTabs.MAIN));
+    public static final RegistryObject<Item> SILK_WINDED_PIRN = register("silk_winded_pirn", (ATTTabs.MAIN));
+    public static final RegistryObject<Item> WOOL_WINDED_PIRN = register("wool_winded_pirn", (ATTTabs.MAIN));
 
     private static RegistryObject<Item> register(String name, CreativeModeTab group)
     {

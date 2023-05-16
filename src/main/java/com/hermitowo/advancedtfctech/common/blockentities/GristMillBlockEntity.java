@@ -69,7 +69,7 @@ public class GristMillBlockEntity extends PoweredMultiblockBlockEntity<GristMill
     public void readCustomNBT(CompoundTag nbt, boolean descPacket)
     {
         super.readCustomNBT(nbt, descPacket);
-        if(!descPacket)
+        if (!descPacket)
         {
             ContainerHelper.loadAllItems(nbt, inventory);
         }
@@ -79,7 +79,7 @@ public class GristMillBlockEntity extends PoweredMultiblockBlockEntity<GristMill
     public void writeCustomNBT(CompoundTag nbt, boolean descPacket)
     {
         super.writeCustomNBT(nbt, descPacket);
-        if(!descPacket)
+        if (!descPacket)
         {
             ContainerHelper.saveAllItems(nbt, inventory);
         }
@@ -90,7 +90,7 @@ public class GristMillBlockEntity extends PoweredMultiblockBlockEntity<GristMill
     {
         boolean active = shouldRenderAsActive();
         ImmersiveEngineering.proxy.handleTileSound(IESounds.crusher, this, active, .25f, 1);
-        if(active)
+        if (active)
         {
             animation_driverRotation += 18f;
             animation_driverRotation %= 360f;
@@ -106,7 +106,7 @@ public class GristMillBlockEntity extends PoweredMultiblockBlockEntity<GristMill
     @Override
     public void tickServer()
     {
-        if(isDummy())
+        if (isDummy())
             return;
 
         super.tickServer();

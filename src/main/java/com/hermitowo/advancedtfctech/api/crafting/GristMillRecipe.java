@@ -35,9 +35,9 @@ public class GristMillRecipe extends ATTMultiblockRecipe
 
     public static GristMillRecipe findRecipe(Level level, ItemStack stack)
     {
-        for(GristMillRecipe recipe:RECIPES.getRecipes(level))
+        for (GristMillRecipe recipe : RECIPES.getRecipes(level))
         {
-            if(recipe.input != null && recipe.input.test(stack))
+            if (recipe.input != null && recipe.input.test(stack))
             {
                 return recipe;
             }

@@ -18,7 +18,7 @@ public class ATTModels
 
     public static void add(String id, ATTModel model)
     {
-        if(MODELS.containsKey(id))
+        if (MODELS.containsKey(id))
         {
             LOGGER.error("Duplicate ID, \"{}\" already used by {}. Skipping.", id, MODELS.get(id).getClass());
         }

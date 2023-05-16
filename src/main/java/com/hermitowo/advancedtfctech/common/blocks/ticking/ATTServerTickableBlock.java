@@ -7,7 +7,7 @@ public interface ATTServerTickableBlock
 {
     void tickServer();
 
-    static <T extends BlockEntity & ATTServerTickableBlock>BlockEntityTicker<T> makeTicker()
+    static <T extends BlockEntity & ATTServerTickableBlock> BlockEntityTicker<T> makeTicker()
     {
         return (level, pos, state, blockentity) -> blockentity.tickServer();
     }

@@ -23,7 +23,7 @@ public class ATTBlocks
     public static <T extends Block> RegistryObject<T> register(String name, Supplier<T> blockConstructor, @Nullable Function<T, ? extends BlockItem> blockItem)
     {
         RegistryObject<T> block = BLOCKS.register(name, blockConstructor);
-        if(blockItem != null)
+        if (blockItem != null)
         {
             ATTItems.register(name, () -> blockItem.apply(block.get()));
         }

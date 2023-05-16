@@ -32,7 +32,7 @@ public interface ATTContainerProvider<T extends BlockEntity & ATTContainerProvid
         return type.create(id, playerInventory, master);
     }
 
-    record BEContainerATT<T extends BlockEntity, C extends IEBaseContainer<? super T>> (RegistryObject<MenuType<C>> type, IEContainerTypes.BEContainerConstructor<T, C> factory)
+    record BEContainerATT<T extends BlockEntity, C extends IEBaseContainer<? super T>>(RegistryObject<MenuType<C>> type, IEContainerTypes.BEContainerConstructor<T, C> factory)
     {
         public C create(int windowId, Inventory playerInv, T tile)
         {

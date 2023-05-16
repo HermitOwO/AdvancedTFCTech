@@ -25,7 +25,8 @@ public class PowerLoomMultiblock extends ATTTemplateMultiblock
     }
 
     @Override
-    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer){
+    public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer)
+    {
         consumer.accept(new ATTClientMultiblockProperties(this, 1.25, 0.75, 2.75));
     }
 

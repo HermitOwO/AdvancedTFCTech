@@ -43,7 +43,8 @@ public class ATTServerConfig
 
     public static final ForgeConfigSpec ALL;
 
-    static{
+    static
+    {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
         GENERAL = new General(builder);
@@ -52,9 +53,10 @@ public class ATTServerConfig
     }
 
     private static Config rawConfig;
+
     public static Config getRawConfig()
     {
-        if(rawConfig == null)
+        if (rawConfig == null)
         {
             try
             {
@@ -63,7 +65,7 @@ public class ATTServerConfig
                 rawConfig = (Config) childConfig.get(ALL);
                 Preconditions.checkNotNull(rawConfig);
             }
-            catch(Exception x)
+            catch (Exception x)
             {
                 throw new RuntimeException(x);
             }

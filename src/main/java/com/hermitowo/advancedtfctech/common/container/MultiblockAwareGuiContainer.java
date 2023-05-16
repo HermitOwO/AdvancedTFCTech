@@ -17,6 +17,7 @@ public class MultiblockAwareGuiContainer<T extends MultiblockPartBlockEntity<T>>
     static final Vec3i ONE = new Vec3i(1, 1, 1);
 
     protected BlockPos templateSize;
+
     public MultiblockAwareGuiContainer(MenuType<?> type, T tile, int id, IETemplateMultiblock template)
     {
         super(type, tile, id);
@@ -24,14 +25,15 @@ public class MultiblockAwareGuiContainer<T extends MultiblockPartBlockEntity<T>>
         this.templateSize = new BlockPos(template.getSize(this.tile.getLevelNonnull())).subtract(ONE);
     }
 
-    public int getMaxDistance(){
+    public int getMaxDistance()
+    {
         return 5;
     }
 
     @Override
     public boolean stillValid(@Nonnull Player player)
     {
-        if(this.inv != null)
+        if (this.inv != null)
         {
             BlockPos min = this.tile.getBlockPosForPos(BlockPos.ZERO);
             BlockPos max = this.tile.getBlockPosForPos(this.templateSize);
@@ -46,9 +48,9 @@ public class MultiblockAwareGuiContainer<T extends MultiblockPartBlockEntity<T>>
 
     protected final void addPlayerInventorySlots(Inventory playerInventory, int x, int y)
     {
-        for(int i = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
         {
-            for(int j = 0; j < 9; j++)
+            for (int j = 0; j < 9; j++)
             {
                 addSlot(new Slot(playerInventory, j + i * 9 + 9, x + j * 18, y + i * 18));
             }
@@ -57,7 +59,7 @@ public class MultiblockAwareGuiContainer<T extends MultiblockPartBlockEntity<T>>
 
     protected final void addPlayerHotbarSlots(Inventory playerInventory, int x, int y)
     {
-        for(int i = 0; i < 9; i++)
+        for (int i = 0; i < 9; i++)
         {
             addSlot(new Slot(playerInventory, i, x + i * 18, y));
         }
