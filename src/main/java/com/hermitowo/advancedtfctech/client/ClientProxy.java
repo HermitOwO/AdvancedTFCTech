@@ -6,6 +6,7 @@ import com.electronwill.nightconfig.core.Config;
 import com.hermitowo.advancedtfctech.client.render.DynamicModel;
 import com.hermitowo.advancedtfctech.client.render.GristMillRenderer;
 import com.hermitowo.advancedtfctech.client.screen.GristMillScreen;
+import com.hermitowo.advancedtfctech.client.screen.PowerLoomScreen;
 import com.hermitowo.advancedtfctech.client.screen.ThresherScreen;
 import com.hermitowo.advancedtfctech.client.utils.MCUtil;
 import com.hermitowo.advancedtfctech.common.CommonProxy;
@@ -35,6 +36,7 @@ public class ClientProxy extends CommonProxy
     {
         MenuScreens.register(ATTContainerTypes.THRESHER.getType(), ThresherScreen::new);
         MenuScreens.register(ATTContainerTypes.GRIST_MILL.getType(), GristMillScreen::new);
+        MenuScreens.register(ATTContainerTypes.POWER_LOOM.getType(), PowerLoomScreen::new);
     }
 
     @Override
@@ -44,6 +46,7 @@ public class ClientProxy extends CommonProxy
             {
                 case "thresher_operationcost" -> (int) (80 * ATTServerConfig.GENERAL.thresher_energyModifier.get());
                 case "gristmill_operationcost" -> (int) (80 * ATTServerConfig.GENERAL.gristMill_energyModifier.get());
+                case "powerloom_operationcost" -> (int) (80 * ATTServerConfig.GENERAL.powerLoom_energyModifier.get());
                 default -> {
                     // Last resort
                     Config cfg = ATTServerConfig.getRawConfig();

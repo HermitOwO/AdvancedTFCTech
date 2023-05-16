@@ -1,0 +1,20 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "XYX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "item": "tfc:jute_fiber"
+    },
+    "Y": {
+      "item": "advancedtfctech:pirn"
+    }
+  },
+  "result": {
+    "item": "advancedtfctech:fiber_winded_pirn"
+  }
+}

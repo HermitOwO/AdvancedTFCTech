@@ -15,6 +15,7 @@ public class ATTRecipeTypes
 
     public static final TypeWithClass<ThresherRecipe> THRESHER = register("thresher", ThresherRecipe.class);
     public static final TypeWithClass<GristMillRecipe> GRIST_MILL = register("grist_mill", GristMillRecipe.class);
+    public static final TypeWithClass<PowerLoomRecipe> POWER_LOOM = register("power_loom", PowerLoomRecipe.class);
 
     private static <T extends Recipe<?>> TypeWithClass<T> register(String name, Class<T> type)
     {

@@ -1,0 +1,69 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "parent": "advancedtfctech:story/craft_pirn",
+  "criteria": {
+    "fiber_winded_pirn": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "advancedtfctech:fiber_winded_pirn"
+            ]
+          }
+        ]
+      }
+    },
+    "silk_winded_pirn": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "advancedtfctech:silk_winded_pirn"
+            ]
+          }
+        ]
+      }
+    },
+    "wool_winded_pirn": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "advancedtfctech:wool_winded_pirn"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "item": "advancedtfctech:silk_winded_pirn"
+    },
+    "title": {
+      "translate": "advancedtfctech.advancements.story.craft_weaved_pirn.title"
+    },
+    "description": {
+      "translate": "advancedtfctech.advancements.story.craft_weaved_pirn.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "background": "immersiveengineering:textures/block/wooden_decoration/treated_wood.png"
+  },
+  "requirements": [
+    [
+      "fiber_winded_pirn"
+    ],
+    [
+      "silk_winded_pirn"
+    ],
+    [
+      "wool_winded_pirn"
+    ]
+  ]
+}

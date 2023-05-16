@@ -5,10 +5,10 @@ license = "MIT"
 [[mods]]
 modId = "advancedtfctech"
 version = "${file.jarVersion}"
-displayName = "Advanced TFC Tech"
+displayName = "Advanced TFC Tech Unofficial"
 authors = "HermitOwO"
 description = '''
-
+Unofficial port of Advanced TFC Tech by PyralIron.
 '''
 
 [[dependencies.advancedtfctech]]

@@ -10,6 +10,7 @@ import blusunrize.immersiveengineering.data.models.SplitModelBuilder;
 import com.google.common.base.Preconditions;
 import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
 import com.hermitowo.advancedtfctech.common.multiblocks.GristMillMultiblock;
+import com.hermitowo.advancedtfctech.common.multiblocks.PowerLoomMultiblock;
 import com.hermitowo.advancedtfctech.common.multiblocks.ThresherMultiblock;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -47,6 +48,7 @@ public class ATTBlockStates extends BlockStateProvider
     {
         thresher();
         gristMill();
+        powerLoom();
     }
 
     private void thresher()
@@ -71,6 +73,18 @@ public class ATTBlockStates extends BlockStateProvider
         BlockModelBuilder mirrored = multiblockModel(ATTBlocks.Multiblocks.GRIST_MILL.get(), modelMirrored, texture, "_mirrored", GristMillMultiblock.INSTANCE, true);
 
         createMultiblock(ATTBlocks.Multiblocks.GRIST_MILL.get(), normal, mirrored, texture);
+    }
+
+    private void powerLoom()
+    {
+        ResourceLocation texture = modLoc("multiblock/power_loom");
+        ResourceLocation modelNormal = modLoc("models/multiblock/obj/power_loom.obj");
+        ResourceLocation modelMirrored = modLoc("models/multiblock/obj/power_loom_mirrored.obj");
+
+        BlockModelBuilder normal = multiblockModel(ATTBlocks.Multiblocks.POWER_LOOM.get(), modelNormal, texture, "", PowerLoomMultiblock.INSTANCE, false);
+        BlockModelBuilder mirrored = multiblockModel(ATTBlocks.Multiblocks.POWER_LOOM.get(), modelMirrored, texture, "_mirrored", PowerLoomMultiblock.INSTANCE, true);
+
+        createMultiblock(ATTBlocks.Multiblocks.POWER_LOOM.get(), normal, mirrored, texture);
     }
 
     private BlockModelBuilder multiblockModel(Block block, ResourceLocation model, ResourceLocation texture, String add, TemplateMultiblock mb, boolean mirror)

@@ -1,0 +1,24 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "type": "advancedtfctech:power_loom",
+  "result": {
+    "count": 8,
+    "base_ingredient": {
+      "item": "tfc:burlap_cloth"
+    }
+  },
+  "inputs": [
+    {
+      "count": 48,
+      "base_ingredient": {
+        "item": "tfc:jute_fiber"
+      }
+    },
+    {
+      "item": "advancedtfctech:fiber_winded_pirn"
+    }
+  ],
+  "category": "burlap_cloth",
+  "time": 500,
+  "energy": 40000
+}

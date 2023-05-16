@@ -47,15 +47,12 @@ public class ThresherScreen extends IEContainerScreen<ThresherContainer>
     @Override
     protected void drawContainerBackgroundPre(@Nonnull PoseStack transform, float f, int mx, int my)
     {
-        int c = 0;
         for(MultiblockProcess<?> process : tile.processQueue)
             if(process instanceof MultiblockProcessInMachine<?>)
             {
                 float mod = process.processTick / (float)process.getMaxTicks(tile.getLevel());
-                int dispX = (c % 3) * 32;
-                int dispY = (c / 3) * 43;
                 int h = (int)Math.max(1, mod * 16);
-                this.blit(transform, leftPos + 77 + dispX, topPos + 54 + dispY, 198, 100, 22, h);
+                this.blit(transform, leftPos + 77, topPos + 54, 198, 100, 22, h);
             }
     }
 }

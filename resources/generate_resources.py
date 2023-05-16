@@ -9,6 +9,7 @@ from mcresources.type_definitions import Json
 import assets
 import data
 import recipes
+import advancements
 
 
 
@@ -49,6 +50,7 @@ def generate_all(rm: ResourceManager):
     assets.generate(rm)
     data.generate(rm)
     recipes.generate(rm)
+    advancements.generate(rm)
 
     rm.flush()
 

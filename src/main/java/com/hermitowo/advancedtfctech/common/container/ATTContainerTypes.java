@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 import blusunrize.immersiveengineering.common.gui.IEBaseContainer;
 import blusunrize.immersiveengineering.common.register.IEContainerTypes;
 import com.hermitowo.advancedtfctech.common.blockentities.GristMillBlockEntity;
+import com.hermitowo.advancedtfctech.common.blockentities.PowerLoomBlockEntity;
 import com.hermitowo.advancedtfctech.common.blockentities.ThresherBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -25,6 +26,7 @@ public class ATTContainerTypes
 
     public static final ATTContainerProvider.BEContainerATT<ThresherBlockEntity, ThresherContainer> THRESHER = register("thresher", ThresherContainer::new);
     public static final ATTContainerProvider.BEContainerATT<GristMillBlockEntity, GristMillContainer> GRIST_MILL = register("grist_mill", GristMillContainer::new);
+    public static final ATTContainerProvider.BEContainerATT<PowerLoomBlockEntity, PowerLoomContainer> POWER_LOOM = register("power_loom", PowerLoomContainer::new);
 
     public static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenu(String name, Supplier<MenuType<T>> factory)
     {

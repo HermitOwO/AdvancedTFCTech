@@ -12,6 +12,7 @@ import com.hermitowo.advancedtfctech.common.multiblocks.GristMillMultiblock;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerTypes;
 import com.hermitowo.advancedtfctech.common.crafting.ATTSerializers;
 import com.hermitowo.advancedtfctech.common.items.ATTItems;
+import com.hermitowo.advancedtfctech.common.multiblocks.PowerLoomMultiblock;
 import com.hermitowo.advancedtfctech.common.multiblocks.ThresherMultiblock;
 import com.hermitowo.advancedtfctech.config.ATTServerConfig;
 import com.mojang.logging.LogUtils;
@@ -54,6 +55,7 @@ public class AdvancedTFCTech
     {
         MultiblockHandler.registerMultiblock(ThresherMultiblock.INSTANCE);
         MultiblockHandler.registerMultiblock(GristMillMultiblock.INSTANCE);
+        MultiblockHandler.registerMultiblock(PowerLoomMultiblock.INSTANCE);
     }
 
     public static <T> Supplier<T> bootstrapErrorToXCPInDev(Supplier<T> in)

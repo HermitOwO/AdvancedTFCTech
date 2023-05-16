@@ -1,0 +1,20 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X",
+    "Y",
+    "X"
+  ],
+  "key": {
+    "X": {
+      "tag": "forge:treated_wood"
+    },
+    "Y": {
+      "tag": "forge:rods/treated_wood"
+    }
+  },
+  "result": {
+    "item": "advancedtfctech:pirn"
+  }
+}

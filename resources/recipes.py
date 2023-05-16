@@ -6,7 +6,8 @@ from constants import *
 
 
 def generate(rm:ResourceManager):
-    rm.domain = 'advancedtfctech'
+
+    rm.crafting_shaped('crafting/pirn', ['X', 'Y', 'X'], {'X': '#forge:treated_wood', 'Y': '#forge:rods/treated_wood'}, 'advancedtfctech:pirn')
 
     for grain in TFC_GRAINS:
         thresher_recipe(rm, '%s' % grain,
@@ -39,6 +40,29 @@ def generate(rm:ResourceManager):
             time = 80,
             energy = 6400)
 
+    for pirn, weave in LOOM.items():
+        power_loom_recipe(rm, '%s' % pirn,
+            result =
+                {
+                    'count': weave.amount,
+                    'base_ingredient':
+                    {'item': 'tfc:' + weave.cloth}
+                },
+            inputs =
+                [
+                    {
+                        'count': weave.amount * 6,
+                        'base_ingredient':
+                        {'item': weave.ingredient}
+                    },
+                    {'item': 'advancedtfctech:%s' % pirn}
+                ],
+            category = weave.cloth,
+            time = 500,
+            energy = 40000)
+
+        rm.crafting_shaped('crafting/%s' % pirn, ['XXX', 'XYX', 'XXX'], {'X': weave.ingredient, 'Y': 'advancedtfctech:pirn'}, 'advancedtfctech:%s' % pirn)
+
 def not_rotten(ingredient: Json) -> Json:
     return {
         'type': 'tfc:not_rotten',
@@ -58,6 +82,15 @@ def grist_mill_recipe(rm: ResourceManager, name_parts: utils.ResourceIdentifier,
     rm.recipe(('grist_mill', name_parts), 'advancedtfctech:grist_mill', {
         'result': result,
         'input': input,
+        'time': time,
+        'energy': energy
+    })
+
+def power_loom_recipe(rm: ResourceManager, name_parts: utils.ResourceIdentifier, result: Json, inputs: list, category: str, time: int, energy: int):
+    rm.recipe(('power_loom', name_parts), 'advancedtfctech:power_loom', {
+        'result': result,
+        'inputs': inputs,
+        'category': category,
         'time': time,
         'energy': energy
     })

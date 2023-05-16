@@ -3,6 +3,7 @@
   "advancedtfctech:advancedtfctech": {
     "category_weight": 200,
     "entry_list": [
+      "advancedtfctech:power_loom",
       "advancedtfctech:thresher",
       "advancedtfctech:grist_mill"
     ]

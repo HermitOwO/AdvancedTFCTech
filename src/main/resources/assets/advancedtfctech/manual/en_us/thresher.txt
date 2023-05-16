@@ -1,5 +1,5 @@
 Thresher
 Shed Your Husk
-A Thresher separates chaff from grain using rotating cylinders and mechanical power.
+The Thresher separates chaff from grain using rotating cylinders and mechanical power.
 
 It consumes <config;i;thresher_operationcost>IF/t.

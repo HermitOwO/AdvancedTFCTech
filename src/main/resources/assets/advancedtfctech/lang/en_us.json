@@ -6,8 +6,16 @@
   "item.advancedtfctech.wool_winded_pirn": "Wool-Winded Pirn",
   "block.advancedtfctech.thresher": "Thresher",
   "block.advancedtfctech.grist_mill": "Grist Mill",
+  "block.advancedtfctech.power_loom": "Power Loom",
   "itemGroup.advancedtfctech": "Advanced TFC Tech",
   "tfc.jei.thresher": "Thresher",
   "tfc.jei.grist_mill": "Grist Mill",
-  "manual.advancedtfctech.advancedtfctech": "TerraFirmaCraft Tech"
+  "tfc.jei.power_loom": "Power Loom",
+  "manual.advancedtfctech.advancedtfctech": "TerraFirmaCraft Tech",
+  "advancedtfctech.advancements.story.root.title": "Advanced TFC Tech",
+  "advancedtfctech.advancements.story.root.description": "Machines for large-scale production",
+  "advancedtfctech.advancements.story.craft_pirn.title": "Winder",
+  "advancedtfctech.advancements.story.craft_pirn.description": "Craft a Pirn",
+  "advancedtfctech.advancements.story.craft_weaved_pirn.title": "Stop Winding",
+  "advancedtfctech.advancements.story.craft_weaved_pirn.description": "Craft all Winded Pirns"
 }

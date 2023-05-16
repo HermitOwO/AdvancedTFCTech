@@ -3,8 +3,10 @@ package com.hermitowo.advancedtfctech.common.crafting;
 import java.util.function.Supplier;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import com.hermitowo.advancedtfctech.api.crafting.GristMillRecipe;
+import com.hermitowo.advancedtfctech.api.crafting.PowerLoomRecipe;
 import com.hermitowo.advancedtfctech.api.crafting.ThresherRecipe;
 import com.hermitowo.advancedtfctech.common.crafting.serializers.GristMillRecipeSerializer;
+import com.hermitowo.advancedtfctech.common.crafting.serializers.PowerLoomRecipeSerializer;
 import com.hermitowo.advancedtfctech.common.crafting.serializers.ThresherRecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.registries.DeferredRegister;
@@ -19,6 +21,7 @@ public class ATTSerializers
 
     public static final RegistryObject<IERecipeSerializer<ThresherRecipe>> THRESHER_SERIALIZER = register("thresher", ThresherRecipeSerializer::new);
     public static final RegistryObject<IERecipeSerializer<GristMillRecipe>> GRIST_MILL_SERIALIZER = register("grist_mill", GristMillRecipeSerializer::new);
+    public static final RegistryObject<IERecipeSerializer<PowerLoomRecipe>> POWER_LOOM_SERIALIZER = register("power_loom", PowerLoomRecipeSerializer::new);
 
     public static <T extends RecipeSerializer<?>> RegistryObject<T> register(String name, Supplier<T> serializer)
     {

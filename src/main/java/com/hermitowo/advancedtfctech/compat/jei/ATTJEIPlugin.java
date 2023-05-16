@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import com.hermitowo.advancedtfctech.api.crafting.ATTRecipeTypes;
 import com.hermitowo.advancedtfctech.api.crafting.GristMillRecipe;
+import com.hermitowo.advancedtfctech.api.crafting.PowerLoomRecipe;
 import com.hermitowo.advancedtfctech.api.crafting.ThresherRecipe;
 import com.hermitowo.advancedtfctech.client.screen.GristMillScreen;
 import com.hermitowo.advancedtfctech.client.screen.ThresherScreen;
@@ -51,6 +52,7 @@ public class ATTJEIPlugin implements IModPlugin
 
     public static final RecipeType<ThresherRecipe> THRESHER = type("thresher", ThresherRecipe.class);
     public static final RecipeType<GristMillRecipe> GRIST_MILL = type("grist_mill", GristMillRecipe.class);
+    public static final RecipeType<PowerLoomRecipe> POWER_LOOM = type("power_loom", PowerLoomRecipe.class);
 
     private static <T> RecipeType<T> type(String name, Class<T> tClass)
     {
@@ -64,6 +66,7 @@ public class ATTJEIPlugin implements IModPlugin
 
         r.addRecipeCategories(new ThresherRecipeCategory(THRESHER, guiHelper));
         r.addRecipeCategories(new GristMillRecipeCategory(GRIST_MILL, guiHelper));
+        r.addRecipeCategories(new PowerLoomRecipeCategory(POWER_LOOM, guiHelper));
     }
 
     @Override
@@ -71,6 +74,7 @@ public class ATTJEIPlugin implements IModPlugin
     {
         r.addRecipes(THRESHER, getRecipes(ATTRecipeTypes.THRESHER.get()));
         r.addRecipes(GRIST_MILL, getRecipes(ATTRecipeTypes.GRIST_MILL.get()));
+        r.addRecipes(POWER_LOOM, getRecipes(ATTRecipeTypes.POWER_LOOM.get()));
     }
 
     @Override
@@ -78,6 +82,7 @@ public class ATTJEIPlugin implements IModPlugin
     {
         cat(r, ATTBlocks.Multiblocks.THRESHER, THRESHER);
         cat(r, ATTBlocks.Multiblocks.GRIST_MILL, GRIST_MILL);
+        cat(r, ATTBlocks.Multiblocks.POWER_LOOM, POWER_LOOM);
     }
 
     private static void cat(IRecipeCatalystRegistration r, Supplier<? extends Block> supplier, RecipeType<?> type)

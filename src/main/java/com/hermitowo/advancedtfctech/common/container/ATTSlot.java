@@ -1,13 +1,18 @@
 package com.hermitowo.advancedtfctech.common.container;
 
 import com.hermitowo.advancedtfctech.api.crafting.GristMillRecipe;
+import com.hermitowo.advancedtfctech.api.crafting.PowerLoomRecipe;
 import com.hermitowo.advancedtfctech.api.crafting.ThresherRecipe;
+import com.hermitowo.advancedtfctech.common.items.ATTItems;
 import javax.annotation.Nonnull;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+
+import net.dries007.tfc.common.items.TFCItems;
 
 public abstract class ATTSlot extends Slot
 {
@@ -70,6 +75,72 @@ public abstract class ATTSlot extends Slot
         public boolean mayPlace(ItemStack stack)
         {
             return !stack.isEmpty() && GristMillRecipe.isValidRecipeInput(level, stack);
+        }
+    }
+
+    // Disgustingly hard-coded for now
+    public static class PirnInput extends ATTSlot
+    {
+        private final Level level;
+
+        public PirnInput(AbstractContainerMenu container, Container inv, int id, int x, int y, Level level)
+        {
+            super(container, inv, id, x, y);
+            this.level = level;
+        }
+
+        @Override
+        public boolean mayPlace(ItemStack stack)
+        {
+            return !stack.isEmpty() && (stack.is(ATTItems.FIBER_WINDED_PIRN.get()) || stack.is(ATTItems.SILK_WINDED_PIRN.get()) || stack.is(ATTItems.WOOL_WINDED_PIRN.get()));
+        }
+
+        @Override
+        public int getMaxStackSize()
+        {
+            return 1;
+        }
+    }
+
+    public static class WeaveInput extends ATTSlot
+    {
+        private final Level level;
+
+        public WeaveInput(AbstractContainerMenu container, Container inv, int id, int x, int y, Level level)
+        {
+            super(container, inv, id, x, y);
+            this.level = level;
+        }
+
+        @Override
+        public boolean mayPlace(ItemStack stack)
+        {
+            return !stack.isEmpty() && (stack.is(TFCItems.JUTE_FIBER.get()) || stack.is(Items.STRING) || stack.is(TFCItems.WOOL_YARN.get()));
+
+        }
+    }
+
+    public static class SecondaryWeaveInput extends ATTSlot
+    {
+        private final Level level;
+
+        public SecondaryWeaveInput(AbstractContainerMenu container, Container inv, int id, int x, int y, Level level)
+        {
+            super(container, inv, id, x, y);
+            this.level = level;
+        }
+
+        @Override
+        public boolean mayPlace(ItemStack stack)
+        {
+            return !stack.isEmpty() && (stack.is(TFCItems.JUTE_FIBER.get()) || stack.is(Items.STRING) || stack.is(TFCItems.WOOL_YARN.get()));
+
+        }
+
+        @Override
+        public int getMaxStackSize()
+        {
+            return 16;
         }
     }
 }

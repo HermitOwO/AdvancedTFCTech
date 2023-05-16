@@ -1,5 +1,5 @@
 Grist Mill
 Flour Power
-A Grist Mill grains raw grain into more edible flour.
+The Grist Mill grains raw grain into more edible flour.
 
 It consumes <config;i;gristmill_operationcost>IF/t.

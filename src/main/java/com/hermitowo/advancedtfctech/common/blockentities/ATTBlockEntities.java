@@ -19,6 +19,7 @@ public class ATTBlockEntities
 
     public static final MultiblockBEType<ThresherBlockEntity> THRESHER = registerMultiblockBE("thresher", ThresherBlockEntity::new, ATTBlocks.Multiblocks.THRESHER);
     public static final MultiblockBEType<GristMillBlockEntity> GRIST_MILL = registerMultiblockBE("grist_mill", GristMillBlockEntity::new, ATTBlocks.Multiblocks.GRIST_MILL);
+    public static final MultiblockBEType<PowerLoomBlockEntity> POWER_LOOM = registerMultiblockBE("power_loom", PowerLoomBlockEntity::new, ATTBlocks.Multiblocks.POWER_LOOM);
 
     public static <T extends BlockEntity & IEBlockInterfaces.IGeneralMultiblock> MultiblockBEType<T> registerMultiblockBE(String name, MultiblockBEType.BEWithTypeConstructor<T> factory, Supplier<? extends Block> valid)
     {
