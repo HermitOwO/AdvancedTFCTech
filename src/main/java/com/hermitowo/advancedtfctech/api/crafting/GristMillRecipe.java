@@ -48,7 +48,6 @@ public class GristMillRecipe extends ATTMultiblockRecipe
     public boolean isValidInput(ItemStack stack)
     {
         return this.input != null && this.input.test(stack);
-
     }
 
     public static boolean isValidRecipeInput(Level level, ItemStack stack)

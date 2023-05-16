@@ -41,7 +41,7 @@ def generate(rm:ResourceManager):
             energy = 6400)
 
     for pirn, weave in LOOM.items():
-        power_loom_recipe(rm, '%s' % pirn,
+        power_loom_recipe(rm, weave.cloth,
             result =
                 {
                     'count': weave.amount,
@@ -57,9 +57,8 @@ def generate(rm:ResourceManager):
                     },
                     {'item': 'advancedtfctech:%s' % pirn}
                 ],
-            category = weave.cloth,
-            time = 500,
-            energy = 40000)
+            time = weave.amount * 62.5,
+            energy = weave.amount * 5000)
 
         rm.crafting_shaped('crafting/%s' % pirn, ['XXX', 'XYX', 'XXX'], {'X': weave.ingredient, 'Y': 'advancedtfctech:pirn'}, 'advancedtfctech:%s' % pirn)
 
@@ -86,11 +85,10 @@ def grist_mill_recipe(rm: ResourceManager, name_parts: utils.ResourceIdentifier,
         'energy': energy
     })
 
-def power_loom_recipe(rm: ResourceManager, name_parts: utils.ResourceIdentifier, result: Json, inputs: list, category: str, time: int, energy: int):
+def power_loom_recipe(rm: ResourceManager, name_parts: utils.ResourceIdentifier, result: Json, inputs: list, time: int, energy: int):
     rm.recipe(('power_loom', name_parts), 'advancedtfctech:power_loom', {
         'result': result,
         'inputs': inputs,
-        'category': category,
         'time': time,
         'energy': energy
     })

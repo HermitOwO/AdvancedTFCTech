@@ -9,7 +9,7 @@ import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransfor
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInWorld;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
 import blusunrize.immersiveengineering.common.util.MultiblockCapability;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
@@ -32,7 +32,6 @@ import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -48,8 +47,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import net.dries007.tfc.common.items.TFCItems;
 
 public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoomBlockEntity, PowerLoomRecipe> implements ATTCommonTickableBlock, ATTContainerProvider<PowerLoomBlockEntity>, IEBlockInterfaces.IBlockBounds, IEBlockInterfaces.IPlayerInteraction
 {
@@ -124,35 +121,23 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
 
         if (!isRSDisabled() && energyStorage.getEnergyStored() > 0)
         {
-            for (int slot = 0; slot < 8; slot++)
+            if (this.processQueue.size() < this.getProcessQueueMaxLength())
             {
-                ItemStack stack = this.getInventory().get(slot);
-                if (!stack.isEmpty())
+                for (int i = 0; i < 8; i++)
                 {
-                    String category = "";
-                    if (stack.is(ATTItems.FIBER_WINDED_PIRN.get()))
-                        category = "burlap_cloth";
-                    if (stack.is(ATTItems.SILK_WINDED_PIRN.get()))
-                        category = "silk_cloth";
-                    if (stack.is(ATTItems.WOOL_WINDED_PIRN.get()))
-                        category = "wool_cloth";
-                    PowerLoomRecipe[] recipes = PowerLoomRecipe.findRecipes(level, category);
-                    if (recipes.length > 0 && (this.getInventory().get(12).isEmpty() || this.getInventory().get(13).isEmpty()))
+                    ItemStack pirn = this.getInventory().get(i);
+                    for (int j = 8; j < 11; j++)
                     {
-                        PowerLoomRecipe recipe = recipes[0];
-                        if (recipe != null && !recipe.output.get().isEmpty())
+                        ItemStack weave = this.getInventory().get(j);
+                        if (!pirn.isEmpty() && !weave.isEmpty())
                         {
-                            NonNullList<ItemStack> query = NonNullList.withSize(11, ItemStack.EMPTY);
-                            for (int i = 0; i < query.size(); i++)
-                                query.set(i, inventory.get(i));
-                            int crafted = recipe.getMaxCrafted(query);
-                            if (crafted > 0)
+                            PowerLoomRecipe recipe = PowerLoomRecipe.findRecipe(level, pirn, weave);
+                            if (recipe != null && (this.getInventory().get(12).isEmpty() || this.getInventory().get(13).isEmpty()))
                             {
-                                if (this.addProcessToQueue(new MultiblockProcessInWorld<>(recipe, this::getRecipeForId, 0.78f, NonNullList.create()), true))
+                                MultiblockProcessInMachine<PowerLoomRecipe> process = new MultiblockProcessInMachine<>(recipe, this::getRecipeForId, i, j);
+                                if (this.addProcessToQueue(process, true))
                                 {
-                                    this.addProcessToQueue(new MultiblockProcessInWorld<>(recipe, this::getRecipeForId, 0.78f, recipe.consumeInputs(query, 1)), false);
-                                    for (int i = 0; i < query.size(); i++)
-                                        inventory.set(i, query.get(i));
+                                    this.addProcessToQueue(process, false);
                                     update = true;
                                 }
                             }
@@ -213,7 +198,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                 {
                     for (int i = 0; i < 8; i++)
                     {
-                        if (master.inventory.get(i).isEmpty() && (heldItem.is(ATTItems.FIBER_WINDED_PIRN.get()) || heldItem.is(ATTItems.SILK_WINDED_PIRN.get()) || heldItem.is(ATTItems.WOOL_WINDED_PIRN.get())))
+                        if (master.inventory.get(i).isEmpty() && PowerLoomRecipe.isValidPirnInput(level, heldItem))
                         {
                             ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, 1);
                             stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
@@ -244,7 +229,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                 {
                     for (int i = 8; i < 11; i++)
                     {
-                        if (master.inventory.get(i).isEmpty() && (heldItem.is(TFCItems.JUTE_FIBER.get()) || heldItem.is(Items.STRING) || heldItem.is(TFCItems.WOOL_YARN.get())))
+                        if (master.inventory.get(i).isEmpty() && PowerLoomRecipe.isValidWeaveInput(level, heldItem))
                         {
                             int size = heldItem.getCount();
                             ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
@@ -274,7 +259,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                 IItemHandler insertionHandler = secondaryInput.getNullable();
                 if (insertionHandler != null)
                 {
-                    if (master.inventory.get(11).isEmpty() && (heldItem.is(TFCItems.JUTE_FIBER.get()) || heldItem.is(Items.STRING) || heldItem.is(TFCItems.WOOL_YARN.get())) && heldItem.getCount() >= 16)
+                    if (master.inventory.get(11).isEmpty() && PowerLoomRecipe.isValidWeaveInput(level, heldItem) && heldItem.getCount() >= 16)
                     {
                         ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, 16);
                         stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
@@ -415,7 +400,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     @Override
     public boolean canUseGui(Player player)
     {
-        return formed && player.getMainHandItem().getItem().equals(ATTItems.PIRN.get());
+        return formed && player.getMainHandItem().is(ATTItems.PIRN.get());
         // return false;
     }
 
@@ -436,7 +421,11 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     @Override
     public boolean isStackValid(int slot, ItemStack stack)
     {
-        return true;
+        if (slot >= 0 && slot < 8)
+            return PowerLoomRecipe.isValidPirnInput(level, stack);
+        if (slot >= 8 && slot < 12)
+            return PowerLoomRecipe.isValidWeaveInput(level, stack);
+        return false;
     }
 
     @Override
@@ -456,12 +445,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         ItemStack stack = this.getInventory().get(11);
         if (recipe != null && !stack.isEmpty())
         {
-            if (recipe.category.equals("burlap_cloth") && stack.is(TFCItems.JUTE_FIBER.get()) && stack.getCount() == 16)
-                return true;
-            if (recipe.category.equals("silk_cloth") && stack.is(Items.STRING) && stack.getCount() == 16)
-                return true;
-            if (recipe.category.equals("wool_cloth") && stack.is(TFCItems.WOOL_YARN.get()) && stack.getCount() == 16)
-                return true;
+            return recipe.inputs[0].testIgnoringSize(stack) && stack.getCount() == 16;
         }
         return false;
     }
@@ -509,7 +493,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     @Override
     public boolean isInWorldProcessingMachine()
     {
-        return true;
+        return false;
     }
 
     private static final CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(PowerLoomBlockEntity::getShape);

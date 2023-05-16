@@ -48,12 +48,11 @@ public class PowerLoomScreen extends IEContainerScreen<PowerLoomContainer>
     protected void drawContainerBackgroundPre(@Nonnull PoseStack transform, float f, int mx, int my)
     {
         for (MultiblockProcess<?> process : tile.processQueue)
-            if (process instanceof MultiblockProcessInMachine<?> inMachine)
+            if (process instanceof MultiblockProcessInMachine<?>)
             {
                 float mod = process.processTick / (float) process.getMaxTicks(tile.getLevel());
-                int slot = inMachine.getInputSlots()[0];
                 int h = (int) Math.max(1, mod * 16);
-                this.blit(transform, leftPos + 27 + slot % 3 * 21, topPos + 34 + slot / 3 * 18 + (16 - h), 176, 16 - h, 2, h);
+                this.blit(transform, leftPos + 27, topPos + 34 + 16 - h, 176, 16 - h, 2, h);
             }
     }
 }

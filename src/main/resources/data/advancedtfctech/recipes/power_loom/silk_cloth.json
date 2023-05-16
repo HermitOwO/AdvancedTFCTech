@@ -2,23 +2,22 @@
   "__comment__": "This file was automatically created by mcresources",
   "type": "advancedtfctech:power_loom",
   "result": {
-    "count": 6,
+    "count": 4,
     "base_ingredient": {
-      "item": "tfc:wool_cloth"
+      "item": "tfc:silk_cloth"
     }
   },
   "inputs": [
     {
-      "count": 36,
+      "count": 24,
       "base_ingredient": {
-        "item": "tfc:wool_yarn"
+        "item": "minecraft:string"
       }
     },
     {
-      "item": "advancedtfctech:wool_winded_pirn"
+      "item": "advancedtfctech:silk_winded_pirn"
     }
   ],
-  "category": "wool_cloth",
-  "time": 500,
-  "energy": 40000
+  "time": 250.0,
+  "energy": 20000
 }

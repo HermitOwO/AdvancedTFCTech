@@ -25,7 +25,6 @@ public class PowerLoomRecipeSerializer extends IERecipeSerializer<PowerLoomRecip
     @Override
     public PowerLoomRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context)
     {
-        String category = GsonHelper.getAsString(json, "category");
         Lazy<ItemStack> output = readOutput(json.get("result"));
         IngredientWithSize[] ingredients;
         if (json.has("input"))
@@ -42,14 +41,13 @@ public class PowerLoomRecipeSerializer extends IERecipeSerializer<PowerLoomRecip
         int time = GsonHelper.getAsInt(json, "time");
         int energy = GsonHelper.getAsInt(json, "energy");
 
-        return new PowerLoomRecipe(recipeId, output, ingredients, category, time, energy);
+        return new PowerLoomRecipe(recipeId, output, ingredients, time, energy);
     }
 
     @Nullable
     @Override
     public PowerLoomRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer)
     {
-        String category = buffer.readUtf();
         Lazy<ItemStack> output = readLazyStack(buffer);
         int inputCount = buffer.readInt();
         IngredientWithSize[] ingredients = new IngredientWithSize[inputCount];
@@ -58,13 +56,12 @@ public class PowerLoomRecipeSerializer extends IERecipeSerializer<PowerLoomRecip
         int time = buffer.readInt();
         int energy = buffer.readInt();
 
-        return new PowerLoomRecipe(recipeId, output, ingredients, category, time, energy);
+        return new PowerLoomRecipe(recipeId, output, ingredients, time, energy);
     }
 
     @Override
     public void toNetwork(FriendlyByteBuf buffer, PowerLoomRecipe recipe)
     {
-        buffer.writeUtf(recipe.category);
         writeLazyStack(buffer, recipe.output);
         buffer.writeInt(recipe.inputs.length);
         for (IngredientWithSize ingredient : recipe.inputs)
