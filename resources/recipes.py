@@ -57,8 +57,8 @@ def generate(rm:ResourceManager):
                     },
                     {'item': 'advancedtfctech:%s' % pirn}
                 ],
-            time = weave.amount * 62.5,
-            energy = weave.amount * 5000)
+            time = 500,
+            energy = 40000)
 
         rm.crafting_shaped('crafting/%s' % pirn, ['XXX', 'XYX', 'XXX'], {'X': weave.ingredient, 'Y': 'advancedtfctech:pirn'}, 'advancedtfctech:%s' % pirn)
 
