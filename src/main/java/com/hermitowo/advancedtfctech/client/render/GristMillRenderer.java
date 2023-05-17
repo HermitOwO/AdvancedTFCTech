@@ -1,6 +1,7 @@
 package com.hermitowo.advancedtfctech.client.render;
 
 import java.util.List;
+import blusunrize.immersiveengineering.client.render.tile.BERenderUtils;
 import blusunrize.immersiveengineering.client.render.tile.IEBlockEntityRenderer;
 import blusunrize.immersiveengineering.client.utils.RenderUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
@@ -29,23 +30,28 @@ public class GristMillRenderer extends IEBlockEntityRenderer<GristMillBlockEntit
 
         boolean b = te.shouldRenderAsActive();
         float angle = te.animation_driverRotation + (b ? 18 * partialTicks : 0);
+        final MultiBufferSource bufferMirrored = BERenderUtils.mirror(te, matrixStack, bufferIn);
 
         matrixStack.pushPose();
 
+        int i = 0;
+        if (te.getIsMirrored())
+            i = -1;
+
         if (dir == Direction.NORTH)
-            matrixStack.translate(1, 1.375, 1);
+            matrixStack.translate(1 + i, 1.375, 1);
         if (dir == Direction.EAST)
-            matrixStack.translate(0, 1.375, 1);
+            matrixStack.translate(0, 1.375, 1 + i);
         if (dir == Direction.SOUTH)
-            matrixStack.translate(-1, 1.375, 0);
+            matrixStack.translate(-1 + i, 1.375, 0);
         if (dir == Direction.WEST)
-            matrixStack.translate(1, 1.375, -1);
+            matrixStack.translate(1, 1.375, -1 + i);
 
         matrixStack.translate(te.getFacing().getStepX() * .5, 0, te.getFacing().getStepZ() * .5);
 
         matrixStack.pushPose();
         matrixStack.mulPose(new Quaternion(new Vector3f(-te.getFacing().getStepZ(), 0, te.getFacing().getStepX()), angle, true));
-        renderDriver(DRIVER, matrixStack, bufferIn, dir, combinedLightIn, combinedOverlayIn);
+        renderDriver(DRIVER, matrixStack, bufferMirrored, dir, combinedLightIn, combinedOverlayIn);
         matrixStack.popPose();
 
         matrixStack.popPose();
