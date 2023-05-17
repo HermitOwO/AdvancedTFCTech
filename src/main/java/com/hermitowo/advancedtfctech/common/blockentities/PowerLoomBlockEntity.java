@@ -233,7 +233,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                 {
                     for (int i = 8; i < 11; i++)
                     {
-                        if (master.inventory.get(i).isEmpty() && PowerLoomRecipe.isValidWeaveInput(level, heldItem))
+                        if (master.inventory.get(i).isEmpty() && heldItem.is(master.inventory.get(11).getItem()))
                         {
                             int size = heldItem.getCount();
                             ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
