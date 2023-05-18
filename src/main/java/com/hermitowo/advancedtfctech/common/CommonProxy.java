@@ -9,7 +9,6 @@ public class CommonProxy
     {
     }
 
-
     public Level getClientWorld()
     {
         return null;
