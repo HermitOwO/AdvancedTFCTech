@@ -2,10 +2,13 @@
   "__comment__": "This file was automatically created by mcresources",
   "type": "advancedtfctech:thresher",
   "result": {
-    "count": 3,
-    "base_ingredient": {
-      "item": "tfc:food/oat_grain"
-    }
+    "stack": {
+      "item": "tfc:food/oat_grain",
+      "count": 3
+    },
+    "modifiers": [
+      "tfc:copy_food"
+    ]
   },
   "secondaries": [
     {

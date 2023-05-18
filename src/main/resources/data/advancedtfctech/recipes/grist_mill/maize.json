@@ -2,10 +2,13 @@
   "__comment__": "This file was automatically created by mcresources",
   "type": "advancedtfctech:grist_mill",
   "result": {
-    "count": 3,
-    "base_ingredient": {
-      "item": "tfc:food/maize_flour"
-    }
+    "stack": {
+      "item": "tfc:food/maize_flour",
+      "count": 3
+    },
+    "modifiers": [
+      "tfc:copy_food"
+    ]
   },
   "input": {
     "type": "tfc:not_rotten",

@@ -11,18 +11,19 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.Lazy;
+
+import net.dries007.tfc.common.recipes.outputs.ItemStackProvider;
 
 public class ThresherRecipe extends ATTMultiblockRecipe
 {
     public static final CachedRecipeList<ThresherRecipe> RECIPES = new CachedRecipeList<>(ATTRecipeTypes.THRESHER);
 
     public IngredientWithSize input;
-    public final Lazy<ItemStack> output;
+    public final ItemStackProvider output;
     public final NonNullList<Lazy<ItemStack>> secondaryOutputs = NonNullList.create();
 
-    public ThresherRecipe(ResourceLocation id, Lazy<ItemStack> output, IngredientWithSize input, int time, int energy)
+    public ThresherRecipe(ResourceLocation id, ItemStackProvider output, IngredientWithSize input, int time, int energy)
     {
         super(ItemStack.EMPTY, ATTRecipeTypes.THRESHER, id);
         this.output = output;
@@ -32,7 +33,7 @@ public class ThresherRecipe extends ATTMultiblockRecipe
         modifyTimeAndEnergy(ATTServerConfig.GENERAL.thresher_timeModifier::get, ATTServerConfig.GENERAL.thresher_energyModifier::get);
 
         setInputListWithSizes(Lists.newArrayList(this.input));
-        this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, this.output.get()));
+        this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, this.output.getEmptyStack()));
     }
 
     public ThresherRecipe addToSecondaryOutput(Lazy<ItemStack> output)
@@ -68,14 +69,6 @@ public class ThresherRecipe extends ATTMultiblockRecipe
     public int getMultipleProcessTicks()
     {
         return 0;
-    }
-
-    @Override
-    public NonNullList<ItemStack> getActualItemOutputs(BlockEntity blockentity)
-    {
-        NonNullList<ItemStack> list = NonNullList.create();
-        list.add(output.get());
-        return list;
     }
 
     @Override

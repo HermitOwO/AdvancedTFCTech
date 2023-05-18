@@ -1,5 +1,6 @@
 package com.hermitowo.advancedtfctech.compat.jei;
 
+import java.util.List;
 import com.hermitowo.advancedtfctech.api.crafting.ThresherRecipe;
 import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -14,6 +15,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.util.Lazy;
 
 import net.dries007.tfc.common.recipes.ingredients.ItemStackIngredient;
@@ -44,8 +46,11 @@ public class ThresherRecipeCategory extends BaseRecipeCategory<ThresherRecipe>
         IRecipeSlotBuilder output = builder.addSlot(RecipeIngredientRole.OUTPUT, 84, 0);
         IRecipeSlotBuilder secondaryOutput = builder.addSlot(RecipeIngredientRole.OUTPUT, 84, 20);
 
+        final Ingredient ingredient = recipe.input.getBaseIngredient();
+        final List<ItemStack> inputList = List.of(ingredient.getItems());
+
         input.addItemStacks(collapse(new ItemStackIngredient(recipe.input.getBaseIngredient(), recipe.input.getCount())));
-        output.addItemStack(recipe.output.get());
+        output.addItemStacks(collapse(inputList, recipe.output));
         for (Lazy<ItemStack> out : recipe.secondaryOutputs)
         {
             secondaryOutput.addItemStack(out.get());

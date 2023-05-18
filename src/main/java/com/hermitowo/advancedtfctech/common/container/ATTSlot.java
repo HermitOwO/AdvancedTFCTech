@@ -1,18 +1,13 @@
 package com.hermitowo.advancedtfctech.common.container;
 
 import com.hermitowo.advancedtfctech.api.crafting.GristMillRecipe;
-import com.hermitowo.advancedtfctech.api.crafting.PowerLoomRecipe;
 import com.hermitowo.advancedtfctech.api.crafting.ThresherRecipe;
-import com.hermitowo.advancedtfctech.common.items.ATTItems;
 import javax.annotation.Nonnull;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-
-import net.dries007.tfc.common.items.TFCItems;
 
 public abstract class ATTSlot extends Slot
 {
@@ -91,7 +86,7 @@ public abstract class ATTSlot extends Slot
         @Override
         public boolean mayPlace(ItemStack stack)
         {
-            return !stack.isEmpty() && PowerLoomRecipe.isValidPirnInput(level, stack);
+            return false;
         }
 
         @Override
@@ -114,8 +109,7 @@ public abstract class ATTSlot extends Slot
         @Override
         public boolean mayPlace(ItemStack stack)
         {
-            return !stack.isEmpty() && PowerLoomRecipe.isValidWeaveInput(level, stack);
-
+            return false;
         }
     }
 
@@ -132,7 +126,7 @@ public abstract class ATTSlot extends Slot
         @Override
         public boolean mayPlace(ItemStack stack)
         {
-            return !stack.isEmpty() && PowerLoomRecipe.isValidWeaveInput(level, stack);
+            return false;
         }
 
         @Override

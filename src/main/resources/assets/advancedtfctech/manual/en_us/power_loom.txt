@@ -2,11 +2,11 @@ Power Loom
 Textile Empire
 The Power Loom is an innovative solution to a growing demand for textiles. To automate the weaving process, a shuttle containing a pirn spooled with yarn is rapidly sent back and forth between two perpendicular sets of strung yarn alternating between high and low positions.
 
-In order to operate the Power Loom, pirns spooled with a select yarn must be put on the holder located at the side of the machine.
+In order to operate the Power Loom, pirns spooled with a selected yarn/fiber must be put on the holder located at the side of the machine.
 
-Before the loom can operate, it must be primed with the select weave by rightclicking with the weave on the 'grill' in the center of the machine.
+Before the loom can operate, it must be primed with 16 of the selected yarn/fiber by rightclicking with the yarn/fiber on the 'grill' in the center of the machine.
 
-Then, input weave can be put with the same method on the lower beam on the machine's shorter side.
+Then, input yarn/fiber can be put with the same method on the lower beam on the machine's shorter side.
 
 Output may be retrieved by a storage device placed in the center of the output side, or by shift-rightclicking on the back.
 

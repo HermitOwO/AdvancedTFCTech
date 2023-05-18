@@ -49,6 +49,9 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import net.dries007.tfc.common.capabilities.food.FoodCapability;
+import net.dries007.tfc.common.capabilities.food.IFood;
+
 public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBlockEntity, ThresherRecipe> implements ATTCommonTickableBlock, ATTContainerProvider<ThresherBlockEntity>, IEBlockInterfaces.IBlockBounds, IEBlockInterfaces.ISoundBE
 {
     private static final BlockPos MAIN_OUT_POS = new BlockPos(1, 0, 0);
@@ -154,6 +157,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
             }
             if (level.getGameTime() % 8 == 0)
             {
+                sort();
                 IItemHandler outputHandler = output.getNullable();
                 if (outputHandler != null)
                 {
@@ -186,6 +190,53 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
     {
         this.setChanged();
         this.markContainingBlockForUpdate(null);
+    }
+
+    public void sort()
+    {
+        List<ItemStack> list = new ArrayList<>(6);
+
+        for (int i = 6; i < 12; i++)
+            list.add(this.getInventory().get(i));
+
+        for (int i = 0; i < list.size(); i++)
+        {
+            for (int j = i + 1; j < list.size(); j++)
+            {
+                ItemStack holder1 = list.get(i);
+                ItemStack holder2 = list.get(j);
+                IFood cap1 = holder1.getCapability(FoodCapability.CAPABILITY).resolve().orElse(null);
+                IFood cap2 = holder2.getCapability(FoodCapability.CAPABILITY).resolve().orElse(null);
+                int size1 = holder1.getCount();
+                int size2 = holder2.getCount();
+                int sizeMax = holder1.getMaxStackSize();
+                if (!holder1.isEmpty() && size1 < sizeMax && !holder2.isEmpty() && size2 < sizeMax && holder1.is(holder2.getItem()) && cap1.getCreationDate() == cap2.getCreationDate())
+                {
+                    if (size1 + size2 > sizeMax)
+                    {
+                        if (size1 >= size2)
+                        {
+                            int amount = sizeMax - size2;
+                            this.inventory.get(i + 6).shrink(amount);
+                            this.inventory.get(j + 6).grow(amount);
+                        }
+                        else
+                        {
+                            int amount = sizeMax - size1;
+                            this.inventory.get(i + 6).grow(amount);
+                            this.inventory.get(j + 6).shrink(amount);
+                        }
+                    }
+                    else
+                    {
+                        ItemStack stack = new ItemStack(list.get(j).getItem(), list.get(i).getCount() + list.get(j).getCount());
+                        this.inventory.set(i + 6, stack);
+                        this.inventory.set(j + 6, ItemStack.EMPTY);
+                    }
+                    sort();
+                }
+            }
+        }
     }
 
     @Override

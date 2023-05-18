@@ -44,7 +44,7 @@ public class PowerLoomRecipe extends ATTMultiblockRecipe
 
     public boolean matches(ItemStack pirn, ItemStack weave)
     {
-        return isValidPirn(pirn) && isValidWeave(weave);
+        return isValidPirn(pirn) && isValidWeaveWithSize(weave);
     }
 
     public boolean isValidPirn(ItemStack stack)
@@ -63,6 +63,11 @@ public class PowerLoomRecipe extends ATTMultiblockRecipe
     public boolean isValidWeave(ItemStack stack)
     {
         return this.inputs[0] != null && this.inputs[0].testIgnoringSize(stack);
+    }
+
+    public boolean isValidWeaveWithSize(ItemStack stack)
+    {
+        return this.inputs[0] != null && this.inputs[0].test(stack);
     }
 
     public static boolean isValidWeaveInput(Level level, ItemStack stack)

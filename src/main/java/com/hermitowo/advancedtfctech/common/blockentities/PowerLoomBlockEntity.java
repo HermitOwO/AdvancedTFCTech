@@ -76,12 +76,16 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
 
     private final CapabilityReference<IItemHandler> output = CapabilityReference.forBlockEntityAt(this,
-        () -> new DirectionalBlockPos(this.getBlockPosForPos(OUT_POS_2).relative(getFacing().getCounterClockWise(), 1), getFacing().getClockWise()),
-        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+        () -> {
+            Direction outDir = getIsMirrored() ? getFacing().getClockWise() : getFacing().getCounterClockWise();
+            return new DirectionalBlockPos(this.getBlockPosForPos(OUT_POS_2).relative(outDir, 1), outDir.getOpposite());
+        }, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
 
     private final CapabilityReference<IItemHandler> secondaryOutput = CapabilityReference.forBlockEntityAt(this,
-        () -> new DirectionalBlockPos(this.getBlockPosForPos(SECONDARY_OUT_POS).relative(getFacing().getClockWise(), 1), getFacing().getClockWise()),
-        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+        () -> {
+            Direction outDir = getIsMirrored() ? getFacing().getCounterClockWise() : getFacing().getClockWise();
+            return new DirectionalBlockPos(this.getBlockPosForPos(SECONDARY_OUT_POS).relative(outDir, 1), outDir);
+        }, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
 
     public PowerLoomBlockEntity(BlockEntityType<PowerLoomBlockEntity> type, BlockPos pos, BlockState state)
     {
@@ -151,6 +155,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
             }
             if (level.getGameTime() % 8 == 0)
             {
+                sort();
                 IItemHandler outputHandler = output.getNullable();
                 if (outputHandler != null)
                 {
@@ -183,6 +188,51 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     {
         this.setChanged();
         this.markContainingBlockForUpdate(null);
+    }
+
+    public void sort()
+    {
+        List<ItemStack> list = new ArrayList<>(3);
+
+        for (int i = 8; i < 11; i++)
+            list.add(this.getInventory().get(i));
+
+        for (int i = 0; i < list.size(); i++)
+        {
+            for (int j = i + 1; j < list.size(); j++)
+            {
+                ItemStack holder1 = list.get(i);
+                ItemStack holder2 = list.get(j);
+                int size1 = holder1.getCount();
+                int size2 = holder2.getCount();
+                int sizeMax = holder1.getMaxStackSize();
+                if (!holder1.isEmpty() && size1 < sizeMax && !holder2.isEmpty() && size2 < sizeMax)
+                {
+                    if (size1 + size2 > sizeMax)
+                    {
+                        if (size1 >= size2)
+                        {
+                            int amount = sizeMax - size2;
+                            this.inventory.get(i + 8).shrink(amount);
+                            this.inventory.get(j + 8).grow(amount);
+                        }
+                        else
+                        {
+                            int amount = sizeMax - size1;
+                            this.inventory.get(i + 8).grow(amount);
+                            this.inventory.get(j + 8).shrink(amount);
+                        }
+                    }
+                    else
+                    {
+                        ItemStack stack = new ItemStack(list.get(j).getItem(), list.get(i).getCount() + list.get(j).getCount());
+                        this.inventory.set(i + 8, stack);
+                        this.inventory.set(j + 8, ItemStack.EMPTY);
+                    }
+                    sort();
+                }
+            }
+        }
     }
 
     @Override
@@ -244,7 +294,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                                 return true;
                             }
                         }
-                        if (player.isShiftKeyDown())
+                        if (player.isShiftKeyDown() && master.processQueue.size() < master.getProcessQueueMaxLength())
                         {
                             ItemStack stack = master.inventory.get(i);
                             if (!stack.isEmpty())
@@ -471,8 +521,9 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         stack = Utils.insertStackIntoInventory(this.secondaryOutput, stack, false);
         if (!stack.isEmpty())
         {
-            BlockPos pos = this.getBlockPosForPos(SECONDARY_OUT_POS).relative(getFacing().getClockWise(), 1);
-            Utils.dropStackAtPos(level, pos, stack, getFacing().getClockWise());
+            Direction outDir = getIsMirrored() ? getFacing().getCounterClockWise() : getFacing().getClockWise();
+            BlockPos pos = this.getBlockPosForPos(SECONDARY_OUT_POS).relative(outDir, 1);
+            Utils.dropStackAtPos(level, pos, stack, outDir);
         }
     }
 

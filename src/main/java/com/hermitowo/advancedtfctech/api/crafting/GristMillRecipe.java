@@ -10,17 +10,18 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.Lazy;
+
+import net.dries007.tfc.common.recipes.outputs.ItemStackProvider;
 
 public class GristMillRecipe extends ATTMultiblockRecipe
 {
     public static final CachedRecipeList<GristMillRecipe> RECIPES = new CachedRecipeList<>(ATTRecipeTypes.GRIST_MILL);
 
     public IngredientWithSize input;
-    public final Lazy<ItemStack> output;
+    public final ItemStackProvider output;
 
-    public GristMillRecipe(ResourceLocation id, Lazy<ItemStack> output, IngredientWithSize input, int time, int energy)
+    public GristMillRecipe(ResourceLocation id, ItemStackProvider output, IngredientWithSize input, int time, int energy)
     {
         super(ItemStack.EMPTY, ATTRecipeTypes.GRIST_MILL, id);
         this.output = output;
@@ -30,7 +31,7 @@ public class GristMillRecipe extends ATTMultiblockRecipe
         modifyTimeAndEnergy(ATTServerConfig.GENERAL.gristMill_timeModifier::get, ATTServerConfig.GENERAL.gristMill_energyModifier::get);
 
         setInputListWithSizes(Lists.newArrayList(this.input));
-        this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, this.output.get()));
+        this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, this.output.getEmptyStack()));
     }
 
     public static GristMillRecipe findRecipe(Level level, ItemStack stack)
@@ -62,14 +63,6 @@ public class GristMillRecipe extends ATTMultiblockRecipe
     public int getMultipleProcessTicks()
     {
         return 0;
-    }
-
-    @Override
-    public NonNullList<ItemStack> getActualItemOutputs(BlockEntity blockentity)
-    {
-        NonNullList<ItemStack> list = NonNullList.create();
-        list.add(output.get());
-        return list;
     }
 
     @Override

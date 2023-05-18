@@ -14,6 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 import net.minecraftforge.common.util.Lazy;
 
+import net.dries007.tfc.common.recipes.outputs.ItemStackProvider;
+
 public class ThresherRecipeSerializer extends IERecipeSerializer<ThresherRecipe>
 {
     @Override
@@ -25,7 +27,7 @@ public class ThresherRecipeSerializer extends IERecipeSerializer<ThresherRecipe>
     @Override
     public ThresherRecipe readFromJson(ResourceLocation recipeId, JsonObject json, IContext context)
     {
-        Lazy<ItemStack> output = readOutput(json.get("result"));
+        ItemStackProvider output = ItemStackProvider.fromJson(GsonHelper.getAsJsonObject(json, "result"));
         IngredientWithSize input = IngredientWithSize.deserialize(GsonHelper.getAsJsonObject(json, "input"));
         int time = GsonHelper.getAsInt(json, "time");
         int energy = GsonHelper.getAsInt(json, "energy");
@@ -47,7 +49,7 @@ public class ThresherRecipeSerializer extends IERecipeSerializer<ThresherRecipe>
     @Override
     public ThresherRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer)
     {
-        Lazy<ItemStack> output = readLazyStack(buffer);
+        ItemStackProvider output = ItemStackProvider.fromNetwork(buffer);
         IngredientWithSize input = IngredientWithSize.read(buffer);
         int time = buffer.readInt();
         int energy = buffer.readInt();
@@ -65,7 +67,7 @@ public class ThresherRecipeSerializer extends IERecipeSerializer<ThresherRecipe>
 
     public void toNetwork(FriendlyByteBuf buffer, ThresherRecipe recipe)
     {
-        writeLazyStack(buffer, recipe.output);
+        recipe.output.toNetwork(buffer);
         recipe.input.write(buffer);
         buffer.writeInt(recipe.getTotalProcessTime());
         buffer.writeInt(recipe.getTotalProcessEnergy());
