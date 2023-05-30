@@ -21,57 +21,53 @@ public class GristMillRenderer extends IEBlockEntityRenderer<GristMillBlockEntit
     public static DynamicModel DRIVER;
 
     @Override
-    public void render(GristMillBlockEntity te, float partialTicks, PoseStack matrixStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn)
+    public void render(GristMillBlockEntity be, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn)
     {
-        if (!te.formed || te.isDummy() || !te.getLevelNonnull().hasChunkAt(te.getBlockPos()))
+        if (!be.formed || be.isDummy() || !be.getLevelNonnull().hasChunkAt(be.getBlockPos()))
             return;
 
-        Direction dir = te.getFacing();
+        Direction dir = be.getFacing();
 
-        boolean b = te.shouldRenderAsActive();
-        float angle = te.animation_driverRotation + (b ? 18 * partialTicks : 0);
-        final MultiBufferSource bufferMirrored = BERenderUtils.mirror(te, matrixStack, bufferIn);
+        boolean b = be.shouldRenderAsActive();
+        float angle = be.animation_driverRotation + (b ? 18 * partialTicks : 0);
+        final MultiBufferSource bufferMirrored = BERenderUtils.mirror(be, poseStack, bufferIn);
 
-        matrixStack.pushPose();
+        poseStack.pushPose();
 
-        int i = 0;
-        if (te.getIsMirrored())
-            i = -1;
+        int i = be.getIsMirrored() ? -1 : 0;
 
         if (dir == Direction.NORTH)
-            matrixStack.translate(1 + i, 1.375, 1);
+            poseStack.translate(1 + i, 1.375, 1);
         if (dir == Direction.EAST)
-            matrixStack.translate(0, 1.375, 1 + i);
+            poseStack.translate(0, 1.375, 1 + i);
         if (dir == Direction.SOUTH)
-            matrixStack.translate(-1 + i, 1.375, 0);
+            poseStack.translate(-1 + i, 1.375, 0);
         if (dir == Direction.WEST)
-            matrixStack.translate(1, 1.375, -1 + i);
+            poseStack.translate(1, 1.375, -1 + i);
 
-        matrixStack.translate(te.getFacing().getStepX() * .5, 0, te.getFacing().getStepZ() * .5);
+        poseStack.translate(be.getFacing().getStepX() * .5, 0, be.getFacing().getStepZ() * .5);
 
-        matrixStack.pushPose();
-        matrixStack.mulPose(new Quaternion(new Vector3f(-te.getFacing().getStepZ(), 0, te.getFacing().getStepX()), angle, true));
-        renderDriver(DRIVER, matrixStack, bufferMirrored, dir, combinedLightIn, combinedOverlayIn);
-        matrixStack.popPose();
+        poseStack.mulPose(new Quaternion(new Vector3f(-be.getFacing().getStepZ(), 0, be.getFacing().getStepX()), angle, true));
+        renderDriver(DRIVER, poseStack, bufferMirrored, dir, combinedLightIn, combinedOverlayIn);
 
-        matrixStack.popPose();
+        poseStack.popPose();
     }
 
-    private void renderDriver(DynamicModel driver, PoseStack matrix, MultiBufferSource buffer, Direction facing, int light, int overlay)
+    private void renderDriver(DynamicModel driver, PoseStack poseStack, MultiBufferSource buffer, Direction facing, int light, int overlay)
     {
-        matrix.pushPose();
+        poseStack.pushPose();
 
         if (facing == Direction.NORTH || facing == Direction.WEST)
-            matrix.translate(0, 0, 0);
+            poseStack.translate(0, 0, 0);
         if (facing == Direction.EAST)
-            matrix.translate(-1, 0, 0);
+            poseStack.translate(-1, 0, 0);
         if (facing == Direction.SOUTH)
-            matrix.translate(0, 0, -1);
+            poseStack.translate(0, 0, -1);
 
         List<BakedQuad> quads = driver.get().getQuads(null, null, Utils.RAND, EmptyModelData.INSTANCE);
-        rotateForFacing(matrix, facing);
-        RenderUtils.renderModelTESRFast(quads, buffer.getBuffer(RenderType.solid()), matrix, light, overlay);
+        rotateForFacing(poseStack, facing);
+        RenderUtils.renderModelTESRFast(quads, buffer.getBuffer(RenderType.solid()), poseStack, light, overlay);
 
-        matrix.popPose();
+        poseStack.popPose();
     }
 }
