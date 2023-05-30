@@ -66,5 +66,7 @@ public class PowerLoomRecipeSerializer extends IERecipeSerializer<PowerLoomRecip
         buffer.writeInt(recipe.inputs.length);
         for (IngredientWithSize ingredient : recipe.inputs)
             ingredient.write(buffer);
+        buffer.writeInt(recipe.getTotalProcessTime());
+        buffer.writeInt(recipe.getTotalProcessEnergy());
     }
 }
