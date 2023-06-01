@@ -6,13 +6,14 @@ TFC_GRAINS = ('wheat', 'rye', 'barley', 'rice', 'maize', 'oat')
 
 class Weave(NamedTuple):
     ingredient: str
-    cloth: str
-    amount: int
+    pirn: str
+    input_amount: int
+    output_amount: int
 
 LOOM: Dict[str, Weave] = {
-    'fiber_winded_pirn': Weave('tfc:jute_fiber', 'burlap_cloth', 8),
-    'silk_winded_pirn': Weave('minecraft:string', 'silk_cloth', 4),
-    'wool_winded_pirn': Weave('tfc:wool_yarn', 'wool_cloth', 6)
+    'burlap_cloth': Weave('tfc:jute_fiber', 'fiber_winded_pirn', 48, 8),
+    'silk_cloth': Weave('minecraft:string', 'silk_winded_pirn', 24, 2),
+    'wool_cloth': Weave('tfc:wool_yarn', 'wool_winded_pirn', 32, 4)
 }
 
 DEFAULT_LANG = {

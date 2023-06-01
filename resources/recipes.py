@@ -11,7 +11,7 @@ def generate(rm:ResourceManager):
 
     for grain in TFC_GRAINS:
         thresher_recipe(rm, '%s' % grain,
-            result = item_stack_provider('3 tfc:food/%s_grain' % grain,copy_food=True),
+            result = item_stack_provider('3 tfc:food/%s_grain' % grain, copy_food=True),
             secondaries =
                 [{
                     'output':
@@ -30,27 +30,27 @@ def generate(rm:ResourceManager):
             time = 80,
             energy = 6400)
 
-    for pirn, weave in LOOM.items():
-        power_loom_recipe(rm, weave.cloth,
+    for cloth, weave in LOOM.items():
+        power_loom_recipe(rm, cloth,
             result =
                 {
-                    'count': weave.amount,
+                    'count': weave.output_amount,
                     'base_ingredient':
-                    {'item': 'tfc:' + weave.cloth}
+                    {'item': 'tfc:' + cloth}
                 },
             inputs =
                 [
                     {
-                        'count': weave.amount * 6,
+                        'count': weave.input_amount,
                         'base_ingredient':
                         {'item': weave.ingredient}
                     },
-                    {'item': 'advancedtfctech:%s' % pirn}
+                    {'item': 'advancedtfctech:%s' % weave.pirn}
                 ],
             time = 500,
             energy = 40000)
 
-        rm.crafting_shaped('crafting/%s' % pirn, ['XXX', 'XYX', 'XXX'], {'X': weave.ingredient, 'Y': 'advancedtfctech:pirn'}, 'advancedtfctech:%s' % pirn)
+        rm.crafting_shaped('crafting/%s' % weave.pirn, ['XXX', 'XYX', 'XXX'], {'X': weave.ingredient, 'Y': 'advancedtfctech:pirn'}, 'advancedtfctech:%s' % weave.pirn)
 
 def not_rotten(ingredient: Json) -> Json:
     return {

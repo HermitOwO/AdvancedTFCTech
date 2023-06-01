@@ -1,6 +1,7 @@
 package com.hermitowo.advancedtfctech.common.container;
 
 import java.util.function.Supplier;
+import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.common.gui.IEBaseContainer;
 import blusunrize.immersiveengineering.common.register.IEContainerTypes;
 import com.hermitowo.advancedtfctech.common.blockentities.GristMillBlockEntity;
@@ -39,7 +40,7 @@ public class ATTContainerTypes
         RegistryObject<MenuType<C>> typeRef = registerMenu(name, () -> {
             Mutable<MenuType<C>> typeBox = new MutableObject<>();
             MenuType<C> type = new MenuType<>((IContainerFactory<C>) (windowId, inv, data) -> {
-                Level world = proxy.getClientWorld();
+                Level world = ImmersiveEngineering.proxy.getClientWorld();
                 BlockPos pos = data.readBlockPos();
                 BlockEntity blockentity = world.getBlockEntity(pos);
                 return container.construct(typeBox.getValue(), windowId, inv, (T) blockentity);

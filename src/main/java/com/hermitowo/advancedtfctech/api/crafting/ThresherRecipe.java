@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.hermitowo.advancedtfctech.api.crafting.cache.CachedRecipeList;
 import com.hermitowo.advancedtfctech.common.crafting.ATTSerializers;
-import com.hermitowo.advancedtfctech.config.ATTServerConfig;
+import com.hermitowo.advancedtfctech.config.ATTConfig;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -30,10 +30,10 @@ public class ThresherRecipe extends ATTMultiblockRecipe
         this.input = input;
 
         timeAndEnergy(time, energy);
-        modifyTimeAndEnergy(ATTServerConfig.GENERAL.thresher_timeModifier::get, ATTServerConfig.GENERAL.thresher_energyModifier::get);
+        modifyTimeAndEnergy(ATTConfig.SERVER.thresher_timeModifier::get, ATTConfig.SERVER.thresher_energyModifier::get);
 
         setInputListWithSizes(Lists.newArrayList(this.input));
-        this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, this.output.getEmptyStack()));
+        this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, this.output.stack().get()));
     }
 
     public ThresherRecipe addToSecondaryOutput(Lazy<ItemStack> output)

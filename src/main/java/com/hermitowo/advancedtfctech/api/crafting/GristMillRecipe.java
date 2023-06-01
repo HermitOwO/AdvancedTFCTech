@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import com.google.common.collect.Lists;
 import com.hermitowo.advancedtfctech.api.crafting.cache.CachedRecipeList;
 import com.hermitowo.advancedtfctech.common.crafting.ATTSerializers;
-import com.hermitowo.advancedtfctech.config.ATTServerConfig;
+import com.hermitowo.advancedtfctech.config.ATTConfig;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -28,10 +28,10 @@ public class GristMillRecipe extends ATTMultiblockRecipe
         this.input = input;
 
         timeAndEnergy(time, energy);
-        modifyTimeAndEnergy(ATTServerConfig.GENERAL.gristMill_timeModifier::get, ATTServerConfig.GENERAL.gristMill_energyModifier::get);
+        modifyTimeAndEnergy(ATTConfig.SERVER.gristMill_timeModifier::get, ATTConfig.SERVER.gristMill_energyModifier::get);
 
         setInputListWithSizes(Lists.newArrayList(this.input));
-        this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, this.output.getEmptyStack()));
+        this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, this.output.stack().get()));
     }
 
     public static GristMillRecipe findRecipe(Level level, ItemStack stack)

@@ -2,7 +2,7 @@
   "__comment__": "This file was automatically created by mcresources",
   "type": "advancedtfctech:power_loom",
   "result": {
-    "count": 4,
+    "count": 2,
     "base_ingredient": {
       "item": "tfc:silk_cloth"
     }

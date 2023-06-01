@@ -1,10 +1,9 @@
 package com.hermitowo.advancedtfctech;
 
-import java.util.function.Supplier;
+import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import com.hermitowo.advancedtfctech.api.crafting.ATTRecipeTypes;
-import com.hermitowo.advancedtfctech.client.ClientProxy;
-import com.hermitowo.advancedtfctech.common.CommonProxy;
+import com.hermitowo.advancedtfctech.client.ATTClientEvents;
 import com.hermitowo.advancedtfctech.common.blockentities.ATTBlockEntities;
 import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerTypes;
@@ -13,18 +12,15 @@ import com.hermitowo.advancedtfctech.common.items.ATTItems;
 import com.hermitowo.advancedtfctech.common.multiblocks.GristMillMultiblock;
 import com.hermitowo.advancedtfctech.common.multiblocks.PowerLoomMultiblock;
 import com.hermitowo.advancedtfctech.common.multiblocks.ThresherMultiblock;
-import com.hermitowo.advancedtfctech.config.ATTServerConfig;
+import com.hermitowo.advancedtfctech.config.ATTConfig;
 import com.mojang.logging.LogUtils;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
 
 @Mod(AdvancedTFCTech.MOD_ID)
@@ -47,7 +43,12 @@ public class AdvancedTFCTech
         ATTSerializers.RECIPE_SERIALIZERS.register(bus);
         ATTRecipeTypes.RECIPE_TYPES.register(bus);
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ATTServerConfig.ALL);
+        ATTConfig.init();
+
+        if (FMLEnvironment.dist == Dist.CLIENT)
+        {
+            ATTClientEvents.init();
+        }
     }
 
     private void setup(FMLCommonSetupEvent event)
@@ -57,31 +58,14 @@ public class AdvancedTFCTech
         MultiblockHandler.registerMultiblock(PowerLoomMultiblock.INSTANCE);
     }
 
-    public static <T> Supplier<T> bootstrapErrorToXCPInDev(Supplier<T> in)
-    {
-        if (FMLLoader.isProduction())
-            return in;
-        return () -> {
-            try
-            {
-                return in.get();
-            }
-            catch (BootstrapMethodError e)
-            {
-                throw new RuntimeException(e);
-            }
-        };
-    }
-
     public void loadComplete(FMLLoadCompleteEvent event)
     {
-        proxy.completed(event);
-    }
-
-    public static final CommonProxy proxy = DistExecutor.safeRunForDist(bootstrapErrorToXCPInDev(() -> ClientProxy::new), bootstrapErrorToXCPInDev(() -> CommonProxy::new));
-
-    public static ResourceLocation rl(String path)
-    {
-        return new ResourceLocation(MOD_ID, path);
+        event.enqueueWork(() -> ManualHelper.addConfigGetter(str -> switch (str)
+            {
+                case "thresher_operationcost" -> (int) (80 * ATTConfig.SERVER.thresher_energyModifier.get());
+                case "gristmill_operationcost" -> (int) (80 * ATTConfig.SERVER.gristMill_energyModifier.get());
+                case "powerloom_operationcost" -> (int) (80 * ATTConfig.SERVER.powerLoom_energyModifier.get());
+                default -> 80;
+            }));
     }
 }

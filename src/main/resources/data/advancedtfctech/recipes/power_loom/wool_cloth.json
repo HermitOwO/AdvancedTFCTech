@@ -2,14 +2,14 @@
   "__comment__": "This file was automatically created by mcresources",
   "type": "advancedtfctech:power_loom",
   "result": {
-    "count": 6,
+    "count": 4,
     "base_ingredient": {
       "item": "tfc:wool_cloth"
     }
   },
   "inputs": [
     {
-      "count": 36,
+      "count": 32,
       "base_ingredient": {
         "item": "tfc:wool_yarn"
       }
