@@ -260,7 +260,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
         registerCapability(new IEInventoryHandler(6, this, 6, false, true))
     );
 
-    @Nullable
+    @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing)
     {
@@ -294,15 +294,12 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
         return null;
     }
 
-    @Nullable
     @Override
     public int[] getOutputTanks()
     {
         return null;
     }
 
-
-    @Nullable
     @Override
     public int[] getOutputSlots()
     {

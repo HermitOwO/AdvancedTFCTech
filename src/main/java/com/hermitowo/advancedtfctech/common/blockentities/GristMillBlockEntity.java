@@ -258,7 +258,7 @@ public class GristMillBlockEntity extends PoweredMultiblockBlockEntity<GristMill
         registerCapability(new IEInventoryHandler(6, this, 6, false, true))
     );
 
-    @Nullable
+    @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing)
     {
@@ -292,15 +292,12 @@ public class GristMillBlockEntity extends PoweredMultiblockBlockEntity<GristMill
         return null;
     }
 
-    @Nullable
     @Override
     public int[] getOutputTanks()
     {
         return null;
     }
 
-
-    @Nullable
     @Override
     public int[] getOutputSlots()
     {

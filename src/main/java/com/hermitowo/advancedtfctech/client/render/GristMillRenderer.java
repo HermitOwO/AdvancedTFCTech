@@ -21,7 +21,7 @@ public class GristMillRenderer extends IEBlockEntityRenderer<GristMillBlockEntit
     public static DynamicModel DRIVER;
 
     @Override
-    public void render(GristMillBlockEntity be, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn)
+    public void render(GristMillBlockEntity be, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay)
     {
         if (!be.formed || be.isDummy() || !be.getLevelNonnull().hasChunkAt(be.getBlockPos()))
             return;
@@ -30,7 +30,7 @@ public class GristMillRenderer extends IEBlockEntityRenderer<GristMillBlockEntit
 
         boolean b = be.shouldRenderAsActive();
         float angle = be.animation_driverRotation + (b ? 18 * partialTicks : 0);
-        final MultiBufferSource bufferMirrored = BERenderUtils.mirror(be, poseStack, bufferIn);
+        final MultiBufferSource bufferMirrored = BERenderUtils.mirror(be, poseStack, buffer);
 
         poseStack.pushPose();
 
@@ -48,7 +48,7 @@ public class GristMillRenderer extends IEBlockEntityRenderer<GristMillBlockEntit
         poseStack.translate(be.getFacing().getStepX() * .5, 0, be.getFacing().getStepZ() * .5);
 
         poseStack.mulPose(new Quaternion(new Vector3f(-be.getFacing().getStepZ(), 0, be.getFacing().getStepX()), angle, true));
-        renderDriver(DRIVER, poseStack, bufferMirrored, dir, combinedLightIn, combinedOverlayIn);
+        renderDriver(DRIVER, poseStack, bufferMirrored, dir, combinedLight, combinedOverlay);
 
         poseStack.popPose();
     }

@@ -50,7 +50,6 @@ public class DynamicModels extends ModelProvider<SimpleModelBuilder>
 
     public static class SimpleModelBuilder extends ModelBuilder<SimpleModelBuilder>
     {
-
         public SimpleModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper)
         {
             super(outputLocation, existingFileHelper);

@@ -14,7 +14,6 @@ class Size(Enum):
     very_large = auto()
     huge = auto()
 
-
 class Weight(Enum):
     very_light = auto()
     light = auto()

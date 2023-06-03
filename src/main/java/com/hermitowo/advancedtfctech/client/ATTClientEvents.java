@@ -1,8 +1,10 @@
 package com.hermitowo.advancedtfctech.client;
 
 import java.util.function.Supplier;
+import com.hermitowo.advancedtfctech.client.model.PowerLoomParts;
 import com.hermitowo.advancedtfctech.client.render.DynamicModel;
 import com.hermitowo.advancedtfctech.client.render.GristMillRenderer;
+import com.hermitowo.advancedtfctech.client.render.PowerLoomRenderer;
 import com.hermitowo.advancedtfctech.client.screen.GristMillScreen;
 import com.hermitowo.advancedtfctech.client.screen.PowerLoomScreen;
 import com.hermitowo.advancedtfctech.client.screen.ThresherScreen;
@@ -26,6 +28,7 @@ public class ATTClientEvents
 
         bus.addListener(ATTClientEvents::clientSetup);
         bus.addListener(ATTClientEvents::registerModelLoaders);
+        bus.addListener(ATTClientEvents::registerLayer);
         bus.addListener(ATTClientEvents::registerRenders);
     }
 
@@ -43,9 +46,16 @@ public class ATTClientEvents
         GristMillRenderer.DRIVER = new DynamicModel(GristMillRenderer.NAME);
     }
 
+    public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event)
+    {
+        event.registerLayerDefinition(PowerLoomParts.LAYER_LOCATION, PowerLoomParts::createBodyLayer);
+    }
+
     public static void registerRenders(EntityRenderersEvent.RegisterRenderers event)
     {
         registerBERenderNoContext(event, ATTBlockEntities.GRIST_MILL.master(), GristMillRenderer::new);
+
+        event.registerBlockEntityRenderer(ATTBlockEntities.POWER_LOOM.master(), PowerLoomRenderer::new);
     }
 
     private static <T extends BlockEntity> void registerBERenderNoContext(EntityRenderersEvent.RegisterRenderers event, BlockEntityType<? extends T> type, Supplier<BlockEntityRenderer<T>> render)

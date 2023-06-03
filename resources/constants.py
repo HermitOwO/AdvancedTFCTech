@@ -12,7 +12,7 @@ class Weave(NamedTuple):
 
 LOOM: Dict[str, Weave] = {
     'burlap_cloth': Weave('tfc:jute_fiber', 'fiber_winded_pirn', 48, 8),
-    'silk_cloth': Weave('minecraft:string', 'silk_winded_pirn', 24, 2),
+    'silk_cloth': Weave('minecraft:string', 'silk_winded_pirn', 32, 4),
     'wool_cloth': Weave('tfc:wool_yarn', 'wool_winded_pirn', 32, 4)
 }
 

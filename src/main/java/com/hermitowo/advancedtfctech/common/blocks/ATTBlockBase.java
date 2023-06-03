@@ -21,11 +21,6 @@ public class ATTBlockBase extends Block
         super(properties);
     }
 
-    public Supplier<BlockItem> blockItemSupplier()
-    {
-        return () -> new ATTBlockItemBase(this, new Item.Properties().tab(ATTTabs.MAIN));
-    }
-
     @Nullable
     public static <E extends BlockEntity & ATTCommonTickableBlock, A extends BlockEntity> BlockEntityTicker<A> createCommonTicker(boolean isClient, BlockEntityType<A> actual, RegistryObject<BlockEntityType<E>> expected)
     {

@@ -92,26 +92,135 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         super(PowerLoomMultiblock.INSTANCE, 32000, true, type, pos, state);
     }
 
+    public float animation_rack = 0;
+    public float animation_rack_side = 0;
+    public float animation_rack2 = 0;
+    public float animation_pirn = 45.0F;
+    public float animation_pirn_x = 0;
+    public float animation_pirn_y = 0;
+    public float animation_pirn_z = 0;
+    public int finishedCount;
+    public boolean animation_rack_b = true;
+    public boolean animation_rack_side_b = true;
+    public boolean animation_rack2_b = true;
+    public boolean animation_pirn_b = true;
+
     @Override
     public void readCustomNBT(CompoundTag nbt, boolean descPacket)
     {
         super.readCustomNBT(nbt, descPacket);
-        if (!descPacket)
-            ContainerHelper.loadAllItems(nbt, inventory);
+        ContainerHelper.loadAllItems(nbt, inventory);
+        this.finishedCount = nbt.getInt("finishedCount");
     }
 
     @Override
     public void writeCustomNBT(CompoundTag nbt, boolean descPacket)
     {
         super.writeCustomNBT(nbt, descPacket);
-        if (!descPacket)
-            ContainerHelper.saveAllItems(nbt, inventory);
+        ContainerHelper.saveAllItems(nbt, inventory);
+        nbt.putInt("finishedCount", this.finishedCount);
     }
 
     @Override
     public void tickClient()
     {
+        if (this.processQueue.isEmpty() && animation_rack < 0.65625F)
+            animation_rack = Math.min(0.65625F, animation_rack + 0.046875F);
 
+        if (this.processQueue.isEmpty() && animation_rack_side < 0.25F)
+            animation_rack_side = Math.min(0.25F, animation_rack_side + 0.125F);
+
+        if (this.processQueue.isEmpty() && animation_rack2 < 0.4375F)
+            animation_rack2 = Math.min(0.4375F, animation_rack2 + 0.0875F);
+
+        if (this.processQueue.isEmpty())
+        {
+            animation_pirn_x = 0;
+            animation_pirn_y = 0;
+            animation_pirn_z = 0;
+        }
+
+        if (shouldRenderAsActive())
+        {
+            for (MultiblockProcess<PowerLoomRecipe> process : this.processQueue)
+            {
+                int tick = process.processTick;
+                int delayedTick = tick - 20;
+
+                if (delayedTick > 0)
+                {
+                    if (animation_rack_b)
+                        animation_rack = Math.max(0, animation_rack - 0.046875F);
+                    else
+                        animation_rack = Math.min(0.65625F, animation_rack + 0.046875F);
+                    if (animation_rack <= 0 && animation_rack_b)
+                        animation_rack_b = false;
+                    else if (animation_rack >= 0.65625F && !animation_rack_b)
+                        animation_rack_b = true;
+                }
+
+                if (delayedTick / 28 >= 1 && delayedTick % 28 <= 4)
+                {
+                    if (animation_rack2_b)
+                        animation_rack2 = Math.max(0, animation_rack2 - 0.0875F);
+                    else
+                        animation_rack2 = Math.min(0.4375F, animation_rack2 + 0.0875F);
+                    if (animation_rack2 <= 0 && animation_rack2_b)
+                        animation_rack2_b = false;
+                    else if (animation_rack2 >= 0.4375F && !animation_rack2_b)
+                        animation_rack2_b = true;
+                }
+
+                if (tick <= 15)
+                    animation_pirn = 3.0F * tick;
+                else
+                    animation_pirn = 45.0F;
+
+                if (tick > 15 && tick <= 20)
+                {
+                    animation_pirn_x = 0.02965F * (tick - 15);
+                    animation_pirn_y = 0.046875F * (tick - 15);
+                }
+                else
+                {
+                    animation_pirn_x = 0.14825F;
+                    animation_pirn_y = 0.234375F;
+                }
+
+                if (delayedTick % 56 > 10 && delayedTick % 56 <= 18)
+                {
+                    if (animation_pirn_b)
+                        animation_pirn_z = Math.max(0, animation_pirn_z - 0.703125F);
+                    else
+                        animation_pirn_z = Math.min(2.8125F, animation_pirn_z + 0.703125F);
+                    if (animation_pirn_z <= 0 && animation_pirn_b)
+                        animation_pirn_b = false;
+                    else if (animation_pirn_z >= 2.8125F && !animation_pirn_b)
+                        animation_pirn_b = true;
+
+                    if (animation_rack_side_b)
+                        animation_rack_side = Math.max(0, animation_rack_side - 0.0625F);
+                    else
+                        animation_rack_side = Math.min(0.25F, animation_rack_side + 0.0625F);
+                    if (animation_rack_side <= 0 && animation_rack_side_b)
+                        animation_rack_side_b = false;
+                    else if (animation_rack_side >= 0.25F && !animation_rack_side_b)
+                        animation_rack_side_b = true;
+                }
+
+                if (tick <= 15)
+                {
+                    animation_pirn_x = 0;
+                    animation_pirn_y = 0;
+                    animation_pirn_z = 0;
+                }
+                if (delayedTick % 56 == 18)
+                {
+                    animation_rack_side = 0.25F;
+                    animation_pirn_z = 0;
+                }
+            }
+        }
     }
 
     @Override
@@ -129,16 +238,16 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
             {
                 for (int i = 0; i < 8; i++)
                 {
-                    ItemStack pirn = this.getInventory().get(i);
+                    ItemStack pirn = this.inventory.get(i);
                     for (int j = 8; j < 11; j++)
                     {
-                        ItemStack weave = this.getInventory().get(j);
+                        ItemStack weave = this.inventory.get(j);
                         if (!pirn.isEmpty() && !weave.isEmpty())
                         {
                             PowerLoomRecipe recipe = PowerLoomRecipe.findRecipe(level, pirn, weave);
-                            if (recipe != null && (this.getInventory().get(12).isEmpty() || this.getInventory().get(13).isEmpty()))
+                            if (recipe != null && (this.inventory.get(12).isEmpty() || this.inventory.get(13).isEmpty()))
                             {
-                                ItemStack secondary = this.getInventory().get(11);
+                                ItemStack secondary = this.inventory.get(11);
                                 if (recipe.inputs[0].testIgnoringSize(secondary) && secondary.getCount() >= 16)
                                 {
                                     MultiblockProcessInMachine<PowerLoomRecipe> process = new MultiblockProcessInMachine<>(recipe, this::getRecipeForId, i, j);
@@ -235,6 +344,26 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         }
     }
 
+    public List<ItemStack> pirnList()
+    {
+        List<ItemStack> list = new ArrayList<>(8);
+
+        for (int i = 0; i < 8; i++)
+            list.add(this.inventory.get(i));
+
+        return list;
+    }
+
+    public int amountPirns()
+    {
+        int count = 0;
+
+        for (int i = 0; i < 8; i++)
+            count += getInventory().get(i).getCount();
+
+        return count;
+    }
+
     @Override
     public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ)
     {
@@ -250,9 +379,15 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                 IItemHandler insertionHandler = pirnInput.getNullable();
                 if (insertionHandler != null)
                 {
+                    List<ItemStack> list = new ArrayList<>(8);
                     for (int i = 0; i < 8; i++)
+                        list.add(master.inventory.get(i));
+                    boolean areAllEmpty = list.stream().allMatch(ItemStack::isEmpty);
+                    boolean anyMatch = list.stream().anyMatch(stack -> stack.is(heldItem.getItem()));
+
+                    if (areAllEmpty || anyMatch)
                     {
-                        if (master.inventory.get(i).isEmpty() && PowerLoomRecipe.isValidPirnInput(level, heldItem))
+                        if (PowerLoomRecipe.isValidPirnInput(level, heldItem))
                         {
                             ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, 1);
                             stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
@@ -262,7 +397,10 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                                 return true;
                             }
                         }
-                        if (player.isShiftKeyDown())
+                    }
+                    if (player.isShiftKeyDown())
+                    {
+                        for (int i = 0; i < 8; i++)
                         {
                             ItemStack stack = master.inventory.get(i);
                             if (!stack.isEmpty())
@@ -393,7 +531,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         registerCapability(new IEInventoryHandler(2, this, 12, false, true))
     );
 
-    @Nullable
+    @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing)
     {
@@ -431,14 +569,12 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         return null;
     }
 
-    @Nullable
     @Override
     public int[] getOutputTanks()
     {
         return null;
     }
 
-    @Nullable
     @Override
     public int[] getOutputSlots()
     {
@@ -525,6 +661,8 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
             BlockPos pos = this.getBlockPosForPos(SECONDARY_OUT_POS).relative(outDir, 1);
             Utils.dropStackAtPos(level, pos, stack, outDir);
         }
+
+        this.finishedCount++;
     }
 
     @Override
