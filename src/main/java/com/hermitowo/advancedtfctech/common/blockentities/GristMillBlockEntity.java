@@ -414,6 +414,7 @@ public class GristMillBlockEntity extends PoweredMultiblockBlockEntity<GristMill
 
             if (bZ == 1 && bX == 2)
             {
+                main.add(box(0, 0, 0, 16, 8, 16));
                 main.add(box(0, 8, 0, 4, 16, 16));
             }
 

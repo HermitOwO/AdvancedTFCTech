@@ -25,6 +25,7 @@ public class PowerLoomParts extends Model
     public final ModelPart rack;
     public final ModelPart rack_side;
     public final ModelPart rack2;
+    public final ModelPart rack3;
     public final ModelPart rod;
     public final ModelPart holder;
     public final ModelPart fiber_pirn;
@@ -37,6 +38,7 @@ public class PowerLoomParts extends Model
         this.rack = root.getChild("rack");
         this.rack_side = root.getChild("rack_side");
         this.rack2 = root.getChild("rack2");
+        this.rack3 = root.getChild("rack3");
         this.rod = root.getChild("rod");
         this.holder = root.getChild("holder");
         this.fiber_pirn = root.getChild("fiber_pirn");
@@ -94,6 +96,25 @@ public class PowerLoomParts extends Model
             .texOffs(345, 77).addBox(-26.0F, -18.0F, 56.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F))
             .texOffs(345, 77).addBox(-26.0F, -18.0F, 58.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(45.0F, -25.0F, -74.0F));
 
+        PartDefinition rack3 = partdefinition.addOrReplaceChild("rack3", CubeListBuilder.create().texOffs(263, 77).addBox(14.75F, -39.0F, -41.0F, 1.0F, 3.0F, 36.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+
+        PartDefinition rack3teeth = rack3.addOrReplaceChild("rack3teeth", CubeListBuilder.create().texOffs(345, 77).addBox(-26.0F, -18.0F, 58.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F))
+            .texOffs(345, 77).addBox(-26.0F, -18.0F, 42.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F))
+            .texOffs(345, 77).addBox(-26.0F, -18.0F, 40.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F))
+            .texOffs(345, 77).addBox(-26.0F, -18.0F, 36.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F))
+            .texOffs(345, 77).addBox(-26.0F, -18.0F, 38.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F))
+            .texOffs(345, 77).addBox(-26.0F, -18.0F, 44.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F))
+            .texOffs(345, 77).addBox(-26.0F, -18.0F, 46.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F))
+            .texOffs(345, 77).addBox(-26.0F, -18.0F, 48.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F))
+            .texOffs(345, 77).addBox(-26.0F, -18.0F, 50.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F))
+            .texOffs(345, 77).addBox(-26.0F, -18.0F, 60.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F))
+            .texOffs(345, 77).addBox(-26.0F, -18.0F, 62.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F))
+            .texOffs(345, 77).addBox(-26.0F, -18.0F, 64.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F))
+            .texOffs(345, 77).addBox(-26.0F, -18.0F, 66.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F))
+            .texOffs(345, 77).addBox(-26.0F, -18.0F, 52.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F))
+            .texOffs(345, 77).addBox(-26.0F, -18.0F, 54.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F))
+            .texOffs(345, 77).addBox(-26.0F, -18.0F, 56.0F, 1.0F, 18.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(40.75F, -18.0F, -75.0F));
+
         PartDefinition rod = partdefinition.addOrReplaceChild("rod", CubeListBuilder.create().texOffs(384, 71).mirror().addBox(-1.5F, -1.5F, 0.0F, 3.0F, 3.0F, 38.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition holder = partdefinition.addOrReplaceChild("holder", CubeListBuilder.create().texOffs(267, 97).addBox(-3.0F, -3.0F, 0.0F, 6.0F, 6.0F, 10.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
@@ -103,10 +124,6 @@ public class PowerLoomParts extends Model
 
         return LayerDefinition.create(meshdefinition, 512, 128);
     }
-
-	public void setupAnim(PowerLoomBlockEntity be, float partialTicks)
-    {
-	}
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha)

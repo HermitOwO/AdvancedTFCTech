@@ -5,7 +5,6 @@ import blusunrize.immersiveengineering.data.blockstates.MultiblockStates;
 import com.hermitowo.advancedtfctech.client.render.GristMillRenderer;
 import com.hermitowo.advancedtfctech.datagen.DynamicModels.SimpleModelBuilder;
 import javax.annotation.Nonnull;
-import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -37,7 +36,7 @@ public class DynamicModels extends ModelProvider<SimpleModelBuilder>
             .end();
 
         for (Map.Entry<Block, ModelFile> multiblock : multiblocks.unsplitModels.entrySet())
-            withExistingParent(Registry.BLOCK.getKey(multiblock.getKey()).getPath(), multiblock.getValue().getLocation());
+            withExistingParent(multiblock.getKey().getRegistryName().getPath(), multiblock.getValue().getLocation());
     }
 
     @Nonnull

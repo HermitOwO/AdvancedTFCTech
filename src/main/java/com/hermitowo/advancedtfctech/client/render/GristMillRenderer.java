@@ -1,10 +1,10 @@
 package com.hermitowo.advancedtfctech.client.render;
 
+import java.util.ArrayList;
 import java.util.List;
 import blusunrize.immersiveengineering.client.render.tile.BERenderUtils;
 import blusunrize.immersiveengineering.client.render.tile.IEBlockEntityRenderer;
 import blusunrize.immersiveengineering.client.utils.RenderUtils;
-import blusunrize.immersiveengineering.common.util.Utils;
 import com.hermitowo.advancedtfctech.common.blockentities.GristMillBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.core.Direction;
-import net.minecraftforge.client.model.data.EmptyModelData;
 
 public class GristMillRenderer extends IEBlockEntityRenderer<GristMillBlockEntity>
 {
@@ -28,8 +27,8 @@ public class GristMillRenderer extends IEBlockEntityRenderer<GristMillBlockEntit
 
         Direction dir = be.getFacing();
 
-        boolean b = be.shouldRenderAsActive();
-        float angle = be.animation_driverRotation + (b ? 18 * partialTicks : 0);
+        boolean active = be.shouldRenderAsActive();
+        float angle = be.animation_driverRotation + (active ? 18 * partialTicks : 0);
         final MultiBufferSource bufferMirrored = BERenderUtils.mirror(be, poseStack, buffer);
 
         poseStack.pushPose();
@@ -48,25 +47,19 @@ public class GristMillRenderer extends IEBlockEntityRenderer<GristMillBlockEntit
         poseStack.translate(be.getFacing().getStepX() * .5, 0, be.getFacing().getStepZ() * .5);
 
         poseStack.mulPose(new Quaternion(new Vector3f(-be.getFacing().getStepZ(), 0, be.getFacing().getStepX()), angle, true));
-        renderDriver(DRIVER, poseStack, bufferMirrored, dir, combinedLight, combinedOverlay);
 
-        poseStack.popPose();
-    }
-
-    private void renderDriver(DynamicModel driver, PoseStack poseStack, MultiBufferSource buffer, Direction facing, int light, int overlay)
-    {
-        poseStack.pushPose();
-
-        if (facing == Direction.NORTH || facing == Direction.WEST)
+        if (dir == Direction.NORTH || dir == Direction.WEST)
             poseStack.translate(0, 0, 0);
-        if (facing == Direction.EAST)
+        if (dir == Direction.EAST)
             poseStack.translate(-1, 0, 0);
-        if (facing == Direction.SOUTH)
+        if (dir == Direction.SOUTH)
             poseStack.translate(0, 0, -1);
 
-        List<BakedQuad> quads = driver.get().getQuads(null, null, Utils.RAND, EmptyModelData.INSTANCE);
-        rotateForFacing(poseStack, facing);
-        RenderUtils.renderModelTESRFast(quads, buffer.getBuffer(RenderType.solid()), poseStack, light, overlay);
+        List<BakedQuad> quads = new ArrayList<>();
+        for (BakedQuad quad : DRIVER.getNullQuads())
+            quads.add(new BakedQuad(quad.getVertices(), quad.getTintIndex(), quad.getDirection(), quad.getSprite(), true));
+        rotateForFacing(poseStack, dir);
+        RenderUtils.renderModelTESRFast(DRIVER.getNullQuads(), bufferMirrored.getBuffer(RenderType.solid()), poseStack, 0, 0);
 
         poseStack.popPose();
     }

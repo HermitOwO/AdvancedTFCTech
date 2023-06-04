@@ -1,7 +1,6 @@
 from enum import Enum, auto
 
-from mcresources import ResourceManager, utils
-from mcresources.type_definitions import Json
+from mcresources import ResourceManager, utils, loot_tables
 
 from constants import *
 

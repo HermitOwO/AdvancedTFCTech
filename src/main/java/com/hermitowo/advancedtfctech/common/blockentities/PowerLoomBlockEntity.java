@@ -95,10 +95,13 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     public float animation_rack = 0;
     public float animation_rack_side = 0;
     public float animation_rack2 = 0;
+    public float angle_long_thread = 0;
+    public float angle_short_thread = 0;
     public float animation_pirn = 45.0F;
     public float animation_pirn_x = 0;
     public float animation_pirn_y = 0;
     public float animation_pirn_z = 0;
+    public int animation_weave = 0;
     public int finishedCount;
     public boolean animation_rack_b = true;
     public boolean animation_rack_side_b = true;
@@ -124,17 +127,23 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     @Override
     public void tickClient()
     {
-        if (this.processQueue.isEmpty() && animation_rack < 0.65625F)
-            animation_rack = Math.min(0.65625F, animation_rack + 0.046875F);
-
-        if (this.processQueue.isEmpty() && animation_rack_side < 0.25F)
-            animation_rack_side = Math.min(0.25F, animation_rack_side + 0.125F);
-
-        if (this.processQueue.isEmpty() && animation_rack2 < 0.4375F)
-            animation_rack2 = Math.min(0.4375F, animation_rack2 + 0.0875F);
-
         if (this.processQueue.isEmpty())
         {
+            if (animation_rack < 0.65625F)
+                animation_rack = Math.min(0.65625F, animation_rack + 0.046875F);
+
+            if (animation_rack_side < 0.25F)
+                animation_rack_side = Math.min(0.25F, animation_rack_side + 0.125F);
+
+            if (animation_rack2 < 0.4375F)
+                animation_rack2 = Math.min(0.4375F, animation_rack2 + 0.0875F);
+
+            if (angle_long_thread < 19.0F)
+                angle_long_thread = Math.min(19.0F, angle_long_thread + 3.8F);
+
+            if (angle_short_thread < 42.0F)
+                angle_short_thread = Math.min(42.0F, angle_short_thread + 8.4F);
+
             animation_pirn_x = 0;
             animation_pirn_y = 0;
             animation_pirn_z = 0;
@@ -162,9 +171,17 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                 if (delayedTick / 28 >= 1 && delayedTick % 28 <= 4)
                 {
                     if (animation_rack2_b)
+                    {
                         animation_rack2 = Math.max(0, animation_rack2 - 0.0875F);
+                        angle_long_thread = Math.max(0, angle_long_thread - 3.8F);
+                        angle_short_thread = Math.max(0, angle_short_thread - 8.4F);
+                    }
                     else
+                    {
                         animation_rack2 = Math.min(0.4375F, animation_rack2 + 0.0875F);
+                        angle_long_thread = Math.min(19.0F, angle_long_thread + 3.8F);
+                        angle_short_thread = Math.min(42.0F, angle_short_thread + 8.4F);
+                    }
                     if (animation_rack2 <= 0 && animation_rack2_b)
                         animation_rack2_b = false;
                     else if (animation_rack2 >= 0.4375F && !animation_rack2_b)
@@ -219,6 +236,8 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                     animation_rack_side = 0.25F;
                     animation_pirn_z = 0;
                 }
+
+                animation_weave = delayedTick > 0 ? Math.floorDiv(delayedTick + 14, 28) : 0;
             }
         }
     }
@@ -292,13 +311,6 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         }
     }
 
-    @Override
-    public void doGraphicalUpdates()
-    {
-        this.setChanged();
-        this.markContainingBlockForUpdate(null);
-    }
-
     public void sort()
     {
         List<ItemStack> list = new ArrayList<>(3);
@@ -342,6 +354,37 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                 }
             }
         }
+
+        ItemStack holder1 = this.getInventory().get(12);
+        ItemStack holder2 = this.getInventory().get(13);
+        int size1 = holder1.getCount();
+        int size2 = holder2.getCount();
+        int sizeMax = holder1.getMaxStackSize();
+        if (!holder1.isEmpty() && size1 < sizeMax && !holder2.isEmpty() && size2 < sizeMax && holder1.is(holder2.getItem()))
+        {
+            if (size1 + size2 > sizeMax)
+            {
+                if (size1 >= size2)
+                {
+                    int amount = sizeMax - size2;
+                    this.inventory.get(12).shrink(amount);
+                    this.inventory.get(13).grow(amount);
+                }
+                else
+                {
+                    int amount = sizeMax - size1;
+                    this.inventory.get(12).grow(amount);
+                    this.inventory.get(13).shrink(amount);
+                }
+            }
+            else
+            {
+                ItemStack stack = new ItemStack(this.getInventory().get(13).getItem(), this.getInventory().get(12).getCount() + this.getInventory().get(13).getCount());
+                this.inventory.set(12, stack);
+                this.inventory.set(13, ItemStack.EMPTY);
+            }
+            sort();
+        }
     }
 
     public List<ItemStack> pirnList()
@@ -349,7 +392,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         List<ItemStack> list = new ArrayList<>(8);
 
         for (int i = 0; i < 8; i++)
-            list.add(this.inventory.get(i));
+            list.add(inventory.get(i));
 
         return list;
     }
@@ -359,7 +402,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         int count = 0;
 
         for (int i = 0; i < 8; i++)
-            count += getInventory().get(i).getCount();
+            count += inventory.get(i).getCount();
 
         return count;
     }
@@ -476,21 +519,17 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
             }
             if (bX == 0 && bY == 0 && (bZ == 1 || bZ == 2 || bZ == 3))
             {
-                IItemHandler outputHandler = output.getNullable();
-                if (outputHandler != null)
+                for (int i = 12; i < 14; i++)
                 {
-                    for (int i = 12; i < 14; i++)
+                    if (player.isShiftKeyDown())
                     {
-                        if (player.isShiftKeyDown())
+                        ItemStack stack = master.inventory.get(i);
+                        if (!stack.isEmpty())
                         {
-                            ItemStack stack = master.inventory.get(i);
-                            if (!stack.isEmpty())
-                            {
-                                player.getInventory().add(stack);
-                                int size = stack.getCount();
-                                stack.shrink(size);
-                                return true;
-                            }
+                            player.getInventory().add(stack);
+                            int size = stack.getCount();
+                            stack.shrink(size);
+                            return true;
                         }
                     }
                 }
@@ -629,6 +668,13 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     }
 
     @Override
+    public void doGraphicalUpdates()
+    {
+        this.setChanged();
+        this.markContainingBlockForUpdate(null);
+    }
+
+    @Override
     public boolean additionalCanProcessCheck(MultiblockProcess<PowerLoomRecipe> process)
     {
         PowerLoomRecipe recipe = process.getRecipe(level);
@@ -663,6 +709,9 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         }
 
         this.finishedCount++;
+
+        this.setChanged();
+        this.markContainingBlockForUpdate(null);
     }
 
     @Override
