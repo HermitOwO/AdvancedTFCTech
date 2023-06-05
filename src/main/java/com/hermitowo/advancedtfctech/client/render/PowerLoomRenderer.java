@@ -1,7 +1,5 @@
 package com.hermitowo.advancedtfctech.client.render;
 
-import java.util.ArrayList;
-import java.util.List;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.render.tile.BERenderUtils;
 import blusunrize.immersiveengineering.client.render.tile.IEBlockEntityRenderer;
@@ -86,11 +84,11 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
         if (north)
             poseStack.translate(-1.211 - rack, 0, 1.9375);
         if (east)
-            poseStack.translate(-2.125, 0, -1.211 - rack);
+            poseStack.translate(-1.9375, 0, -1.211 - rack);
         if (south)
             poseStack.translate(-0.789 + rack, 0, -1.9375);
         if (west)
-            poseStack.translate(2, 0, -0.789 + rack);
+            poseStack.translate(1.9375, 0, -0.789 + rack);
 
         rotateForFacingMirrored(poseStack, facing, isMirrored);
 
@@ -123,28 +121,19 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
         poseStack.popPose();
 
         // Holder
-        /*List<ItemStack> list = new ArrayList<>(8);
+        ItemStack stack = be.pirnList.stream().filter(s -> !s.isEmpty()).findAny().orElse(ItemStack.EMPTY);
         int amountPirns = 0;
         for (int i = 0; i < 8; i++)
-        {
-            list.add(be.inventory.get(i));
-            amountPirns += be.inventory.get(i).getCount();
-        }
-        ItemStack stack = list.stream().filter(s -> !s.isEmpty()).findAny().orElse(ItemStack.EMPTY);*/
-
-        /*int amountPirns = 0;
-        for (int i = 0; i < be.pirnList().size(); i++)
-            amountPirns += be.pirnList().get(i).getCount();*/
-        ItemStack stack = be.pirnList().stream().filter(s -> !s.isEmpty()).findAny().orElse(ItemStack.EMPTY);
-        int amountPirns = active ? be.amountPirns() - 1 : be.amountPirns();
+            amountPirns += be.getInventory().get(i).getCount();
+        amountPirns = active ? amountPirns - 1 : amountPirns;
 
         poseStack.pushPose();
 
         rotateAndTranslate(poseStack, facing, -0.78125, -1.625, 2);
         rotateForFacingMirrored(poseStack, facing, isMirrored);
 
-        float tilt = be.finishedCount % 8 * 45.0F;
-        poseStack.mulPose(Vector3f.ZP.rotationDegrees(be.animation_pirn + tilt - 45.0F));
+        float tilt = be.holderRotation * 45.0F;
+        poseStack.mulPose(Vector3f.ZP.rotationDegrees(be.animation_pirn + tilt));
 
         powerLoomModel.holder.render(poseStack, vertexConsumer, combinedLight, combinedOverlay);
 
@@ -158,9 +147,11 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
             rotateAndTranslate(poseStack, facing, -0.78125, -1.625, 2);
             rotateForFacingMirrored(poseStack, facing, isMirrored);
 
-            poseStack.mulPose(Vector3f.ZP.rotationDegrees(be.animation_pirn));
+            poseStack.mulPose(Vector3f.ZP.rotationDegrees(be.animation_pirn + 45.0F));
 
             poseStack.mulPose(Vector3f.ZN.rotationDegrees(45.0F * (i + 1)));
+            if (active)
+                poseStack.mulPose(Vector3f.ZN.rotationDegrees(45.0F));
 
             if (stack.is(ATTItems.FIBER_WINDED_PIRN.get()))
                 powerLoomModel.fiber_pirn.render(poseStack, vertexConsumer, combinedLight, combinedOverlay);
@@ -180,7 +171,7 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
             poseStack.mulPose(Vector3f.ZP.rotationDegrees(be.animation_pirn));
 
             poseStack.mulPose(Vector3f.ZN.rotationDegrees(45.0F));
-            poseStack.translate(be.animation_pirn_x - rack + 0.72625, be.animation_pirn_y, -be.animation_pirn_z);
+            poseStack.translate(be.animation_pirn_x - be.animation_pirn_x2, be.animation_pirn_y, -be.animation_pirn_z);
             poseStack.mulPose(Vector3f.ZP.rotationDegrees(45.0F));
 
             if (stack.is(ATTItems.FIBER_WINDED_PIRN.get()))
@@ -196,19 +187,15 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
         TextureAtlasSprite texture = blockMap.getSprite(new ResourceLocation(MOD_ID, "multiblock/power_loom"));
 
         // Input Rod Cloth
-        List<ItemStack> weaveList = new ArrayList<>(3);
         int amountWeave = 0;
-        for (int i = 8; i < 11; i++)
-        {
-            amountWeave += be.inventory.get(i).getCount();
-            weaveList.add(be.inventory.get(i));
-        }
+        for (ItemStack weave : be.inputList)
+            amountWeave += weave.getCount();
 
         int displacement = be.inventory.get(11).is(TFCItems.JUTE_FIBER.get()) ? 66 : 0;
 
         if (amountWeave > 0)
         {
-            int count = Math.floorDiv(amountWeave, (int) (0.75 * weaveList.stream().filter(s -> !s.isEmpty()).findAny().orElse(ItemStack.EMPTY).getMaxStackSize()));
+            int count = Math.floorDiv(amountWeave, (int) (0.75 * be.inputList.stream().filter(s -> !s.isEmpty()).findAny().orElse(ItemStack.EMPTY).getMaxStackSize()));
 
             poseStack.pushPose();
 

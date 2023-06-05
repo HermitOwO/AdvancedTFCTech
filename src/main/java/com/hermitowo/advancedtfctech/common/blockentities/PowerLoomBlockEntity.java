@@ -21,6 +21,7 @@ import com.hermitowo.advancedtfctech.common.container.ATTContainerProvider;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerTypes;
 import com.hermitowo.advancedtfctech.common.items.ATTItems;
 import com.hermitowo.advancedtfctech.common.multiblocks.PowerLoomMultiblock;
+import com.hermitowo.advancedtfctech.config.ATTConfig;
 import com.mojang.datafixers.util.Pair;
 import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
@@ -62,6 +63,8 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     private static final BlockPos SECONDARY_WEAVE_IN_POS = new BlockPos(1, 1, 2);
 
     public NonNullList<ItemStack> inventory = NonNullList.withSize(14, ItemStack.EMPTY);
+    public List<ItemStack> pirnList = this.getInventory().subList(0, 8);
+    public List<ItemStack> inputList = this.getInventory().subList(8, 11);
 
     private final CapabilityReference<IItemHandler> secondaryInput = CapabilityReference.forBlockEntityAt(this,
         () -> new DirectionalBlockPos(this.getBlockPosForPos(PIRN_IN_POS).relative(getFacing(), 2), getFacing().getOpposite()),
@@ -97,12 +100,13 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     public float animation_rack2 = 0;
     public float angle_long_thread = 0;
     public float angle_short_thread = 0;
-    public float animation_pirn = 45.0F;
+    public float animation_pirn = 0;
     public float animation_pirn_x = 0;
+    public float animation_pirn_x2 = 0;
     public float animation_pirn_y = 0;
     public float animation_pirn_z = 0;
     public int animation_weave = 0;
-    public int finishedCount;
+    public int holderRotation;
     public boolean animation_rack_b = true;
     public boolean animation_rack_side_b = true;
     public boolean animation_rack2_b = true;
@@ -113,7 +117,16 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     {
         super.readCustomNBT(nbt, descPacket);
         ContainerHelper.loadAllItems(nbt, inventory);
-        this.finishedCount = nbt.getInt("finishedCount");
+        this.holderRotation = nbt.getInt("holderRotation");
+        short inventoryStatus = nbt.getShort("inventoryStatus");
+        for (int i = 0; i < 14; ++i)
+        {
+            boolean hasServer = (inventoryStatus & 1) != 0;
+            boolean hasClient = !inventory.get(i).isEmpty();
+            if (!hasServer && hasClient)
+                inventory.set(i, ItemStack.EMPTY);
+            inventoryStatus >>>= 1;
+        }
     }
 
     @Override
@@ -121,7 +134,16 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     {
         super.writeCustomNBT(nbt, descPacket);
         ContainerHelper.saveAllItems(nbt, inventory);
-        nbt.putInt("finishedCount", this.finishedCount);
+        nbt.putInt("holderRotation", this.holderRotation);
+        short packed = 0;
+        short mask = 1;
+        for (int i = 0; i < 14; ++i)
+        {
+            if (!inventory.get(i).isEmpty())
+                packed += mask;
+            mask *= 2;
+        }
+        nbt.putShort("inventoryStatus", packed);
     }
 
     @Override
@@ -144,6 +166,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
             if (angle_short_thread < 42.0F)
                 angle_short_thread = Math.min(42.0F, angle_short_thread + 8.4F);
 
+            animation_pirn = 0;
             animation_pirn_x = 0;
             animation_pirn_y = 0;
             animation_pirn_z = 0;
@@ -167,6 +190,9 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                     else if (animation_rack >= 0.65625F && !animation_rack_b)
                         animation_rack_b = true;
                 }
+                else
+                    if (animation_rack < 0.65625F)
+                        animation_rack = Math.min(0.65625F, animation_rack + 0.046875F);
 
                 if (delayedTick / 28 >= 1 && delayedTick % 28 <= 4)
                 {
@@ -236,6 +262,8 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                     animation_rack_side = 0.25F;
                     animation_pirn_z = 0;
                 }
+
+                animation_pirn_x2 = tick <= 20 ? 0 : animation_rack * animation_rack * (3.0F - 2.0F * animation_rack) - 0.72625F;
 
                 animation_weave = delayedTick > 0 ? Math.floorDiv(delayedTick + 14, 28) : 0;
             }
@@ -313,17 +341,12 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
 
     public void sort()
     {
-        List<ItemStack> list = new ArrayList<>(3);
-
-        for (int i = 8; i < 11; i++)
-            list.add(this.getInventory().get(i));
-
-        for (int i = 0; i < list.size(); i++)
+        for (int i = 0; i < inputList.size(); i++)
         {
-            for (int j = i + 1; j < list.size(); j++)
+            for (int j = i + 1; j < inputList.size(); j++)
             {
-                ItemStack holder1 = list.get(i);
-                ItemStack holder2 = list.get(j);
+                ItemStack holder1 = inputList.get(i);
+                ItemStack holder2 = inputList.get(j);
                 int size1 = holder1.getCount();
                 int size2 = holder2.getCount();
                 int sizeMax = holder1.getMaxStackSize();
@@ -346,7 +369,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                     }
                     else
                     {
-                        ItemStack stack = new ItemStack(list.get(j).getItem(), list.get(i).getCount() + list.get(j).getCount());
+                        ItemStack stack = new ItemStack(inputList.get(j).getItem(), inputList.get(i).getCount() + inputList.get(j).getCount());
                         this.inventory.set(i + 8, stack);
                         this.inventory.set(j + 8, ItemStack.EMPTY);
                     }
@@ -387,26 +410,6 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         }
     }
 
-    public List<ItemStack> pirnList()
-    {
-        List<ItemStack> list = new ArrayList<>(8);
-
-        for (int i = 0; i < 8; i++)
-            list.add(inventory.get(i));
-
-        return list;
-    }
-
-    public int amountPirns()
-    {
-        int count = 0;
-
-        for (int i = 0; i < 8; i++)
-            count += inventory.get(i).getCount();
-
-        return count;
-    }
-
     @Override
     public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ)
     {
@@ -441,7 +444,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                             }
                         }
                     }
-                    if (player.isShiftKeyDown())
+                    if (player.isShiftKeyDown() && master.processQueue.size() < master.getProcessQueueMaxLength())
                     {
                         for (int i = 0; i < 8; i++)
                         {
@@ -629,8 +632,10 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     @Override
     public boolean canUseGui(Player player)
     {
-        return formed && player.getMainHandItem().is(ATTItems.PIRN.get());
-        // return false;
+        if (ATTConfig.SERVER.enablePowerLoomDebug.get())
+            return formed && player.getMainHandItem().is(ATTItems.PIRN.get());
+        else
+            return false;
     }
 
     @Nullable
@@ -708,10 +713,8 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
             Utils.dropStackAtPos(level, pos, stack, outDir);
         }
 
-        this.finishedCount++;
-
-        this.setChanged();
-        this.markContainingBlockForUpdate(null);
+        animation_pirn = 0;
+        this.holderRotation = (holderRotation + 1) % 8;
     }
 
     @Override

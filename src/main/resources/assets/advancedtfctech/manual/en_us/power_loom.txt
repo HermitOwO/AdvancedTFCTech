@@ -11,6 +11,3 @@ Then, input yarn/fiber can be put with the same method on the lower beam on the 
 Output may be retrieved by a storage device placed in the center of the output side, or by shift-rightclicking on the back.
 
 It consumes <config;i;powerloom_operationcost>IF/t.
-
-[Beta]
-Note: Animations for the Power Loom are not done yet. Although the Power Loom is supposed to be an in-world processing machine, a temporary GUI can be opened up by rightclicking with a Pirn to confirm the inventory inside the multiblock.
