@@ -1,6 +1,6 @@
 {
   "__comment__": "This file was automatically created by mcresources",
-  "parent": "advancedtfctech:story/craft_pirn",
+  "parent": "advancedtfctech:story/mb_power_loom",
   "criteria": {
     "fiber_winded_pirn": {
       "trigger": "minecraft:inventory_changed",
@@ -44,10 +44,10 @@
       "item": "advancedtfctech:silk_winded_pirn"
     },
     "title": {
-      "translate": "advancedtfctech.advancements.story.craft_weaved_pirn.title"
+      "translate": "advancedtfctech.advancements.story.craft_winded_pirn.title"
     },
     "description": {
-      "translate": "advancedtfctech.advancements.story.craft_weaved_pirn.description"
+      "translate": "advancedtfctech.advancements.story.craft_winded_pirn.description"
     },
     "frame": "goal",
     "show_toast": true,

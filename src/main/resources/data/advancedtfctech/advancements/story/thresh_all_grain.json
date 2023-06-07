@@ -1,0 +1,120 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "parent": "advancedtfctech:story/mb_thresher",
+  "criteria": {
+    "wheat": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "tfc:food/wheat_grain"
+            ],
+            "count": 32
+          }
+        ]
+      }
+    },
+    "rye": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "tfc:food/rye_grain"
+            ],
+            "count": 32
+          }
+        ]
+      }
+    },
+    "barley": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "tfc:food/barley_grain"
+            ],
+            "count": 32
+          }
+        ]
+      }
+    },
+    "rice": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "tfc:food/rice_grain"
+            ],
+            "count": 32
+          }
+        ]
+      }
+    },
+    "maize": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "tfc:food/maize_grain"
+            ],
+            "count": 32
+          }
+        ]
+      }
+    },
+    "oat": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "tfc:food/oat_grain"
+            ],
+            "count": 32
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "item": "tfc:food/wheat_grain"
+    },
+    "title": {
+      "translate": "advancedtfctech.advancements.story.thresh_all_grain.title"
+    },
+    "description": {
+      "translate": "advancedtfctech.advancements.story.thresh_all_grain.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "background": "immersiveengineering:textures/block/wooden_decoration/treated_wood.png"
+  },
+  "requirements": [
+    [
+      "wheat"
+    ],
+    [
+      "rye"
+    ],
+    [
+      "barley"
+    ],
+    [
+      "rice"
+    ],
+    [
+      "maize"
+    ],
+    [
+      "oat"
+    ]
+  ]
+}

@@ -14,8 +14,16 @@
   "manual.advancedtfctech.advancedtfctech": "TerraFirmaCraft Tech",
   "advancedtfctech.advancements.story.root.title": "Advanced TFC Tech",
   "advancedtfctech.advancements.story.root.description": "Machines for large-scale production",
-  "advancedtfctech.advancements.story.craft_pirn.title": "Winder",
-  "advancedtfctech.advancements.story.craft_pirn.description": "Craft a Pirn",
-  "advancedtfctech.advancements.story.craft_weaved_pirn.title": "Stop Winding",
-  "advancedtfctech.advancements.story.craft_weaved_pirn.description": "Craft all Winded Pirns"
+  "advancedtfctech.advancements.story.mb_grist_mill.title": "On My Grind",
+  "advancedtfctech.advancements.story.mb_grist_mill.description": "Form the Grist Mill Multiblock",
+  "advancedtfctech.advancements.story.mb_thresher.title": "Undressing",
+  "advancedtfctech.advancements.story.mb_thresher.description": "Form the Thresher Multiblock",
+  "advancedtfctech.advancements.story.mb_power_loom.title": "Unemployment",
+  "advancedtfctech.advancements.story.mb_power_loom.description": "Form the Power Loom Multiblock",
+  "advancedtfctech.advancements.story.grind_all_grain.title": "Another One Bites The Dust",
+  "advancedtfctech.advancements.story.grind_all_grain.description": "Obtain a Full Stack of Every Flour",
+  "advancedtfctech.advancements.story.thresh_all_grain.title": "Farmer's Delight",
+  "advancedtfctech.advancements.story.thresh_all_grain.description": "Obtain a Full Stack of Every Grain",
+  "advancedtfctech.advancements.story.craft_winded_pirn.title": "Stop Winding",
+  "advancedtfctech.advancements.story.craft_winded_pirn.description": "Craft all Winded Pirns"
 }

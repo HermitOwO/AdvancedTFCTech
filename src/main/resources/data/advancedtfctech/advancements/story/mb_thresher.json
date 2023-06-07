@@ -1,0 +1,38 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "parent": "advancedtfctech:story/root",
+  "criteria": {
+    "multiblock_formed_condition": {
+      "trigger": "immersiveengineering:multiblock_formed",
+      "conditions": {
+        "multiblock": "advancedtfctech:multiblocks/thresher",
+        "items": {
+          "items": [
+            "immersiveengineering:hammer"
+          ]
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "item": "advancedtfctech:thresher"
+    },
+    "title": {
+      "translate": "advancedtfctech.advancements.story.mb_thresher.title"
+    },
+    "description": {
+      "translate": "advancedtfctech.advancements.story.mb_thresher.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "background": "immersiveengineering:textures/block/wooden_decoration/treated_wood.png"
+  },
+  "requirements": [
+    [
+      "multiblock_formed_condition"
+    ]
+  ]
+}
