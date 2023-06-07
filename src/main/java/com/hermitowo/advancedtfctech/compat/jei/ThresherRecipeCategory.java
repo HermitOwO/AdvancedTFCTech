@@ -52,9 +52,7 @@ public class ThresherRecipeCategory extends BaseRecipeCategory<ThresherRecipe>
         input.addItemStacks(collapse(new ItemStackIngredient(recipe.input.getBaseIngredient(), recipe.input.getCount())));
         output.addItemStacks(collapse(inputList, recipe.output));
         for (Lazy<ItemStack> out : recipe.secondaryOutputs)
-        {
             secondaryOutput.addItemStack(out.get());
-        }
 
         input.setBackground(slot, -1, -1);
         output.setBackground(slot, -1, -1);

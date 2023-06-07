@@ -1,7 +1,6 @@
 package com.hermitowo.advancedtfctech.client.model;
 
 
-import com.hermitowo.advancedtfctech.common.blockentities.PowerLoomBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.Model;
@@ -20,8 +19,8 @@ import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
 
 public class PowerLoomParts extends Model
 {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(MOD_ID, "powerloomparts"), "main");
-	private final ModelPart powerloom;
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(MOD_ID, "powerloomparts"), "main");
+    private final ModelPart powerloom;
     public final ModelPart rack;
     public final ModelPart rack_side;
     public final ModelPart rack2;
@@ -31,10 +30,10 @@ public class PowerLoomParts extends Model
     public final ModelPart fiber_pirn;
     public final ModelPart wool_pirn;
 
-	public PowerLoomParts(ModelPart root)
+    public PowerLoomParts(ModelPart root)
     {
         super(RenderType::entitySolid);
-		this.powerloom = root.getChild("powerloom");
+        this.powerloom = root.getChild("powerloom");
         this.rack = root.getChild("rack");
         this.rack_side = root.getChild("rack_side");
         this.rack2 = root.getChild("rack2");
@@ -43,7 +42,7 @@ public class PowerLoomParts extends Model
         this.holder = root.getChild("holder");
         this.fiber_pirn = root.getChild("fiber_pirn");
         this.wool_pirn = root.getChild("wool_pirn");
-	}
+    }
 
     public static LayerDefinition createBodyLayer()
     {
@@ -125,9 +124,9 @@ public class PowerLoomParts extends Model
         return LayerDefinition.create(meshdefinition, 512, 128);
     }
 
-	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha)
+    @Override
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha)
     {
-		powerloom.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-	}
+        powerloom.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    }
 }

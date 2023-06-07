@@ -3,10 +3,13 @@ package com.hermitowo.advancedtfctech.api.crafting;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.common.util.Lazy;
+
+import net.dries007.tfc.common.recipes.outputs.ItemStackProvider;
 
 public abstract class ATTMultiblockRecipe extends MultiblockRecipe
 {
@@ -44,4 +47,6 @@ public abstract class ATTMultiblockRecipe extends MultiblockRecipe
     {
         return this.totalProcessEnergy.get();
     }
+
+    protected Lazy<NonNullList<ItemStackProvider>> providerList = Lazy.of(NonNullList::create);
 }

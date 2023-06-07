@@ -1,19 +1,30 @@
 package com.hermitowo.advancedtfctech.client.render;
 
+import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.api.client.IVertexBufferHolder;
 import blusunrize.immersiveengineering.client.render.tile.BERenderUtils;
 import blusunrize.immersiveengineering.client.render.tile.IEBlockEntityRenderer;
-import blusunrize.immersiveengineering.client.utils.RenderUtils;
+import blusunrize.immersiveengineering.common.util.Utils;
 import com.hermitowo.advancedtfctech.common.blockentities.GristMillBlockEntity;
+import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.data.EmptyModelData;
 
 public class GristMillRenderer extends IEBlockEntityRenderer<GristMillBlockEntity>
 {
     public static String NAME = "grist_mill_animation";
     public static DynamicModel DRIVER;
+
+    private static final IVertexBufferHolder MODEL_BUFFER = IVertexBufferHolder.create(() -> {
+        BlockState state = ATTBlocks.Multiblocks.GRIST_MILL.get().defaultBlockState()
+            .setValue(IEProperties.FACING_HORIZONTAL, Direction.NORTH);
+        return DRIVER.get().getQuads(state, null, Utils.RAND, EmptyModelData.INSTANCE);
+    });
 
     @Override
     public void render(GristMillBlockEntity be, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay)
@@ -31,13 +42,7 @@ public class GristMillRenderer extends IEBlockEntityRenderer<GristMillBlockEntit
 
         poseStack.mulPose(Vector3f.XP.rotationDegrees(angle));
 
-        /*
-        List<BakedQuad> quads = new ArrayList<>();
-        for (BakedQuad quad : DRIVER.getNullQuads())
-            quads.add(new BakedQuad(quad.getVertices(), quad.getTintIndex(), quad.getDirection(), quad.getSprite(), true));
-         */
-
-        RenderUtils.renderModelTESRFast(DRIVER.getNullQuads(), bufferMirrored.getBuffer(RenderType.solid()), poseStack, combinedLight, combinedOverlay);
+        MODEL_BUFFER.render(RenderType.solid(), combinedLight, combinedOverlay, bufferMirrored, poseStack);
 
         poseStack.popPose();
     }

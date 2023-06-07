@@ -3,6 +3,7 @@ package com.hermitowo.advancedtfctech.common.blockentities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiFunction;
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.api.utils.DirectionalBlockPos;
@@ -142,7 +143,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
                         ThresherRecipe recipe = ThresherRecipe.findRecipe(level, stack);
                         if (recipe != null)
                         {
-                            MultiblockProcessInMachine<ThresherRecipe> process = new MultiblockProcessInMachine<>(recipe, this::getRecipeForId, slot);
+                            MultiblockProcessThresher process = new MultiblockProcessThresher(recipe, this::getRecipeForId, slot);
                             if (this.addProcessToQueue(process, true))
                             {
                                 this.addProcessToQueue(process, false);
@@ -459,5 +460,23 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
         if (main.isEmpty())
             main.add(new AABB(0, 0, 0, 1, 1, 1));
         return main;
+    }
+
+    public static class MultiblockProcessThresher extends MultiblockProcessInMachine<ThresherRecipe>
+    {
+        public MultiblockProcessThresher(ThresherRecipe recipe, BiFunction<Level, ResourceLocation, ThresherRecipe> getRecipe, int... inputSlots)
+        {
+            super(recipe, getRecipe, inputSlots);
+        }
+
+        @Override
+        protected NonNullList<ItemStack> getRecipeItemOutputs(PoweredMultiblockBlockEntity<?, ThresherRecipe> multiblock)
+        {
+            ThresherRecipe recipe = getRecipe(multiblock.getLevel());
+            if (recipe == null)
+                return NonNullList.create();
+            ItemStack input = multiblock.getInventory().get(this.inputSlots[0]);
+            return recipe.generateActualOutput(input);
+        }
     }
 }

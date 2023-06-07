@@ -3,6 +3,7 @@ package com.hermitowo.advancedtfctech.common.blockentities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiFunction;
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.api.utils.DirectionalBlockPos;
@@ -140,7 +141,7 @@ public class GristMillBlockEntity extends PoweredMultiblockBlockEntity<GristMill
                         GristMillRecipe recipe = GristMillRecipe.findRecipe(level, stack);
                         if (recipe != null)
                         {
-                            MultiblockProcessInMachine<GristMillRecipe> process = new MultiblockProcessInMachine<>(recipe, this::getRecipeForId, slot);
+                            MultiblockProcessGristMill process = new MultiblockProcessGristMill(recipe, this::getRecipeForId, slot);
                             if (this.addProcessToQueue(process, true))
                             {
                                 this.addProcessToQueue(process, false);
@@ -507,5 +508,23 @@ public class GristMillBlockEntity extends PoweredMultiblockBlockEntity<GristMill
     private static AABB box(double x0, double y0, double z0, double x1, double y1, double z1)
     {
         return new AABB(x0 / 16D, y0 / 16D, z0 / 16D, x1 / 16D, y1 / 16D, z1 / 16D);
+    }
+
+    public static class MultiblockProcessGristMill extends MultiblockProcessInMachine<GristMillRecipe>
+    {
+        public MultiblockProcessGristMill(GristMillRecipe recipe, BiFunction<Level, ResourceLocation, GristMillRecipe> getRecipe, int... inputSlots)
+        {
+            super(recipe, getRecipe, inputSlots);
+        }
+
+        @Override
+        protected NonNullList<ItemStack> getRecipeItemOutputs(PoweredMultiblockBlockEntity<?, GristMillRecipe> multiblock)
+        {
+            GristMillRecipe recipe = getRecipe(multiblock.getLevel());
+            if (recipe == null)
+                return NonNullList.create();
+            ItemStack input = multiblock.getInventory().get(this.inputSlots[0]);
+            return recipe.generateActualOutput(input);
+        }
     }
 }

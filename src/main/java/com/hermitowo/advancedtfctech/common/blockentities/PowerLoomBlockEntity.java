@@ -190,9 +190,8 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                     else if (animation_rack >= 0.65625F && !animation_rack_b)
                         animation_rack_b = true;
                 }
-                else
-                    if (animation_rack < 0.65625F)
-                        animation_rack = Math.min(0.65625F, animation_rack + 0.046875F);
+                else if (animation_rack < 0.65625F)
+                    animation_rack = Math.min(0.65625F, animation_rack + 0.046875F);
 
                 if (delayedTick / 28 >= 1 && delayedTick % 28 <= 4)
                 {
@@ -634,8 +633,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     {
         if (ATTConfig.SERVER.enablePowerLoomDebug.get())
             return formed && player.getMainHandItem().is(ATTItems.PIRN.get());
-        else
-            return false;
+        return false;
     }
 
     @Nullable

@@ -32,6 +32,7 @@ public class GristMillRecipe extends ATTMultiblockRecipe
 
         setInputListWithSizes(Lists.newArrayList(this.input));
         this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, this.output.stack().get()));
+        this.providerList = Lazy.of(() -> NonNullList.of(ItemStackProvider.empty(), this.output));
     }
 
     public static GristMillRecipe findRecipe(Level level, ItemStack stack)
@@ -69,5 +70,16 @@ public class GristMillRecipe extends ATTMultiblockRecipe
     protected IERecipeSerializer<GristMillRecipe> getIESerializer()
     {
         return ATTSerializers.GRIST_MILL_SERIALIZER.get();
+    }
+
+    public NonNullList<ItemStack> generateActualOutput(ItemStack input)
+    {
+        NonNullList<ItemStack> actualOutput = NonNullList.withSize(outputList.get().size(), ItemStack.EMPTY);
+        for (int i = 0; i < outputList.get().size(); ++i)
+        {
+            ItemStackProvider provider = providerList.get().get(i);
+            actualOutput.set(i, provider.getStack(input));
+        }
+        return actualOutput;
     }
 }

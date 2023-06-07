@@ -30,7 +30,7 @@ public class ATTServerConfig
 
         innerBuilder.pop().push("debug");
 
-        enablePowerLoomDebug = builder.apply("enablePowerLoomDebug").comment("If true, a GUI can be opened up by rightclicking the Power Loom with a Pirn").define("enablePowerLoomDebug", false);
+        enablePowerLoomDebug = builder.apply("enablePowerLoomDebug").comment("If true, a GUI can be opened up by rightclicking the Power Loom with a Pirn.").define("enablePowerLoomDebug", false);
 
         innerBuilder.pop();
     }

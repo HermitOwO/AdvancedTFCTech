@@ -1,13 +1,10 @@
 package com.hermitowo.advancedtfctech.common.blocks;
 
 import java.util.function.Supplier;
-import com.hermitowo.advancedtfctech.common.ATTTabs;
 import com.hermitowo.advancedtfctech.common.blocks.ticking.ATTClientTickableBlock;
 import com.hermitowo.advancedtfctech.common.blocks.ticking.ATTCommonTickableBlock;
 import com.hermitowo.advancedtfctech.common.blocks.ticking.ATTServerTickableBlock;
 import javax.annotation.Nullable;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
