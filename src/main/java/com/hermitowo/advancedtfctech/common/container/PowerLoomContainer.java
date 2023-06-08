@@ -23,9 +23,8 @@ public class PowerLoomContainer extends MultiblockAwareGuiContainer<PowerLoomBlo
         }
         addSlot(new ATTSlot.SecondaryWeaveInput(this, this.inv, 11, 10, 10, blockentity.getLevel()));
         addSlot(new ATTSlot.ItemOutput(this, this.inv, 12, 132, 98));
-        addSlot(new ATTSlot.ItemOutput(this, this.inv, 13, 150, 98));
 
-        slotCount = 14;
+        slotCount = 13;
 
         addPlayerInventorySlots(playerInventory, 8, 126);
         addPlayerHotbarSlots(playerInventory, 8, 184);

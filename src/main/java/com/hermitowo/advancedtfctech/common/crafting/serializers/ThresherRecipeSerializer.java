@@ -58,9 +58,7 @@ public class ThresherRecipeSerializer extends IERecipeSerializer<ThresherRecipe>
 
         int secondaryCount = buffer.readInt();
         for (int i = 0; i < secondaryCount; i++)
-        {
             recipe.addToSecondaryOutput(readLazyStack(buffer));
-        }
 
         return recipe;
     }
@@ -74,8 +72,6 @@ public class ThresherRecipeSerializer extends IERecipeSerializer<ThresherRecipe>
 
         buffer.writeInt(recipe.secondaryOutputs.size());
         for (Lazy<ItemStack> secondaryOutput : recipe.secondaryOutputs)
-        {
             buffer.writeItem(secondaryOutput.get());
-        }
     }
 }

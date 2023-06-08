@@ -3,6 +3,7 @@ package com.hermitowo.advancedtfctech.client.render;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.render.tile.BERenderUtils;
 import blusunrize.immersiveengineering.client.render.tile.IEBlockEntityRenderer;
+import com.hermitowo.advancedtfctech.api.crafting.PowerLoomRecipe;
 import com.hermitowo.advancedtfctech.client.model.PowerLoomParts;
 import com.hermitowo.advancedtfctech.common.blockentities.PowerLoomBlockEntity;
 import com.hermitowo.advancedtfctech.common.items.ATTItems;
@@ -21,7 +22,6 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 
 import net.dries007.tfc.client.RenderHelpers;
-import net.dries007.tfc.common.items.TFCItems;
 
 import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
 
@@ -182,48 +182,17 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
             poseStack.popPose();
         }
 
-        VertexConsumer consumer = bufferMirrored.getBuffer(RenderType.solid());
         TextureAtlas blockMap = ClientUtils.mc().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS);
-        TextureAtlasSprite texture = blockMap.getSprite(new ResourceLocation(MOD_ID, "multiblock/power_loom"));
-
-        // Input Rod Cloth
-        int amountWeave = 0;
-        for (ItemStack weave : be.inputList)
-            amountWeave += weave.getCount();
-
-        int displacement = be.inventory.get(11).is(TFCItems.JUTE_FIBER.get()) ? 66 : 0;
-
-        if (amountWeave > 0)
-        {
-            int count = Math.floorDiv(amountWeave, (int) (0.75 * be.inputList.stream().filter(s -> !s.isEmpty()).findAny().orElse(ItemStack.EMPTY).getMaxStackSize()));
-
-            poseStack.pushPose();
-
-            translateForFacing(poseStack, facing, 1.6875, 0.625, -0.5);
-            rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
-
-            if (active)
-                poseStack.mulPose(Vector3f.ZN.rotationDegrees(angle));
-
-            RenderHelper.renderTexturedBox(consumer, poseStack, -2 - count / 2F, -2 - count / 2F, 0, 2 + count / 2F, 2 + count / 2F, 32, texture, displacement, 38, combinedLight);
-
-            poseStack.popPose();
-        }
+        VertexConsumer consumer = bufferMirrored.getBuffer(RenderType.solid());
+        PowerLoomRecipe recipe = PowerLoomRecipe.findRecipeForRendering(be.getLevel(), be.inventory.get(11));
+        TextureAtlasSprite outputTexture = blockMap.getSprite(be.lastTexture);
 
         // Output Rod Cloth
-        int amountOutput = 0;
-        for (int i = 12; i < 14; i++)
-            amountOutput += be.inventory.get(i).getCount();
+        int amountOutput = be.inventory.get(12).getCount();
 
         if (amountOutput > 0)
         {
             int count = Math.floorDiv(amountOutput, 16);
-
-            int displacementOutput;
-            if (!be.inventory.get(12).isEmpty())
-                displacementOutput = be.inventory.get(12).is(TFCItems.BURLAP_CLOTH.get()) ? 66 : 0;
-            else
-                displacementOutput = be.inventory.get(13).is(TFCItems.BURLAP_CLOTH.get()) ? 66 : 0;
 
             poseStack.pushPose();
 
@@ -233,88 +202,115 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
             if (active)
                 poseStack.mulPose(Vector3f.ZN.rotationDegrees(angle));
 
-            RenderHelper.renderTexturedBox(consumer, poseStack, -2 - count / 2F, -2 - count / 2F, 0, 2 + count / 2F, 2 + count / 2F, 32, texture, displacementOutput, 38, combinedLight);
+            RenderHelper.renderTexturedBox(consumer, poseStack, -2 - count / 2F, -2 - count / 2F, 0, 2 + count / 2F, 2 + count / 2F, 32, outputTexture, 0, 38, combinedLight);
 
             poseStack.popPose();
         }
 
-        if (be.inventory.get(11).getCount() >= 16)
+        if (recipe != null)
         {
-            // Rods
-            poseStack.pushPose();
+            TextureAtlasSprite texture = blockMap.getSprite(recipe.inProgressTexture);
 
-            translateForFacing(poseStack, facing, -0.6875, 1.5, -0.5);
-            rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
+            // Input Rod Cloth
+            int amountWeave = 0;
+            for (ItemStack weave : be.inputList)
+                amountWeave += weave.getCount();
 
-            RenderHelper.renderTexturedBox(consumer, poseStack, -2, -2, 0, 2, 2, 32, texture, displacement, 38, combinedLight);
-
-            poseStack.translate(2.3125, 0, 0);
-            RenderHelper.renderTexturedBox(consumer, poseStack, -2, -2, 0, 2, 2, 32, texture, displacement, 38, combinedLight);
-
-            poseStack.popPose();
-
-            // Cloths
-            poseStack.pushPose();
-
-            translateForFacing(poseStack, facing, -0.7, 0.7, -0.5);
-            rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
-            poseStack.mulPose(Vector3f.ZP.rotationDegrees(8.0F));
-            RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 11, 32, texture, displacement, 38 + be.animation_weave, combinedLight);
-
-            poseStack.popPose();
-
-            poseStack.pushPose();
-
-            translateForFacing(poseStack, facing, 1.575, 0.7, -0.5);
-            rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
-            poseStack.mulPose(Vector3f.ZN.rotationDegrees(8.0F));
-
-            RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 12, 32, texture, displacement, be.animation_weave, combinedLight);
-
-            poseStack.popPose();
-
-            // Threads
-            for (int i = 0; i < 16; i++)
+            if (amountWeave > 0)
             {
+                int count = Math.floorDiv(amountWeave, (int) (0.75 * be.inputList.stream().filter(s -> !s.isEmpty()).findAny().orElse(ItemStack.EMPTY).getMaxStackSize()));
+
                 poseStack.pushPose();
 
-                translateForFacing(poseStack, facing, -0.71875, 1.65, -0.5 + i * 0.125);
+                translateForFacing(poseStack, facing, 1.6875, 0.625, -0.5);
                 rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
-                poseStack.mulPose(Vector3f.ZN.rotationDegrees(80.0F + be.angle_long_thread));
 
-                RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 27, 1, texture, displacement, 0, combinedLight);
+                if (active)
+                    poseStack.mulPose(Vector3f.ZN.rotationDegrees(angle));
+
+                RenderHelper.renderTexturedBox(consumer, poseStack, -2 - count / 2F, -2 - count / 2F, 0, 2 + count / 2F, 2 + count / 2F, 32, texture, 0, 38, combinedLight);
+
+                poseStack.popPose();
+            }
+
+            if (be.inventory.get(11).getCount() >= 16)
+            {
+                // Rods
+                poseStack.pushPose();
+
+                translateForFacing(poseStack, facing, -0.6875, 1.5, -0.5);
+                rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
+
+                RenderHelper.renderTexturedBox(consumer, poseStack, -2, -2, 0, 2, 2, 32, texture, 0, 38, combinedLight);
+
+                poseStack.translate(2.3125, 0, 0);
+                RenderHelper.renderTexturedBox(consumer, poseStack, -2, -2, 0, 2, 2, 32, texture, 0, 38, combinedLight);
+
+                poseStack.popPose();
+
+                // Cloths
+                poseStack.pushPose();
+
+                translateForFacing(poseStack, facing, -0.7, 0.7, -0.5);
+                rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
+                poseStack.mulPose(Vector3f.ZP.rotationDegrees(8.0F));
+                RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 11, 32, texture, 0, 38 + be.animation_weave, combinedLight);
 
                 poseStack.popPose();
 
                 poseStack.pushPose();
 
-                translateForFacing(poseStack, facing, -0.71875, 1.65, -0.4375 + i * 0.125);
+                translateForFacing(poseStack, facing, 1.575, 0.7, -0.5);
                 rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
-                poseStack.mulPose(Vector3f.ZN.rotationDegrees(99.0F - be.angle_long_thread));
+                poseStack.mulPose(Vector3f.ZN.rotationDegrees(8.0F));
 
-                RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 27, 1, texture, displacement, 0, combinedLight);
+                RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 12, 32, texture, 0, be.animation_weave, combinedLight);
 
                 poseStack.popPose();
 
-                poseStack.pushPose();
+                // Threads
+                for (int i = 0; i < 16; i++)
+                {
+                    poseStack.pushPose();
 
-                translateForFacing(poseStack, facing, 1.635, 1.585, -0.5 + i * 0.125);
-                rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
-                poseStack.mulPose(Vector3f.ZP.rotationDegrees(68.0F + be.angle_short_thread));
+                    translateForFacing(poseStack, facing, -0.71875, 1.65, -0.5 + i * 0.125);
+                    rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
+                    poseStack.mulPose(Vector3f.ZN.rotationDegrees(80.0F + be.angle_long_thread));
 
-                RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 13, 1, texture, displacement, 0, combinedLight);
+                    RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 27, 1, texture, 0, 0, combinedLight);
 
-                poseStack.popPose();
+                    poseStack.popPose();
 
-                poseStack.pushPose();
+                    poseStack.pushPose();
 
-                translateForFacing(poseStack, facing, 1.635, 1.585, -0.4375 + i * 0.125);
-                rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
-                poseStack.mulPose(Vector3f.ZP.rotationDegrees(110.0F - be.angle_short_thread));
+                    translateForFacing(poseStack, facing, -0.71875, 1.65, -0.4375 + i * 0.125);
+                    rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
+                    poseStack.mulPose(Vector3f.ZN.rotationDegrees(99.0F - be.angle_long_thread));
 
-                RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 13, 1, texture, displacement, 0, combinedLight);
+                    RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 27, 1, texture, 0, 0, combinedLight);
 
-                poseStack.popPose();
+                    poseStack.popPose();
+
+                    poseStack.pushPose();
+
+                    translateForFacing(poseStack, facing, 1.635, 1.585, -0.5 + i * 0.125);
+                    rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
+                    poseStack.mulPose(Vector3f.ZP.rotationDegrees(68.0F + be.angle_short_thread));
+
+                    RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 13, 1, texture, 0, 0, combinedLight);
+
+                    poseStack.popPose();
+
+                    poseStack.pushPose();
+
+                    translateForFacing(poseStack, facing, 1.635, 1.585, -0.4375 + i * 0.125);
+                    rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
+                    poseStack.mulPose(Vector3f.ZP.rotationDegrees(110.0F - be.angle_short_thread));
+
+                    RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 13, 1, texture, 0, 0, combinedLight);
+
+                    poseStack.popPose();
+                }
             }
         }
     }

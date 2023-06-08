@@ -38,10 +38,21 @@ public class PowerLoomRecipeSerializer extends IERecipeSerializer<PowerLoomRecip
             for (int i = 0; i < ingredients.length; i++)
                 ingredients[i] = IngredientWithSize.deserialize(inputs.get(i));
         }
+        ResourceLocation inProgressTexture = new ResourceLocation(GsonHelper.getAsString(json, "in_progress_texture"));
         int time = GsonHelper.getAsInt(json, "time");
         int energy = GsonHelper.getAsInt(json, "energy");
 
-        return new PowerLoomRecipe(recipeId, output, ingredients, time, energy);
+        PowerLoomRecipe recipe = new PowerLoomRecipe(recipeId, output, ingredients, inProgressTexture, time, energy);
+
+        JsonArray array = json.getAsJsonArray("secondaries");
+        for (int i = 0; i < array.size(); i++)
+        {
+            JsonObject element = array.get(i).getAsJsonObject();
+            Lazy<ItemStack> stack = readOutput(element.get("output"));
+            recipe.addToSecondaryOutput(stack);
+        }
+
+        return recipe;
     }
 
     @Nullable
@@ -53,10 +64,17 @@ public class PowerLoomRecipeSerializer extends IERecipeSerializer<PowerLoomRecip
         IngredientWithSize[] ingredients = new IngredientWithSize[inputCount];
         for (int i = 0; i < ingredients.length; i++)
             ingredients[i] = IngredientWithSize.read(buffer);
+        ResourceLocation inProgressTexture = new ResourceLocation(buffer.readUtf());
         int time = buffer.readInt();
         int energy = buffer.readInt();
 
-        return new PowerLoomRecipe(recipeId, output, ingredients, time, energy);
+        PowerLoomRecipe recipe = new PowerLoomRecipe(recipeId, output, ingredients, inProgressTexture, time, energy);
+
+        int secondaryCount = buffer.readInt();
+        for (int i = 0; i < secondaryCount; i++)
+            recipe.addToSecondaryOutput(readLazyStack(buffer));
+
+        return recipe;
     }
 
     @Override
@@ -66,7 +84,12 @@ public class PowerLoomRecipeSerializer extends IERecipeSerializer<PowerLoomRecip
         buffer.writeInt(recipe.inputs.length);
         for (IngredientWithSize ingredient : recipe.inputs)
             ingredient.write(buffer);
+        buffer.writeUtf(recipe.inProgressTexture.toString());
         buffer.writeInt(recipe.getTotalProcessTime());
         buffer.writeInt(recipe.getTotalProcessEnergy());
+
+        buffer.writeInt(recipe.secondaryOutputs.size());
+        for (Lazy<ItemStack> secondaryOutput : recipe.secondaryOutputs)
+            buffer.writeItem(secondaryOutput.get());
     }
 }

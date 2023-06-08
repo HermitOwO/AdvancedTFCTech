@@ -12,13 +12,18 @@ import com.hermitowo.advancedtfctech.common.blockentities.ATTBlockEntities;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerTypes;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+
+import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
 
 public class ATTClientEvents
 {
@@ -30,6 +35,7 @@ public class ATTClientEvents
         bus.addListener(ATTClientEvents::registerModelLoaders);
         bus.addListener(ATTClientEvents::registerLayer);
         bus.addListener(ATTClientEvents::registerRenders);
+        bus.addListener(ATTClientEvents::onTextureStitch);
     }
 
     public static void clientSetup(FMLClientSetupEvent event)
@@ -61,5 +67,15 @@ public class ATTClientEvents
     private static <T extends BlockEntity> void registerBERenderNoContext(EntityRenderersEvent.RegisterRenderers event, BlockEntityType<? extends T> type, Supplier<BlockEntityRenderer<T>> render)
     {
         event.registerBlockEntityRenderer(type, $ -> render.get());
+    }
+
+    public static void onTextureStitch(TextureStitchEvent.Pre event)
+    {
+        final ResourceLocation sheet = event.getAtlas().location();
+        if (sheet.equals(InventoryMenu.BLOCK_ATLAS))
+        {
+            event.addSprite(new ResourceLocation(MOD_ID, "multiblock/burlap"));
+            event.addSprite(new ResourceLocation(MOD_ID, "multiblock/wool"));
+        }
     }
 }

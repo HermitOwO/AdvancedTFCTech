@@ -16,6 +16,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.util.Lazy;
 
 import net.dries007.tfc.compat.jei.category.BaseRecipeCategory;
 
@@ -48,7 +49,8 @@ public class PowerLoomRecipeCategory extends BaseRecipeCategory<PowerLoomRecipe>
         input.addItemStacks(Arrays.asList(recipe.inputs[0].getMatchingStacks()));
         pirn.addItemStacks(Arrays.asList(recipe.inputs[1].getMatchingStacks()));
         output.addItemStack(recipe.output.get());
-        secondaryOutput.addItemStack(ATTItems.PIRN.get().getDefaultInstance());
+        for (Lazy<ItemStack> out : recipe.secondaryOutputs)
+            secondaryOutput.addItemStack(out.get());
 
         input.setBackground(slot, -1, -1);
         pirn.setBackground(slot, -1, -1);

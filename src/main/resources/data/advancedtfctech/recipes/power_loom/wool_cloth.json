@@ -2,22 +2,28 @@
   "__comment__": "This file was automatically created by mcresources",
   "type": "advancedtfctech:power_loom",
   "result": {
-    "count": 4,
-    "base_ingredient": {
-      "item": "tfc:wool_cloth"
-    }
+    "item": "tfc:wool_cloth",
+    "count": 4
   },
+  "secondaries": [
+    {
+      "output": {
+        "item": "advancedtfctech:pirn"
+      }
+    }
+  ],
   "inputs": [
     {
-      "count": 32,
       "base_ingredient": {
         "item": "tfc:wool_yarn"
-      }
+      },
+      "count": 32
     },
     {
       "item": "advancedtfctech:wool_winded_pirn"
     }
   ],
+  "in_progress_texture": "advancedtfctech:multiblock/wool",
   "time": 250,
   "energy": 20000
 }

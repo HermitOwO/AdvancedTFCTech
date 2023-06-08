@@ -28,6 +28,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
@@ -40,6 +41,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
@@ -62,7 +64,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     private static final BlockPos WEAVE_IN_POS_3 = new BlockPos(2, 0, 3);
     private static final BlockPos SECONDARY_WEAVE_IN_POS = new BlockPos(1, 1, 2);
 
-    public NonNullList<ItemStack> inventory = NonNullList.withSize(14, ItemStack.EMPTY);
+    public NonNullList<ItemStack> inventory = NonNullList.withSize(13, ItemStack.EMPTY);
     public List<ItemStack> pirnList = this.getInventory().subList(0, 8);
     public List<ItemStack> inputList = this.getInventory().subList(8, 11);
 
@@ -111,6 +113,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     public boolean animation_rack_side_b = true;
     public boolean animation_rack2_b = true;
     public boolean animation_pirn_b = true;
+    @Nullable public ResourceLocation lastTexture;
 
     @Override
     public void readCustomNBT(CompoundTag nbt, boolean descPacket)
@@ -118,8 +121,9 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         super.readCustomNBT(nbt, descPacket);
         ContainerHelper.loadAllItems(nbt, inventory);
         this.holderRotation = nbt.getInt("holderRotation");
+        this.lastTexture = nbt.contains("lastTexture", Tag.TAG_STRING) ? new ResourceLocation(nbt.getString("lastTexture")) : null;
         short inventoryStatus = nbt.getShort("inventoryStatus");
-        for (int i = 0; i < 14; ++i)
+        for (int i = 0; i < 13; ++i)
         {
             boolean hasServer = (inventoryStatus & 1) != 0;
             boolean hasClient = !inventory.get(i).isEmpty();
@@ -135,9 +139,11 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         super.writeCustomNBT(nbt, descPacket);
         ContainerHelper.saveAllItems(nbt, inventory);
         nbt.putInt("holderRotation", this.holderRotation);
+        if (this.lastTexture != null)
+            nbt.putString("lastTexture", this.lastTexture.toString());
         short packed = 0;
         short mask = 1;
-        for (int i = 0; i < 14; ++i)
+        for (int i = 0; i < 13; ++i)
         {
             if (!inventory.get(i).isEmpty())
                 packed += mask;
@@ -291,16 +297,21 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                         if (!pirn.isEmpty() && !weave.isEmpty())
                         {
                             PowerLoomRecipe recipe = PowerLoomRecipe.findRecipe(level, pirn, weave);
-                            if (recipe != null && (this.inventory.get(12).isEmpty() || this.inventory.get(13).isEmpty()))
+                            ItemStack secondarySlot = this.inventory.get(11);
+                            if (recipe != null && recipe.inputs[0].testIgnoringSize(secondarySlot) && secondarySlot.getCount() >= 16)
                             {
-                                ItemStack secondary = this.inventory.get(11);
-                                if (recipe.inputs[0].testIgnoringSize(secondary) && secondary.getCount() >= 16)
+                                ItemStack outputSlot = this.inventory.get(12);
+                                ItemStack output = recipe.output.get();
+                                if (outputSlot.isEmpty() || (ItemHandlerHelper.canItemStacksStack(outputSlot, output) && outputSlot.getCount() + output.getCount() <= outputSlot.getMaxStackSize()))
                                 {
                                     MultiblockProcessInMachine<PowerLoomRecipe> process = new MultiblockProcessInMachine<>(recipe, this::getRecipeForId, i, j);
                                     if (this.addProcessToQueue(process, true))
                                     {
                                         this.addProcessToQueue(process, false);
                                         update = true;
+
+                                        PowerLoomBlockEntity master = master();
+                                        master.lastTexture = recipe.inProgressTexture;
                                     }
                                 }
                             }
@@ -314,18 +325,15 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                 IItemHandler outputHandler = output.getNullable();
                 if (outputHandler != null)
                 {
-                    for (int j = 12; j < 14; j++)
+                    if (!inventory.get(12).isEmpty())
                     {
-                        if (!inventory.get(j).isEmpty())
+                        ItemStack stack = ItemHandlerHelper.copyStackWithSize(inventory.get(12), 1);
+                        stack = ItemHandlerHelper.insertItem(outputHandler, stack, false);
+                        if (stack.isEmpty())
                         {
-                            ItemStack stack = ItemHandlerHelper.copyStackWithSize(inventory.get(j), 1);
-                            stack = ItemHandlerHelper.insertItem(outputHandler, stack, false);
-                            if (stack.isEmpty())
-                            {
-                                this.inventory.get(j).shrink(1);
-                                if (this.inventory.get(j).getCount() <= 0)
-                                    this.inventory.set(j, ItemStack.EMPTY);
-                            }
+                            this.inventory.get(12).shrink(1);
+                            if (this.inventory.get(12).getCount() <= 0)
+                                this.inventory.set(12, ItemStack.EMPTY);
                         }
                     }
                 }
@@ -375,37 +383,6 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                     sort();
                 }
             }
-        }
-
-        ItemStack holder1 = this.getInventory().get(12);
-        ItemStack holder2 = this.getInventory().get(13);
-        int size1 = holder1.getCount();
-        int size2 = holder2.getCount();
-        int sizeMax = holder1.getMaxStackSize();
-        if (!holder1.isEmpty() && size1 < sizeMax && !holder2.isEmpty() && size2 < sizeMax && holder1.is(holder2.getItem()))
-        {
-            if (size1 + size2 > sizeMax)
-            {
-                if (size1 >= size2)
-                {
-                    int amount = sizeMax - size2;
-                    this.inventory.get(12).shrink(amount);
-                    this.inventory.get(13).grow(amount);
-                }
-                else
-                {
-                    int amount = sizeMax - size1;
-                    this.inventory.get(12).grow(amount);
-                    this.inventory.get(13).shrink(amount);
-                }
-            }
-            else
-            {
-                ItemStack stack = new ItemStack(this.getInventory().get(13).getItem(), this.getInventory().get(12).getCount() + this.getInventory().get(13).getCount());
-                this.inventory.set(12, stack);
-                this.inventory.set(13, ItemStack.EMPTY);
-            }
-            sort();
         }
     }
 
@@ -466,15 +443,33 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                 {
                     for (int i = 8; i < 11; i++)
                     {
-                        if (master.inventory.get(i).isEmpty() && heldItem.is(master.inventory.get(11).getItem()))
+                        if (heldItem.is(master.inventory.get(11).getItem()))
                         {
-                            int size = heldItem.getCount();
-                            ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
-                            stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
-                            if (stack.isEmpty())
+                            if (master.inventory.get(i).isEmpty())
                             {
-                                heldItem.shrink(size);
-                                return true;
+                                int size = heldItem.getCount();
+                                ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
+                                stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
+                                if (stack.isEmpty())
+                                {
+                                    heldItem.shrink(size);
+                                    return true;
+                                }
+                            }
+                            if (master.inventory.get(i).getCount() < master.inventory.get(i).getMaxStackSize())
+                            {
+                                int size = master.inventory.get(i).getMaxStackSize() - master.inventory.get(i).getCount();
+                                ItemStack stack;
+                                if (heldItem.getCount() >= size)
+                                    stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
+                                else
+                                    stack = ItemHandlerHelper.copyStackWithSize(heldItem, heldItem.getCount());
+                                stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
+                                if (stack.isEmpty())
+                                {
+                                    heldItem.shrink(size);
+                                    return true;
+                                }
                             }
                         }
                         if (player.isShiftKeyDown() && master.processQueue.size() < master.getProcessQueueMaxLength())
@@ -508,31 +503,31 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                     }
                     if (player.isShiftKeyDown() && master.processQueue.size() < master.getProcessQueueMaxLength())
                     {
-                        ItemStack stack = master.inventory.get(11);
-                        if (!stack.isEmpty())
+                        if (master.inventory.get(8).isEmpty() && master.inventory.get(9).isEmpty() && master.inventory.get(10).isEmpty())
                         {
-                            player.getInventory().add(stack);
-                            int size = stack.getCount();
-                            stack.shrink(size);
-                            return true;
+                            ItemStack stack = master.inventory.get(11);
+                            if (!stack.isEmpty())
+                            {
+                                player.getInventory().add(stack);
+                                int size = stack.getCount();
+                                stack.shrink(size);
+                                return true;
+                            }
                         }
                     }
                 }
             }
             if (bX == 0 && bY == 0 && (bZ == 1 || bZ == 2 || bZ == 3))
             {
-                for (int i = 12; i < 14; i++)
+                if (player.isShiftKeyDown())
                 {
-                    if (player.isShiftKeyDown())
+                    ItemStack stack = master.inventory.get(12);
+                    if (!stack.isEmpty())
                     {
-                        ItemStack stack = master.inventory.get(i);
-                        if (!stack.isEmpty())
-                        {
-                            player.getInventory().add(stack);
-                            int size = stack.getCount();
-                            stack.shrink(size);
-                            return true;
-                        }
+                        player.getInventory().add(stack);
+                        int size = stack.getCount();
+                        stack.shrink(size);
+                        return true;
                     }
                 }
             }
@@ -569,7 +564,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
 
     private final MultiblockCapability<IItemHandler> outputHandler = MultiblockCapability.make(
         this, be -> be.outputHandler, PowerLoomBlockEntity::master,
-        registerCapability(new IEInventoryHandler(2, this, 12, false, true))
+        registerCapability(new IEInventoryHandler(1, this, 12, false, true))
     );
 
     @Nonnull
@@ -619,7 +614,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     @Override
     public int[] getOutputSlots()
     {
-        return new int[] {12, 13};
+        return new int[] {12};
     }
 
     @Override
@@ -702,13 +697,17 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     @Override
     public void onProcessFinish(MultiblockProcess<PowerLoomRecipe> process)
     {
-        ItemStack stack = ATTItems.PIRN.get().getDefaultInstance();
-        stack = Utils.insertStackIntoInventory(this.secondaryOutput, stack, false);
-        if (!stack.isEmpty())
+        PowerLoomRecipe recipe = process.getRecipe(level);
+        for (Lazy<ItemStack> out : recipe.secondaryOutputs)
         {
-            Direction outDir = getIsMirrored() ? getFacing().getCounterClockWise() : getFacing().getClockWise();
-            BlockPos pos = this.getBlockPosForPos(SECONDARY_OUT_POS).relative(outDir, 1);
-            Utils.dropStackAtPos(level, pos, stack, outDir);
+            ItemStack stack = out.get();
+            stack = Utils.insertStackIntoInventory(this.secondaryOutput, stack, false);
+            if (!stack.isEmpty())
+            {
+                Direction outDir = getIsMirrored() ? getFacing().getCounterClockWise() : getFacing().getClockWise();
+                BlockPos pos = this.getBlockPosForPos(SECONDARY_OUT_POS).relative(outDir, 1);
+                Utils.dropStackAtPos(level, pos, stack, outDir);
+            }
         }
 
         animation_pirn = 0;
