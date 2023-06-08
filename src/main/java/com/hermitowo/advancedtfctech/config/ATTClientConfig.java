@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.ForgeConfigSpec.Builder;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import net.minecraftforge.common.ForgeConfigSpec.*;
 
 import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
 

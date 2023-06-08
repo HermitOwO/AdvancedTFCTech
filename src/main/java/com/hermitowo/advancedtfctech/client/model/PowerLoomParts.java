@@ -27,8 +27,6 @@ public class PowerLoomParts extends Model
     public final ModelPart rack3;
     public final ModelPart rod;
     public final ModelPart holder;
-    public final ModelPart fiber_pirn;
-    public final ModelPart wool_pirn;
 
     public PowerLoomParts(ModelPart root)
     {
@@ -40,8 +38,6 @@ public class PowerLoomParts extends Model
         this.rack3 = root.getChild("rack3");
         this.rod = root.getChild("rod");
         this.holder = root.getChild("holder");
-        this.fiber_pirn = root.getChild("fiber_pirn");
-        this.wool_pirn = root.getChild("wool_pirn");
     }
 
     public static LayerDefinition createBodyLayer()
@@ -117,9 +113,6 @@ public class PowerLoomParts extends Model
         PartDefinition rod = partdefinition.addOrReplaceChild("rod", CubeListBuilder.create().texOffs(384, 71).mirror().addBox(-1.5F, -1.5F, 0.0F, 3.0F, 3.0F, 38.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition holder = partdefinition.addOrReplaceChild("holder", CubeListBuilder.create().texOffs(267, 97).addBox(-3.0F, -3.0F, 0.0F, 6.0F, 6.0F, 10.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
-
-        PartDefinition fiber_pirn = partdefinition.addOrReplaceChild("fiber_pirn", CubeListBuilder.create().texOffs(394, 51).addBox(3.0F, -1.0F, 0.0F, 2.0F, 2.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.7854F));
-        PartDefinition wool_pirn = partdefinition.addOrReplaceChild("wool_pirn", CubeListBuilder.create().texOffs(394, 40).addBox(3.0F, -1.0F, 0.0F, 2.0F, 2.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.7854F));
 
         return LayerDefinition.create(meshdefinition, 512, 128);
     }
