@@ -18,15 +18,17 @@ public class PowerLoomRecipe extends ATTMultiblockRecipe
     public static final CachedRecipeList<PowerLoomRecipe> RECIPES = new CachedRecipeList<>(ATTRecipeTypes.POWER_LOOM);
 
     public final IngredientWithSize[] inputs;
+    public final IngredientWithSize secondaryInput;
     public final Lazy<ItemStack> output;
     public final NonNullList<Lazy<ItemStack>> secondaryOutputs = NonNullList.create();
     public final ResourceLocation inProgressTexture;
 
-    public PowerLoomRecipe(ResourceLocation id, Lazy<ItemStack> output, IngredientWithSize[] inputs, ResourceLocation inProgressTexture, int time, int energy)
+    public PowerLoomRecipe(ResourceLocation id, Lazy<ItemStack> output, IngredientWithSize[] inputs, IngredientWithSize secondaryInput, ResourceLocation inProgressTexture, int time, int energy)
     {
         super(ItemStack.EMPTY, ATTRecipeTypes.POWER_LOOM, id);
         this.output = output;
         this.inputs = inputs;
+        this.secondaryInput = secondaryInput;
         this.inProgressTexture = inProgressTexture;
 
         timeAndEnergy(time, energy);
@@ -53,12 +55,12 @@ public class PowerLoomRecipe extends ATTMultiblockRecipe
         return null;
     }
 
-    public static PowerLoomRecipe findRecipeForRendering(Level level, ItemStack weave)
+    public static PowerLoomRecipe findRecipeForRendering(Level level, ItemStack secondaryInput)
     {
-        if (weave.isEmpty())
+        if (secondaryInput.isEmpty())
             return null;
         for (PowerLoomRecipe recipe : RECIPES.getRecipes(level))
-            if (recipe.isValidWeave(weave))
+            if (recipe.isValidSecondaryInput(secondaryInput))
                 return recipe;
         return null;
     }
@@ -95,6 +97,19 @@ public class PowerLoomRecipe extends ATTMultiblockRecipe
     {
         for (PowerLoomRecipe recipe : RECIPES.getRecipes(level))
             if (recipe != null && recipe.isValidWeave(stack))
+                return true;
+        return false;
+    }
+
+    public boolean isValidSecondaryInput(ItemStack stack)
+    {
+        return this.secondaryInput != null && this.secondaryInput.testIgnoringSize(stack);
+    }
+
+    public static boolean isValidSecondaryInput(Level level, ItemStack stack)
+    {
+        for (PowerLoomRecipe recipe : RECIPES.getRecipes(level))
+            if (recipe != null && recipe.isValidSecondaryInput(stack))
                 return true;
         return false;
     }

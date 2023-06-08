@@ -33,6 +33,8 @@ DEFAULT_LANG = {
     'tfc.jei.power_loom': 'Power Loom',
 
     'manual.advancedtfctech.advancedtfctech': 'TerraFirmaCraft Tech',
+
+    'advancedtfctech.jei.not_consumed': 'Not Consumed'
 }
 
 def lang(key: str, *args) -> str:

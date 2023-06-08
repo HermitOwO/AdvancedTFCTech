@@ -42,9 +42,9 @@ public class ThresherRecipeCategory extends BaseRecipeCategory<ThresherRecipe>
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, ThresherRecipe recipe, IFocusGroup focuses)
     {
-        IRecipeSlotBuilder input = builder.addSlot(RecipeIngredientRole.INPUT, 20, 10);
-        IRecipeSlotBuilder output = builder.addSlot(RecipeIngredientRole.OUTPUT, 84, 0);
-        IRecipeSlotBuilder secondaryOutput = builder.addSlot(RecipeIngredientRole.OUTPUT, 84, 20);
+        IRecipeSlotBuilder input = builder.addSlot(RecipeIngredientRole.INPUT, 20, 11);
+        IRecipeSlotBuilder output = builder.addSlot(RecipeIngredientRole.OUTPUT, 84, 1);
+        IRecipeSlotBuilder secondaryOutput = builder.addSlot(RecipeIngredientRole.OUTPUT, 84, 21);
 
         final Ingredient ingredient = recipe.input.getBaseIngredient();
         final List<ItemStack> inputList = List.of(ingredient.getItems());
@@ -62,7 +62,7 @@ public class ThresherRecipeCategory extends BaseRecipeCategory<ThresherRecipe>
     @Override
     public void draw(ThresherRecipe recipe, IRecipeSlotsView recipeSlots, PoseStack stack, double mouseX, double mouseY)
     {
-        gears.draw(stack, 50, 12);
-        gearsAnimated.draw(stack, 50, 12);
+        gears.draw(stack, 49, 11);
+        gearsAnimated.draw(stack, 49, 11);
     }
 }

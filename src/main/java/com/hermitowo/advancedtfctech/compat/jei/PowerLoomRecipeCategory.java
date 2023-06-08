@@ -3,7 +3,6 @@ package com.hermitowo.advancedtfctech.compat.jei;
 import java.util.Arrays;
 import com.hermitowo.advancedtfctech.api.crafting.PowerLoomRecipe;
 import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
-import com.hermitowo.advancedtfctech.common.items.ATTItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
@@ -18,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.Lazy;
 
+import net.dries007.tfc.common.recipes.ingredients.ItemStackIngredient;
 import net.dries007.tfc.compat.jei.category.BaseRecipeCategory;
 
 import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
@@ -31,7 +31,7 @@ public class PowerLoomRecipeCategory extends BaseRecipeCategory<PowerLoomRecipe>
 
     public PowerLoomRecipeCategory(RecipeType<PowerLoomRecipe> type, IGuiHelper helper)
     {
-        super(type, helper, helper.createBlankDrawable(120, 38), new ItemStack(ATTBlocks.Multiblocks.POWER_LOOM.get()));
+        super(type, helper, helper.createBlankDrawable(150, 38), new ItemStack(ATTBlocks.Multiblocks.POWER_LOOM.get()));
         arrows = helper.createDrawable(ICONS, 0, 118, 22, 16);
         IDrawableStatic arrowAnimated = helper.createDrawable(ICONS, 22, 118, 22, 16);
         this.arrowsAnimated = helper.createAnimatedDrawable(arrowAnimated, 80, IDrawableAnimated.StartDirection.LEFT, false);
@@ -41,19 +41,22 @@ public class PowerLoomRecipeCategory extends BaseRecipeCategory<PowerLoomRecipe>
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, PowerLoomRecipe recipe, IFocusGroup focuses)
     {
-        IRecipeSlotBuilder input = builder.addSlot(RecipeIngredientRole.INPUT, 20, 0);
-        IRecipeSlotBuilder pirn = builder.addSlot(RecipeIngredientRole.INPUT, 20, 20);
-        IRecipeSlotBuilder output = builder.addSlot(RecipeIngredientRole.OUTPUT, 84, 0);
-        IRecipeSlotBuilder secondaryOutput = builder.addSlot(RecipeIngredientRole.OUTPUT, 84, 20);
+        IRecipeSlotBuilder input = builder.addSlot(RecipeIngredientRole.INPUT, 40, 1);
+        IRecipeSlotBuilder pirn = builder.addSlot(RecipeIngredientRole.INPUT, 40, 21);
+        IRecipeSlotBuilder secondaryInput = builder.addSlot(RecipeIngredientRole.CATALYST, 20, 11).addTooltipCallback(ATTJEIPlugin.notConsumedTooltipCallback);
+        IRecipeSlotBuilder output = builder.addSlot(RecipeIngredientRole.OUTPUT, 114, 1);
+        IRecipeSlotBuilder secondaryOutput = builder.addSlot(RecipeIngredientRole.OUTPUT, 114, 21);
 
         input.addItemStacks(Arrays.asList(recipe.inputs[0].getMatchingStacks()));
         pirn.addItemStacks(Arrays.asList(recipe.inputs[1].getMatchingStacks()));
+        secondaryInput.addItemStacks(collapse(new ItemStackIngredient(recipe.secondaryInput.getBaseIngredient(), recipe.secondaryInput.getCount())));
         output.addItemStack(recipe.output.get());
         for (Lazy<ItemStack> out : recipe.secondaryOutputs)
             secondaryOutput.addItemStack(out.get());
 
         input.setBackground(slot, -1, -1);
         pirn.setBackground(slot, -1, -1);
+        secondaryInput.setBackground(slot, -1, -1);
         output.setBackground(slot, -1, -1);
         secondaryOutput.setBackground(slot, -1, -1);
     }
@@ -61,7 +64,7 @@ public class PowerLoomRecipeCategory extends BaseRecipeCategory<PowerLoomRecipe>
     @Override
     public void draw(PowerLoomRecipe recipe, IRecipeSlotsView recipeSlots, PoseStack stack, double mouseX, double mouseY)
     {
-        arrows.draw(stack, 50, 12);
-        arrowsAnimated.draw(stack, 50, 12);
+        arrows.draw(stack, 74, 11);
+        arrowsAnimated.draw(stack, 74, 11);
     }
 }

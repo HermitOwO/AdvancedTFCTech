@@ -13,6 +13,7 @@ import com.hermitowo.advancedtfctech.client.screen.ThresherScreen;
 import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.gui.ingredient.IRecipeSlotTooltipCallback;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
@@ -37,6 +38,8 @@ public class ATTJEIPlugin implements IModPlugin
     {
         return new ResourceLocation(MOD_ID, "jei");
     }
+
+    public static IRecipeSlotTooltipCallback notConsumedTooltipCallback = new NotConsumedTooltipCallback();
 
     private static <C extends Container, T extends Recipe<C>> List<T> getRecipes(net.minecraft.world.item.crafting.RecipeType<T> type)
     {

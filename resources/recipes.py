@@ -29,6 +29,7 @@ def generate(rm:ResourceManager):
             result = utils.item_stack(str(weave.output_amount) + ' tfc:' + cloth),
             secondaries = [{'output': ingredient_with_size('advancedtfctech:pirn')}],
             inputs = ingredient_with_size_list((str(weave.input_amount) + ' ' + weave.ingredient, 'advancedtfctech:%s' % weave.pirn)),
+            secondary_input = ingredient_with_size('16 ' + weave.ingredient),
             in_progress_texture = weave.in_progress_texture,
             time = weave.time,
             energy = weave.energy)
@@ -102,11 +103,12 @@ def grist_mill_recipe(rm: ResourceManager, name_parts: utils.ResourceIdentifier,
         'energy': energy
     })
 
-def power_loom_recipe(rm: ResourceManager, name_parts: utils.ResourceIdentifier, result: Json, secondaries: list, inputs: Json, in_progress_texture: str, time: int, energy: int):
+def power_loom_recipe(rm: ResourceManager, name_parts: utils.ResourceIdentifier, result: Json, secondaries: list, inputs: Json, secondary_input: Json, in_progress_texture: str, time: int, energy: int):
     rm.recipe(('power_loom', name_parts), 'advancedtfctech:power_loom', {
         'result': utils.item_stack(result),
         'secondaries': secondaries,
         'inputs': ingredient_with_size_list(inputs),
+        'secondary_input': secondary_input,
         'in_progress_texture': in_progress_texture,
         'time': time,
         'energy': energy

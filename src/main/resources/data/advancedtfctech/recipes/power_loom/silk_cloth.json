@@ -23,6 +23,12 @@
       "item": "advancedtfctech:silk_winded_pirn"
     }
   ],
+  "secondary_input": {
+    "base_ingredient": {
+      "item": "minecraft:string"
+    },
+    "count": 16
+  },
   "in_progress_texture": "advancedtfctech:multiblock/wool",
   "time": 250,
   "energy": 20000

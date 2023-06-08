@@ -298,7 +298,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                         {
                             PowerLoomRecipe recipe = PowerLoomRecipe.findRecipe(level, pirn, weave);
                             ItemStack secondarySlot = this.inventory.get(11);
-                            if (recipe != null && recipe.inputs[0].testIgnoringSize(secondarySlot) && secondarySlot.getCount() >= 16)
+                            if (recipe != null && recipe.secondaryInput.test(secondarySlot))
                             {
                                 ItemStack outputSlot = this.inventory.get(12);
                                 ItemStack output = recipe.output.get();
@@ -443,7 +443,8 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                 {
                     for (int i = 8; i < 11; i++)
                     {
-                        if (heldItem.is(master.inventory.get(11).getItem()))
+                        PowerLoomRecipe recipe = PowerLoomRecipe.findRecipeForRendering(level, master.inventory.get(11));
+                        if (recipe != null && recipe.inputs[0].testIgnoringSize(heldItem))
                         {
                             if (master.inventory.get(i).isEmpty())
                             {
@@ -488,10 +489,24 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
             }
             if (bX == 1 && bY == 1 && bZ == 2)
             {
+                if (player.isShiftKeyDown() && master.processQueue.size() < master.getProcessQueueMaxLength())
+                {
+                    if (master.inventory.get(8).isEmpty() && master.inventory.get(9).isEmpty() && master.inventory.get(10).isEmpty())
+                    {
+                        ItemStack stack = master.inventory.get(11);
+                        if (!stack.isEmpty())
+                        {
+                            player.getInventory().add(stack);
+                            int size = stack.getCount();
+                            stack.shrink(size);
+                            return true;
+                        }
+                    }
+                }
                 IItemHandler insertionHandler = secondaryInput.getNullable();
                 if (insertionHandler != null)
                 {
-                    if (master.inventory.get(11).isEmpty() && PowerLoomRecipe.isValidWeaveInput(level, heldItem) && heldItem.getCount() >= 16)
+                    if (master.inventory.get(11).isEmpty() && PowerLoomRecipe.isValidSecondaryInput(level, heldItem) && heldItem.getCount() >= 16)
                     {
                         ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, 16);
                         stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
@@ -501,16 +516,20 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                             return true;
                         }
                     }
-                    if (player.isShiftKeyDown() && master.processQueue.size() < master.getProcessQueueMaxLength())
+                    if (master.inventory.get(11).getCount() < 16)
                     {
                         if (master.inventory.get(8).isEmpty() && master.inventory.get(9).isEmpty() && master.inventory.get(10).isEmpty())
                         {
-                            ItemStack stack = master.inventory.get(11);
-                            if (!stack.isEmpty())
+                            int size = 16 - master.inventory.get(11).getCount();
+                            ItemStack stack;
+                            if (heldItem.getCount() >= size)
+                                stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
+                            else
+                                stack = ItemHandlerHelper.copyStackWithSize(heldItem, heldItem.getCount());
+                            stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
+                            if (stack.isEmpty())
                             {
-                                player.getInventory().add(stack);
-                                int size = stack.getCount();
-                                stack.shrink(size);
+                                heldItem.shrink(size);
                                 return true;
                             }
                         }
@@ -650,8 +669,10 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     {
         if (slot >= 0 && slot < 8)
             return PowerLoomRecipe.isValidPirnInput(level, stack);
-        if (slot >= 8 && slot < 12)
+        if (slot >= 8 && slot < 11)
             return PowerLoomRecipe.isValidWeaveInput(level, stack);
+        if (slot == 11)
+            return PowerLoomRecipe.isValidSecondaryInput(level, stack);
         return false;
     }
 
@@ -678,9 +699,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         PowerLoomRecipe recipe = process.getRecipe(level);
         ItemStack stack = this.getInventory().get(11);
         if (recipe != null && !stack.isEmpty())
-        {
-            return recipe.inputs[0].testIgnoringSize(stack) && stack.getCount() == 16;
-        }
+            return recipe.secondaryInput.test(stack);
         return false;
     }
 

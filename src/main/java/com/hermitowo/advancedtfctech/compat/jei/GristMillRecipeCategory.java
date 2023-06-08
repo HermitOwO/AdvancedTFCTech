@@ -41,8 +41,8 @@ public class GristMillRecipeCategory extends BaseRecipeCategory<GristMillRecipe>
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, GristMillRecipe recipe, IFocusGroup focuses)
     {
-        IRecipeSlotBuilder input = builder.addSlot(RecipeIngredientRole.INPUT, 20, 10);
-        IRecipeSlotBuilder output = builder.addSlot(RecipeIngredientRole.OUTPUT, 84, 10);
+        IRecipeSlotBuilder input = builder.addSlot(RecipeIngredientRole.INPUT, 20, 11);
+        IRecipeSlotBuilder output = builder.addSlot(RecipeIngredientRole.OUTPUT, 84, 11);
 
         final Ingredient ingredient = recipe.input.getBaseIngredient();
         final List<ItemStack> inputList = List.of(ingredient.getItems());
@@ -57,7 +57,7 @@ public class GristMillRecipeCategory extends BaseRecipeCategory<GristMillRecipe>
     @Override
     public void draw(GristMillRecipe recipe, IRecipeSlotsView recipeSlots, PoseStack stack, double mouseX, double mouseY)
     {
-        gears.draw(stack, 50, 12);
-        gearsAnimated.draw(stack, 50, 12);
+        gears.draw(stack, 49, 11);
+        gearsAnimated.draw(stack, 49, 11);
     }
 }

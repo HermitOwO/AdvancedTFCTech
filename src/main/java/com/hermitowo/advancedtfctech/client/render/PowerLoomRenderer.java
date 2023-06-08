@@ -233,7 +233,7 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
                 poseStack.popPose();
             }
 
-            if (be.inventory.get(11).getCount() >= 16)
+            if (be.inventory.get(11).getCount() >= recipe.secondaryInput.getCount())
             {
                 // Rods
                 poseStack.pushPose();

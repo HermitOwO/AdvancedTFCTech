@@ -23,6 +23,12 @@
       "item": "advancedtfctech:fiber_winded_pirn"
     }
   ],
+  "secondary_input": {
+    "base_ingredient": {
+      "item": "tfc:jute_fiber"
+    },
+    "count": 16
+  },
   "in_progress_texture": "advancedtfctech:multiblock/burlap",
   "time": 500,
   "energy": 40000
