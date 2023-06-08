@@ -62,6 +62,64 @@ public class RenderHelper
         putVertex(wr, stack, x1, y0, z0, u0, v0 + dY, normalX, normalY, normalZ, light);
     }
 
+    public static void renderTexturedPirn(VertexConsumer wr, PoseStack stack, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, TextureAtlasSprite texture, int light)
+    {
+        float pixel = (texture.getU1() - texture.getU0()) / texture.getWidth();
+        float u0 = texture.getU0();
+        float v0 = texture.getV0();
+
+        float x0 = minX / 16;
+        float y0 = minY / 16;
+        float z0 = minZ / 16;
+        float x1 = maxX / 16;
+        float y1 = maxY / 16;
+        float z1 = maxZ / 16;
+
+        float dX = (maxX - minX) * pixel;
+        float dY = (maxY - minY) * pixel;
+        float dZ = (maxZ - minZ) * pixel;
+
+        float s = dX + Math.abs(dY - dZ);
+
+        float normalX = 0;
+        float normalY = 0;
+        float normalZ = 1;
+
+        putVertex(wr, stack, x0, y0, z1, u0 + s, v0 + s, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x1, y0, z1, u0 + dX + s, v0 + s, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x1, y1, z1, u0 + dX + s, v0 + dY + s, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x0, y1, z1, u0 + s, v0 + dY + s, normalX, normalY, normalZ, light);
+        normalZ = -1;
+        putVertex(wr, stack, x0, y1, z0, u0 + s , v0 + s, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x1, y1, z0, u0 + dX + s, v0 + s, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x1, y0, z0, u0 + dX + s, v0 + dY + s, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x0, y0, z0, u0 + s, v0 + dY + s, normalX, normalY, normalZ, light);
+
+        normalZ = 0;
+        normalY = -1;
+        putVertex(wr, stack, x0, y0, z0, u0 + s, v0, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x1, y0, z0, u0 + dX + s, v0, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x1, y0, z1, u0 + dX + s, v0 + dZ, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x0, y0, z1, u0 + s, v0 + dZ, normalX, normalY, normalZ, light);
+        normalY = 1;
+        putVertex(wr, stack, x0, y1, z1, u0 + s, v0, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x1, y1, z1, u0 + dX + s, v0, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x1, y1, z0, u0 + dX + s, v0 + dZ, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x0, y1, z0, u0 + s, v0 + dZ, normalX, normalY, normalZ, light);
+
+        normalY = 0;
+        normalX = -1;
+        putVertex(wr, stack, x0, y0, z0, u0, v0 + s, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x0, y0, z1, u0 + dZ, v0 + s, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x0, y1, z1, u0 + dZ, v0 + dY + s, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x0, y1, z0, u0, v0 + dY + s, normalX, normalY, normalZ, light);
+        normalX = 1;
+        putVertex(wr, stack, x1, y1, z0, u0, v0 + s, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x1, y1, z1, u0 + dZ, v0 + s, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x1, y0, z1, u0 + dZ, v0 + dY + s, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x1, y0, z0, u0, v0 + dY + s, normalX, normalY, normalZ, light);
+    }
+
     private static void putVertex(VertexConsumer b, PoseStack mat, float x, float y, float z, float u, float v, float nX, float nY, float nZ, int light)
     {
         b.vertex(mat.last().pose(), x, y, z)

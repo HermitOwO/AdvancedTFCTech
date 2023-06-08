@@ -15,9 +15,9 @@ class Weave(NamedTuple):
     energy: int
 
 LOOM: Dict[str, Weave] = {
-    'burlap_cloth': Weave('tfc:jute_fiber', 'fiber_winded_pirn', 48, 8, 'advancedtfctech:multiblock/burlap', 500, 40000),
-    'silk_cloth': Weave('minecraft:string', 'silk_winded_pirn', 32, 4, 'advancedtfctech:multiblock/wool', 250, 20000),
-    'wool_cloth': Weave('tfc:wool_yarn', 'wool_winded_pirn', 32, 4, 'advancedtfctech:multiblock/wool', 250, 20000)
+    'burlap_cloth': Weave('tfc:jute_fiber', 'fiber_winded_pirn', 48, 8, 'advancedtfctech:multiblock/power_loom/burlap', 500, 40000),
+    'silk_cloth': Weave('minecraft:string', 'silk_winded_pirn', 32, 4, 'advancedtfctech:multiblock/power_loom/wool', 250, 20000),
+    'wool_cloth': Weave('tfc:wool_yarn', 'wool_winded_pirn', 32, 4, 'advancedtfctech:multiblock/power_loom/wool', 250, 20000)
 }
 
 DEFAULT_LANG = {

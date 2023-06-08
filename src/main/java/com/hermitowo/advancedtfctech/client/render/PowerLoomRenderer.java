@@ -1,12 +1,15 @@
 package com.hermitowo.advancedtfctech.client.render;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.render.tile.BERenderUtils;
 import blusunrize.immersiveengineering.client.render.tile.IEBlockEntityRenderer;
 import com.hermitowo.advancedtfctech.api.crafting.PowerLoomRecipe;
 import com.hermitowo.advancedtfctech.client.model.PowerLoomParts;
 import com.hermitowo.advancedtfctech.common.blockentities.PowerLoomBlockEntity;
-import com.hermitowo.advancedtfctech.common.items.ATTItems;
+import com.hermitowo.advancedtfctech.config.ATTConfig;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
@@ -121,12 +124,6 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
         poseStack.popPose();
 
         // Holder
-        ItemStack stack = be.pirnList.stream().filter(s -> !s.isEmpty()).findAny().orElse(ItemStack.EMPTY);
-        int amountPirns = 0;
-        for (int i = 0; i < 8; i++)
-            amountPirns += be.getInventory().get(i).getCount();
-        amountPirns = active ? amountPirns - 1 : amountPirns;
-
         poseStack.pushPose();
 
         rotateAndTranslate(poseStack, facing, -0.78125, -1.625, 2);
@@ -139,6 +136,32 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
 
         poseStack.popPose();
 
+        /*
+         *
+         */
+
+        VertexConsumer consumer = bufferMirrored.getBuffer(RenderType.solid());
+        TextureAtlas blockMap = ClientUtils.mc().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS);
+
+        ItemStack pirn = be.pirnList.stream().filter(s -> !s.isEmpty()).findAny().orElse(ItemStack.EMPTY);
+        int amountPirns = 0;
+        for (int i = 0; i < 8; i++)
+            amountPirns += be.getInventory().get(i).getCount();
+        amountPirns = active ? amountPirns - 1 : amountPirns;
+
+        TextureAtlasSprite pirnTexture = blockMap.getSprite(new ResourceLocation("forge:white"));
+
+        List<List<? extends String>> pirnTextureList = new ArrayList<>(Arrays.asList(
+            Arrays.asList("advancedtfctech:fiber_winded_pirn", "advancedtfctech:multiblock/power_loom/fiber_winded_pirn"),
+            Arrays.asList("advancedtfctech:silk_winded_pirn", "advancedtfctech:multiblock/power_loom/wool_winded_pirn"),
+            Arrays.asList("advancedtfctech:wool_winded_pirn", "advancedtfctech:multiblock/power_loom/wool_winded_pirn")));
+
+        pirnTextureList.addAll(ATTConfig.CLIENT.additionalPowerLoomPirnTextures.get());
+
+        for (List<? extends String> list : pirnTextureList)
+            if (list.get(0).equals(pirn.getItem().getRegistryName().toString()))
+                pirnTexture = blockMap.getSprite(new ResourceLocation(list.get(1)));
+
         // Pirns
         for (int i = 0; i < amountPirns; i++)
         {
@@ -149,14 +172,11 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
 
             poseStack.mulPose(Vector3f.ZP.rotationDegrees(be.animation_pirn + 45.0F));
 
-            poseStack.mulPose(Vector3f.ZN.rotationDegrees(45.0F * (i + 1)));
+            poseStack.mulPose(Vector3f.ZN.rotationDegrees(45.0F * i));
             if (active)
                 poseStack.mulPose(Vector3f.ZN.rotationDegrees(45.0F));
 
-            if (stack.is(ATTItems.FIBER_WINDED_PIRN.get()))
-                powerLoomModel.fiber_pirn.render(poseStack, vertexConsumer, combinedLight, combinedOverlay);
-            else
-                powerLoomModel.wool_pirn.render(poseStack, vertexConsumer, combinedLight, combinedOverlay);
+            RenderHelper.renderTexturedPirn(consumer, poseStack, -1, -5, 0, 1, -3, 9, pirnTexture, combinedLight);
 
             poseStack.popPose();
         }
@@ -168,22 +188,15 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
             rotateAndTranslate(poseStack, facing, -0.78125, -1.625, 2);
             rotateForFacingMirrored(poseStack, facing, isMirrored);
 
-            poseStack.mulPose(Vector3f.ZP.rotationDegrees(be.animation_pirn));
-
-            poseStack.mulPose(Vector3f.ZN.rotationDegrees(45.0F));
             poseStack.translate(be.animation_pirn_x - be.animation_pirn_x2, be.animation_pirn_y, -be.animation_pirn_z);
-            poseStack.mulPose(Vector3f.ZP.rotationDegrees(45.0F));
 
-            if (stack.is(ATTItems.FIBER_WINDED_PIRN.get()))
-                powerLoomModel.fiber_pirn.render(poseStack, vertexConsumer, combinedLight, combinedOverlay);
-            else
-                powerLoomModel.wool_pirn.render(poseStack, vertexConsumer, combinedLight, combinedOverlay);
+            poseStack.mulPose(Vector3f.ZP.rotationDegrees(be.animation_pirn + 45.0F));
+
+            RenderHelper.renderTexturedPirn(consumer, poseStack, -1, -5, 0, 1, -3, 9, pirnTexture, combinedLight);
 
             poseStack.popPose();
         }
 
-        TextureAtlas blockMap = ClientUtils.mc().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS);
-        VertexConsumer consumer = bufferMirrored.getBuffer(RenderType.solid());
         PowerLoomRecipe recipe = PowerLoomRecipe.findRecipeForRendering(be.getLevel(), be.inventory.get(11));
         TextureAtlasSprite outputTexture = blockMap.getSprite(be.lastTexture);
 

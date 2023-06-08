@@ -128,11 +128,5 @@ public abstract class ATTSlot extends Slot
         {
             return false;
         }
-
-        @Override
-        public int getMaxStackSize()
-        {
-            return 16;
-        }
     }
 }

@@ -70,9 +70,9 @@ public class PowerLoomParts extends Model
             .texOffs(338, 88).addBox(-69.5F, -27.0F, -11.0F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F))
             .texOffs(338, 88).addBox(-69.5F, -27.0F, -9.0F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(93.5F, -3.0F, -19.5F));
 
-        PartDefinition woodrack = rack.addOrReplaceChild("woodrack", CubeListBuilder.create().texOffs(165, 20).addBox(-88.5F, -23.0F, -48.0F, 5.0F, 3.0F, 62.0F, new CubeDeformation(0.0F))
-            .texOffs(301, 103).mirror().addBox(-87.5F, -30.0F, -47.0F, 3.0F, 7.0F, 3.0F, new CubeDeformation(0.0F)).mirror(false)
-            .texOffs(282, 0).addBox(-88.0F, -35.0F, -48.0F, 5.0F, 5.0F, 62.0F, new CubeDeformation(0.0F)), PartPose.offset(111.0F, 0.0F, 0.0F));
+        PartDefinition woodrack = rack.addOrReplaceChild("woodrack", CubeListBuilder.create().texOffs(165, 20).addBox(-89.0F, -23.0F, -48.0F, 5.0F, 3.0F, 62.0F, new CubeDeformation(0.0F))
+            .texOffs(301, 103).mirror().addBox(-88.0F, -30.0F, -47.0F, 3.0F, 7.0F, 3.0F, new CubeDeformation(0.0F)).mirror(false)
+            .texOffs(282, 0).addBox(-89.0F, -35.0F, -48.0F, 5.0F, 5.0F, 62.0F, new CubeDeformation(0.0F)), PartPose.offset(111.0F, 0.0F, 0.0F));
 
         PartDefinition rack_side = partdefinition.addOrReplaceChild("rack_side", CubeListBuilder.create().texOffs(301, 103).addBox(-38.0F, -10.0F, -3.0F, 3.0F, 7.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(-49.5F, -20.0F, 13.0F));
 

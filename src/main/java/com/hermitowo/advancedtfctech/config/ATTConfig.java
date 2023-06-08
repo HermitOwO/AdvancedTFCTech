@@ -10,6 +10,7 @@ import net.dries007.tfc.util.Helpers;
 
 public class ATTConfig
 {
+    public static final ATTClientConfig CLIENT = register(ModConfig.Type.CLIENT, ATTClientConfig::new);
     public static final ATTServerConfig SERVER = register(ModConfig.Type.SERVER, ATTServerConfig::new);
 
     public static void init() {}

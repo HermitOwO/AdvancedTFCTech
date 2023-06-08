@@ -459,12 +459,9 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                             }
                             if (master.inventory.get(i).getCount() < master.inventory.get(i).getMaxStackSize())
                             {
-                                int size = master.inventory.get(i).getMaxStackSize() - master.inventory.get(i).getCount();
-                                ItemStack stack;
-                                if (heldItem.getCount() >= size)
-                                    stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
-                                else
-                                    stack = ItemHandlerHelper.copyStackWithSize(heldItem, heldItem.getCount());
+                                int remaining = master.inventory.get(i).getMaxStackSize() - master.inventory.get(i).getCount();
+                                int size = Math.min(heldItem.getCount(), remaining);
+                                ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
                                 stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
                                 if (stack.isEmpty())
                                 {
@@ -506,26 +503,26 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                 IItemHandler insertionHandler = secondaryInput.getNullable();
                 if (insertionHandler != null)
                 {
-                    if (master.inventory.get(11).isEmpty() && PowerLoomRecipe.isValidSecondaryInput(level, heldItem) && heldItem.getCount() >= 16)
+                    PowerLoomRecipe recipe = PowerLoomRecipe.findRecipeForRendering(level, heldItem);
+                    if (recipe != null)
                     {
-                        ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, 16);
-                        stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
-                        if (stack.isEmpty())
+                        ItemStack secondarySlot = master.inventory.get(11);
+                        if (secondarySlot.isEmpty())
                         {
-                            heldItem.shrink(16);
-                            return true;
+                            int size = Math.min(heldItem.getCount(), recipe.secondaryInput.getCount());
+                            ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
+                            stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
+                            if (stack.isEmpty())
+                            {
+                                heldItem.shrink(size);
+                                return true;
+                            }
                         }
-                    }
-                    if (master.inventory.get(11).getCount() < 16)
-                    {
-                        if (master.inventory.get(8).isEmpty() && master.inventory.get(9).isEmpty() && master.inventory.get(10).isEmpty())
+                        if (secondarySlot.is(heldItem.getItem()) && secondarySlot.getCount() < recipe.secondaryInput.getCount())
                         {
-                            int size = 16 - master.inventory.get(11).getCount();
-                            ItemStack stack;
-                            if (heldItem.getCount() >= size)
-                                stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
-                            else
-                                stack = ItemHandlerHelper.copyStackWithSize(heldItem, heldItem.getCount());
+                            int remaining = recipe.secondaryInput.getCount() - secondarySlot.getCount();
+                            int size = Math.min(heldItem.getCount(), remaining);
+                            ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
                             stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
                             if (stack.isEmpty())
                             {
@@ -681,8 +678,6 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     {
         if (slot >= 0 && slot < 8)
             return 1;
-        if (slot == 11)
-            return 16;
         return 64;
     }
 

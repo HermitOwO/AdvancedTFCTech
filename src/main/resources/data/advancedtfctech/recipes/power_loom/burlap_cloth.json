@@ -29,7 +29,7 @@
     },
     "count": 16
   },
-  "in_progress_texture": "advancedtfctech:multiblock/burlap",
+  "in_progress_texture": "advancedtfctech:multiblock/power_loom/burlap",
   "time": 500,
   "energy": 40000
 }
