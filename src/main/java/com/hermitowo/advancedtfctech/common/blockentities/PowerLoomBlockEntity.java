@@ -333,7 +333,10 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                         {
                             this.inventory.get(12).shrink(1);
                             if (this.inventory.get(12).getCount() <= 0)
+                            {
                                 this.inventory.set(12, ItemStack.EMPTY);
+                                update = true;
+                            }
                         }
                     }
                 }
