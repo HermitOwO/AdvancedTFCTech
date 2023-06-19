@@ -52,14 +52,14 @@ def make_book(rm: ResourceManager, i18n: I18n, local_instance: bool = False):
                 (' SSS ', ' MMM ', '     '),
                 (' S S ', 'LMFML', ' S S '),
                 ('RSSS ', 'TH0HL', ' SSS ')), mapping={
-                    "S": "immersiveengineering:steel_scaffolding_standard",
-                    "M": "immersiveengineering:sheetmetal_steel",
-                    "T": "immersiveengineering:storage_steel",
-                    "F": "immersiveengineering:steel_fence",
-                    "L": "immersiveengineering:light_engineering",
-                    "H": "immersiveengineering:heavy_engineering",
-                    "R": "immersiveengineering:rs_engineering",
-                    "0": "immersiveengineering:heavy_engineering"
+                    'S': 'immersiveengineering:steel_scaffolding_standard',
+                    'M': 'immersiveengineering:sheetmetal_steel',
+                    'T': 'immersiveengineering:storage_steel',
+                    'F': 'immersiveengineering:steel_fence',
+                    'L': 'immersiveengineering:light_engineering',
+                    'H': 'immersiveengineering:heavy_engineering',
+                    'R': 'immersiveengineering:rs_engineering',
+                    '0': 'immersiveengineering:heavy_engineering'
                 }),
             text('The $(thing)Power Loom$() is an innovative solution to a growing demand for textiles.$(br2)To automate the weaving process, a shuttle containing a pirn spooled with yarn is rapidly sent back and forth between two perpendicular sets of strung yarn alternating between high and low positions.$(br2)In order to operate the Power Loom, $(thing)pirns spooled with a selected yarn/fiber$() must be put on the holder located at the $(thing)side$() of the machine.'),
             text('Before the loom can operate, it must be primed with $(thing)16 of the selected yarn/fiber$() by $(item)rightclicking$() with the yarn/fiber on the \'grill\' in the $(thing)center$() of the machine.$(br2)Then, $(thing)input yarn/fiber$() can be put with the same method on the $(thing)lower beam on the machine\'s shorter side$().$(br2)Output may be retrieved by a storage device placed in the $(thing)center of the output side$(), or by $(item)shift-rightclicking$() on the back.'),
@@ -71,11 +71,11 @@ def make_book(rm: ResourceManager, i18n: I18n, local_instance: bool = False):
                 ('   ', 'MHM', '   '),
                 ('MMM', 'LLR', 'MLM'),
                 ('MLM', 'M0M', 'MMM')), mapping={
-                    "M": "immersiveengineering:sheetmetal_steel",
-                    "L": "immersiveengineering:light_engineering",
-                    "R": "immersiveengineering:rs_engineering",
-                    "H": "minecraft:hopper",
-                    "0": "immersiveengineering:light_engineering"
+                    'M': 'immersiveengineering:sheetmetal_steel',
+                    'L': 'immersiveengineering:light_engineering',
+                    'R': 'immersiveengineering:rs_engineering',
+                    'H': 'minecraft:hopper',
+                    '0': 'immersiveengineering:light_engineering'
             }),
             text('The $(thing)Thresher$() separates chaff from grain using rotating cylinders and mechanical power.$(br2)Items can be inputted from the top by a Hopper or a Dropping Conveyor Belt.$(br2)By default, it consumes 80IF/t.')
         )),
@@ -85,14 +85,14 @@ def make_book(rm: ResourceManager, i18n: I18n, local_instance: bool = False):
                 ('   ', ' H ', '   ', '   '),
                 (' L ', 'RLM', 'mTm', 'mLm'),
                 ('SMS', 'S0L', 'SSS', 'SMS')), mapping={
-                    "S": "immersiveengineering:steel_scaffolding_standard",
-                    "M": "immersiveengineering:sheetmetal_steel",
-                    "m": "immersiveengineering:slab_sheetmetal_steel",
-                    "T": "immersiveengineering:storage_steel",
-                    "L": "immersiveengineering:light_engineering",
-                    "R": "immersiveengineering:rs_engineering",
-                    "H": "minecraft:hopper",
-                    "0": "immersiveengineering:steel_scaffolding_standard"
+                    'S': 'immersiveengineering:steel_scaffolding_standard',
+                    'M': 'immersiveengineering:sheetmetal_steel',
+                    'm': 'immersiveengineering:slab_sheetmetal_steel',
+                    'T': 'immersiveengineering:storage_steel',
+                    'L': 'immersiveengineering:light_engineering',
+                    'R': 'immersiveengineering:rs_engineering',
+                    'H': 'minecraft:hopper',
+                    '0': 'immersiveengineering:steel_scaffolding_standard'
             }),
             text('The $(thing)Grist Mill$() grains raw grain into more edible flour.$(br2)Items can be inputted from the top by a Hopper or a Dropping Conveyor Belt.$(br2)By default, it consumes 80IF/t.')
         ))
