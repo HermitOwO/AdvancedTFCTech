@@ -65,7 +65,7 @@ public class AdvancedTFCTech
                 case "thresher_operationcost" -> (int) (80 * ATTConfig.SERVER.thresher_energyModifier.get());
                 case "gristmill_operationcost" -> (int) (80 * ATTConfig.SERVER.gristMill_energyModifier.get());
                 case "powerloom_operationcost" -> (int) (80 * ATTConfig.SERVER.powerLoom_energyModifier.get());
-                default -> 80;
+                default -> -1;
             }));
     }
 }

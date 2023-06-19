@@ -3,7 +3,7 @@ package com.hermitowo.advancedtfctech.client;
 import java.util.List;
 import java.util.function.Supplier;
 import com.hermitowo.advancedtfctech.client.model.PowerLoomParts;
-import com.hermitowo.advancedtfctech.client.render.DynamicModel;
+import com.hermitowo.advancedtfctech.client.model.DynamicModel;
 import com.hermitowo.advancedtfctech.client.render.GristMillRenderer;
 import com.hermitowo.advancedtfctech.client.render.PowerLoomRenderer;
 import com.hermitowo.advancedtfctech.client.screen.GristMillScreen;

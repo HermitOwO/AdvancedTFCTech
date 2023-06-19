@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.api.client.IVertexBufferHolder;
 import blusunrize.immersiveengineering.client.render.tile.BERenderUtils;
 import blusunrize.immersiveengineering.client.render.tile.IEBlockEntityRenderer;
 import blusunrize.immersiveengineering.common.util.Utils;
+import com.hermitowo.advancedtfctech.client.model.DynamicModel;
 import com.hermitowo.advancedtfctech.common.blockentities.GristMillBlockEntity;
 import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;

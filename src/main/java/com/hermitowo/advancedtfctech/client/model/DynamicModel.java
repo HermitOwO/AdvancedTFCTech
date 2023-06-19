@@ -1,4 +1,4 @@
-package com.hermitowo.advancedtfctech.client.render;
+package com.hermitowo.advancedtfctech.client.model;
 
 import java.util.List;
 import blusunrize.immersiveengineering.common.util.Utils;

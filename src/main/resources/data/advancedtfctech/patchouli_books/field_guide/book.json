@@ -1,0 +1,6 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "extend": "tfc:field_guide",
+  "name": "advancedtfctech field_guide extension",
+  "landing_text": "advancedtfctech field_guide extension"
+}
