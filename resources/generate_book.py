@@ -67,7 +67,7 @@ def make_book(rm: ResourceManager, i18n: I18n, local_instance: bool = False):
         )),
         entry('thresher', 'Thresher', 'advancedtfctech:thresher', pages=(
             non_text_first_page(),
-            multiblock('Thresher', '$(item)Right click$() the $(thing)Light Engineering Block$() in the middle layer opposite to the Steel Sheetmetal with an Engineer\'s Hammer.', True, pattern=(
+            multiblock('Thresher', '$(item)Right click$() the $(thing)Light Engineering Block$() in the middle layer opposite to Steel Sheetmetal with an Engineer\'s Hammer.', True, pattern=(
                 ('   ', 'MHM', '   '),
                 ('MMM', 'LLR', 'MLM'),
                 ('MLM', 'M0M', 'MMM')), mapping={
