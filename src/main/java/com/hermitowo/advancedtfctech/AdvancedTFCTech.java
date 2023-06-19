@@ -60,7 +60,7 @@ public class AdvancedTFCTech
         MultiblockHandler.registerMultiblock(PowerLoomMultiblock.INSTANCE);
     }
 
-    public void loadComplete(FMLLoadCompleteEvent event)
+    private void loadComplete(FMLLoadCompleteEvent event)
     {
         event.enqueueWork(() -> ManualHelper.addConfigGetter(str -> switch (str)
             {
