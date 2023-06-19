@@ -1,0 +1,41 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "type": "advancedtfctech:power_loom",
+  "result": {
+    "item": "firmalife:pineapple_leather",
+    "count": 4
+  },
+  "secondaries": [
+    {
+      "output": {
+        "item": "advancedtfctech:pirn"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "base_ingredient": {
+        "item": "firmalife:pineapple_yarn"
+      },
+      "count": 32
+    },
+    {
+      "item": "advancedtfctech:pineapple_winded_pirn"
+    }
+  ],
+  "secondary_input": {
+    "base_ingredient": {
+      "item": "firmalife:pineapple_yarn"
+    },
+    "count": 16
+  },
+  "in_progress_texture": "advancedtfctech:multiblock/power_loom/pineapple",
+  "time": 250,
+  "energy": 20000,
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "firmalife"
+    }
+  ]
+}

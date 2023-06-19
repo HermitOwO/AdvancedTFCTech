@@ -1,0 +1,26 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "XYX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "item": "firmalife:pineapple_yarn"
+    },
+    "Y": {
+      "item": "advancedtfctech:pirn"
+    }
+  },
+  "result": {
+    "item": "advancedtfctech:pineapple_winded_pirn"
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "firmalife"
+    }
+  ]
+}

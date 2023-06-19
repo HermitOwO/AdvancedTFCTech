@@ -1,7 +1,9 @@
 package com.hermitowo.advancedtfctech.config;
 
 import java.util.function.Function;
-import net.minecraftforge.common.ForgeConfigSpec.*;
+import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
+import net.minecraftforge.common.ForgeConfigSpec.Builder;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
 import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
 

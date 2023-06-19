@@ -154,7 +154,8 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
         List<List<? extends String>> pirnTextureList = new ArrayList<>(Arrays.asList(
             Arrays.asList("advancedtfctech:fiber_winded_pirn", "advancedtfctech:multiblock/power_loom/fiber_winded_pirn"),
             Arrays.asList("advancedtfctech:silk_winded_pirn", "advancedtfctech:multiblock/power_loom/wool_winded_pirn"),
-            Arrays.asList("advancedtfctech:wool_winded_pirn", "advancedtfctech:multiblock/power_loom/wool_winded_pirn")));
+            Arrays.asList("advancedtfctech:wool_winded_pirn", "advancedtfctech:multiblock/power_loom/wool_winded_pirn"),
+            Arrays.asList("advancedtfctech:pineapple_winded_pirn", "advancedtfctech:multiblock/power_loom/pineapple_winded_pirn")));
 
         pirnTextureList.addAll(ATTConfig.CLIENT.additionalPowerLoomPirnTextures.get());
 

@@ -36,6 +36,20 @@ def generate(rm:ResourceManager):
 
         rm.crafting_shaped('crafting/%s' % weave.pirn, ['XXX', 'XYX', 'XXX'], {'X': weave.ingredient, 'Y': 'advancedtfctech:pirn'}, 'advancedtfctech:%s' % weave.pirn)
 
+    # Firmalife compat
+
+    power_loom_recipe(rm, 'pineapple_leather',
+        result = utils.item_stack('4 firmalife:pineapple_leather'),
+        secondaries = [{'output': ingredient_with_size('advancedtfctech:pirn')}],
+        inputs = ingredient_with_size_list(('32 firmalife:pineapple_yarn', 'advancedtfctech:pineapple_winded_pirn')),
+        secondary_input = ingredient_with_size('16 firmalife:pineapple_yarn'),
+        in_progress_texture = 'advancedtfctech:multiblock/power_loom/pineapple',
+        time = 250,
+        energy = 20000,
+        conditional_modid = 'firmalife')
+
+    rm.crafting_shaped('crafting/pineapple_winded_pirn', ['XXX', 'XYX', 'XXX'], {'X': 'firmalife:pineapple_yarn', 'Y': 'advancedtfctech:pirn'}, 'advancedtfctech:pineapple_winded_pirn', conditions = {'type': 'forge:mod_loaded', 'modid': 'firmalife'})
+
 def not_rotten(ingredient: Json) -> Json:
     return {
         'type': 'tfc:not_rotten',
@@ -103,7 +117,7 @@ def grist_mill_recipe(rm: ResourceManager, name_parts: utils.ResourceIdentifier,
         'energy': energy
     })
 
-def power_loom_recipe(rm: ResourceManager, name_parts: utils.ResourceIdentifier, result: Json, secondaries: list, inputs: Json, secondary_input: Json, in_progress_texture: str, time: int, energy: int):
+def power_loom_recipe(rm: ResourceManager, name_parts: utils.ResourceIdentifier, result: Json, secondaries: list, inputs: Json, secondary_input: Json, in_progress_texture: str, time: int, energy: int, conditional_modid: str = None):
     rm.recipe(('power_loom', name_parts), 'advancedtfctech:power_loom', {
         'result': utils.item_stack(result),
         'secondaries': secondaries,
@@ -112,4 +126,4 @@ def power_loom_recipe(rm: ResourceManager, name_parts: utils.ResourceIdentifier,
         'in_progress_texture': in_progress_texture,
         'time': time,
         'energy': energy
-    })
+    }, conditions = {'type': 'forge:mod_loaded', 'modid': conditional_modid} if conditional_modid is not None else None)

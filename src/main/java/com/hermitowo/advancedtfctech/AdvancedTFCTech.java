@@ -4,6 +4,7 @@ import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import com.hermitowo.advancedtfctech.api.crafting.ATTRecipeTypes;
 import com.hermitowo.advancedtfctech.client.ATTClientEvents;
+import com.hermitowo.advancedtfctech.client.ATTClientForgeEvents;
 import com.hermitowo.advancedtfctech.common.blockentities.ATTBlockEntities;
 import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerTypes;
@@ -48,6 +49,7 @@ public class AdvancedTFCTech
         if (FMLEnvironment.dist == Dist.CLIENT)
         {
             ATTClientEvents.init();
+            ATTClientForgeEvents.init();
         }
     }
 

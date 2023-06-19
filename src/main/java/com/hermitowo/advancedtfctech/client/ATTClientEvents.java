@@ -2,8 +2,8 @@ package com.hermitowo.advancedtfctech.client;
 
 import java.util.List;
 import java.util.function.Supplier;
-import com.hermitowo.advancedtfctech.client.model.PowerLoomParts;
 import com.hermitowo.advancedtfctech.client.model.DynamicModel;
+import com.hermitowo.advancedtfctech.client.model.PowerLoomParts;
 import com.hermitowo.advancedtfctech.client.render.GristMillRenderer;
 import com.hermitowo.advancedtfctech.client.render.PowerLoomRenderer;
 import com.hermitowo.advancedtfctech.client.screen.GristMillScreen;
@@ -77,9 +77,11 @@ public class ATTClientEvents
         {
             event.addSprite(new ResourceLocation(MOD_ID, "multiblock/power_loom/burlap"));
             event.addSprite(new ResourceLocation(MOD_ID, "multiblock/power_loom/wool"));
+            event.addSprite(new ResourceLocation(MOD_ID, "multiblock/power_loom/pineapple"));
 
             event.addSprite(new ResourceLocation(MOD_ID, "multiblock/power_loom/fiber_winded_pirn"));
             event.addSprite(new ResourceLocation(MOD_ID, "multiblock/power_loom/wool_winded_pirn"));
+            event.addSprite(new ResourceLocation(MOD_ID, "multiblock/power_loom/pineapple_winded_pirn"));
 
             for (String texture : ATTConfig.CLIENT.additionalPowerLoomClothTextures.get())
                 event.addSprite(new ResourceLocation(texture));
