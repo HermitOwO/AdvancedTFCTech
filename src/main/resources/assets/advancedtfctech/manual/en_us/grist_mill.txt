@@ -2,6 +2,6 @@ Grist Mill
 Flour Power
 The Grist Mill grains raw grain into more edible flour.
 
-Items can be inputted from the top by a Hopper or a Dropping Conveyor Belt.
+Items can be inputted from the top by a Hopper, a Chute, or a Dropping Conveyor Belt.
 
 It consumes <config;i;gristmill_operationcost>IF/t.

@@ -44,7 +44,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "The $(thing)Grist Mill$() grains raw grain into more edible flour.$(br2)Items can be inputted from the top by a Hopper or a Dropping Conveyor Belt.$(br2)By default, it consumes 80IF/t."
+      "text": "The $(thing)Grist Mill$() grains raw grain into more edible flour.$(br2)Items can be inputted from the top by a Hopper, a Chute, or a Dropping Conveyor Belt.$(br2)By default, it consumes 80IF/t."
     }
   ],
   "read_by_default": true,

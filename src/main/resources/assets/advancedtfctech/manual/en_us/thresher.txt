@@ -2,6 +2,6 @@ Thresher
 Shed Your Husk
 The Thresher separates chaff from grain using rotating cylinders and mechanical power.
 
-Items can be inputted from the top by a Hopper or a Dropping Conveyor Belt.
+Items can be inputted from the top by a Hopper, a Chute, or a Dropping Conveyor Belt.
 
 It consumes <config;i;thresher_operationcost>IF/t.

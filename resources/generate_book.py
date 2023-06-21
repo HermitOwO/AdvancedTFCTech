@@ -77,7 +77,7 @@ def make_book(rm: ResourceManager, i18n: I18n, local_instance: bool = False):
                     'H': 'minecraft:hopper',
                     '0': 'immersiveengineering:light_engineering'
             }),
-            text('The $(thing)Thresher$() separates chaff from grain using rotating cylinders and mechanical power.$(br2)Items can be inputted from the top by a Hopper or a Dropping Conveyor Belt.$(br2)By default, it consumes 80IF/t.')
+            text('The $(thing)Thresher$() separates chaff from grain using rotating cylinders and mechanical power.$(br2)Items can be inputted from the top by a Hopper, a Chute, or a Dropping Conveyor Belt.$(br2)By default, it consumes 80IF/t.')
         )),
         entry('grist_mill', 'Grist Mill', 'advancedtfctech:grist_mill', pages=(
             non_text_first_page(),
@@ -94,7 +94,7 @@ def make_book(rm: ResourceManager, i18n: I18n, local_instance: bool = False):
                     'H': 'minecraft:hopper',
                     '0': 'immersiveengineering:steel_scaffolding_standard'
             }),
-            text('The $(thing)Grist Mill$() grains raw grain into more edible flour.$(br2)Items can be inputted from the top by a Hopper or a Dropping Conveyor Belt.$(br2)By default, it consumes 80IF/t.')
+            text('The $(thing)Grist Mill$() grains raw grain into more edible flour.$(br2)Items can be inputted from the top by a Hopper, a Chute, or a Dropping Conveyor Belt.$(br2)By default, it consumes 80IF/t.')
         ))
     ))
 
