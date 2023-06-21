@@ -9,19 +9,25 @@
       "multiblock": {
         "pattern": [
           [
-            " SSS ",
-            " MMM ",
-            "     "
+            "   ",
+            "SM ",
+            "SM ",
+            "SM ",
+            "   "
           ],
           [
-            " S S ",
-            "LMFML",
-            " S S "
+            " L ",
+            "SMS",
+            " F ",
+            "SMS",
+            " L "
           ],
           [
-            "RSSS ",
-            "TH0HL",
-            " SSS "
+            " L ",
+            "SHS",
+            "S0S",
+            "SHS",
+            "RT "
           ]
         ],
         "mapping": {

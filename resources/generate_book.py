@@ -49,9 +49,9 @@ def make_book(rm: ResourceManager, i18n: I18n, local_instance: bool = False):
         entry('power_loom', 'Power Loom', 'advancedtfctech:power_loom', pages=(
             non_text_first_page(),
             multiblock('Power Loom', 'To form the structure, $(item)right click$() the $(thing)Light Engineering Block$() above the Block of Steel with an Engineer\'s Hammer.', True, pattern=(
-                (' SSS ', ' MMM ', '     '),
-                (' S S ', 'LMFML', ' S S '),
-                ('RSSS ', 'TH0HL', ' SSS ')), mapping={
+                ('   ', 'SM ', 'SM ', 'SM ', '   '),
+                (' L ', 'SMS', ' F ', 'SMS', ' L '),
+                (' L ', 'SHS', 'S0S', 'SHS', 'RT ')), mapping={
                     'S': 'immersiveengineering:steel_scaffolding_standard',
                     'M': 'immersiveengineering:sheetmetal_steel',
                     'T': 'immersiveengineering:storage_steel',
