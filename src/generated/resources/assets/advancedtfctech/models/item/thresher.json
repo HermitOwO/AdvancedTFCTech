@@ -91,6 +91,6 @@
     "texture": "advancedtfctech:multiblock/thresher"
   },
   "loader": "forge:obj",
-  "model": "advancedtfctech:models/multiblock/obj/thresher.obj",
+  "model": "advancedtfctech:models/multiblock/thresher.obj",
   "flip-v": true
 }

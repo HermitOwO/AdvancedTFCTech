@@ -1,5 +1,5 @@
 {
   "loader": "forge:obj",
-  "model": "advancedtfctech:models/multiblock/obj/grist_mill_animation.obj",
+  "model": "advancedtfctech:models/multiblock/grist_mill_animation.obj",
   "flip-v": true
 }

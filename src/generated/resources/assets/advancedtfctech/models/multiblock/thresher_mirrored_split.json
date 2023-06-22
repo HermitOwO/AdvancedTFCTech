@@ -9,7 +9,7 @@
       "particle": "advancedtfctech:multiblock/thresher"
     },
     "loader": "forge:obj",
-    "model": "advancedtfctech:models/multiblock/obj/thresher_mirrored.obj",
+    "model": "advancedtfctech:models/multiblock/thresher_mirrored.obj",
     "detectCullableFaces": false,
     "flip-v": true
   },

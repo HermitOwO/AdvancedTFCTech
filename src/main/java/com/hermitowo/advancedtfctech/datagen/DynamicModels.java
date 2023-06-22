@@ -31,7 +31,7 @@ public class DynamicModels extends ModelProvider<SimpleModelBuilder>
     {
         getBuilder(GristMillRenderer.NAME)
             .customLoader(OBJLoaderBuilder::begin)
-            .modelLocation(new ResourceLocation(MOD_ID, "models/multiblock/obj/grist_mill_animation.obj"))
+            .modelLocation(new ResourceLocation(MOD_ID, "models/multiblock/grist_mill_animation.obj"))
             .flipV(true)
             .end();
 

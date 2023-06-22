@@ -54,8 +54,8 @@ public class ATTBlockStates extends BlockStateProvider
     private void thresher()
     {
         ResourceLocation texture = modLoc("multiblock/thresher");
-        ResourceLocation modelNormal = modLoc("models/multiblock/obj/thresher.obj");
-        ResourceLocation modelMirrored = modLoc("models/multiblock/obj/thresher_mirrored.obj");
+        ResourceLocation modelNormal = modLoc("models/multiblock/thresher.obj");
+        ResourceLocation modelMirrored = modLoc("models/multiblock/thresher_mirrored.obj");
 
         BlockModelBuilder normal = multiblockModel(ATTBlocks.Multiblocks.THRESHER.get(), modelNormal, texture, "", ThresherMultiblock.INSTANCE, false);
         BlockModelBuilder mirrored = multiblockModel(ATTBlocks.Multiblocks.THRESHER.get(), modelMirrored, texture, "_mirrored", ThresherMultiblock.INSTANCE, true);
@@ -66,8 +66,8 @@ public class ATTBlockStates extends BlockStateProvider
     private void gristMill()
     {
         ResourceLocation texture = modLoc("multiblock/grist_mill");
-        ResourceLocation modelNormal = modLoc("models/multiblock/obj/grist_mill.obj");
-        ResourceLocation modelMirrored = modLoc("models/multiblock/obj/grist_mill_mirrored.obj");
+        ResourceLocation modelNormal = modLoc("models/multiblock/grist_mill.obj");
+        ResourceLocation modelMirrored = modLoc("models/multiblock/grist_mill_mirrored.obj");
 
         BlockModelBuilder normal = multiblockModel(ATTBlocks.Multiblocks.GRIST_MILL.get(), modelNormal, texture, "", GristMillMultiblock.INSTANCE, false);
         BlockModelBuilder mirrored = multiblockModel(ATTBlocks.Multiblocks.GRIST_MILL.get(), modelMirrored, texture, "_mirrored", GristMillMultiblock.INSTANCE, true);
@@ -78,8 +78,8 @@ public class ATTBlockStates extends BlockStateProvider
     private void powerLoom()
     {
         ResourceLocation texture = modLoc("multiblock/power_loom");
-        ResourceLocation modelNormal = modLoc("models/multiblock/obj/power_loom.obj");
-        ResourceLocation modelMirrored = modLoc("models/multiblock/obj/power_loom_mirrored.obj");
+        ResourceLocation modelNormal = modLoc("models/multiblock/power_loom.obj");
+        ResourceLocation modelMirrored = modLoc("models/multiblock/power_loom_mirrored.obj");
 
         BlockModelBuilder normal = multiblockModel(ATTBlocks.Multiblocks.POWER_LOOM.get(), modelNormal, texture, "", PowerLoomMultiblock.INSTANCE, false);
         BlockModelBuilder mirrored = multiblockModel(ATTBlocks.Multiblocks.POWER_LOOM.get(), modelMirrored, texture, "_mirrored", PowerLoomMultiblock.INSTANCE, true);

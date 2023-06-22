@@ -36,7 +36,7 @@ public class ATTItemModels extends ModelProvider<TRSRModelBuilder>
 
     private void thresherItem()
     {
-        TRSRModelBuilder model = obj(ATTBlocks.Multiblocks.THRESHER.get(), "multiblock/obj/thresher.obj")
+        TRSRModelBuilder model = obj(ATTBlocks.Multiblocks.THRESHER.get(), "multiblock/thresher.obj")
             .texture("texture", modLoc("multiblock/thresher"));
 
         ModelBuilder<?>.TransformsBuilder trans = model.transforms();
@@ -52,7 +52,7 @@ public class ATTItemModels extends ModelProvider<TRSRModelBuilder>
 
     private void gristMillItem()
     {
-        TRSRModelBuilder model = obj(ATTBlocks.Multiblocks.GRIST_MILL.get(), "multiblock/obj/grist_mill.obj")
+        TRSRModelBuilder model = obj(ATTBlocks.Multiblocks.GRIST_MILL.get(), "multiblock/grist_mill.obj")
             .texture("texture", modLoc("multiblock/grist_mill"));
 
         ModelBuilder<?>.TransformsBuilder trans = model.transforms();
@@ -68,7 +68,7 @@ public class ATTItemModels extends ModelProvider<TRSRModelBuilder>
 
     private void powerLoomItem()
     {
-        TRSRModelBuilder model = obj(ATTBlocks.Multiblocks.POWER_LOOM.get(), "multiblock/obj/power_loom.obj")
+        TRSRModelBuilder model = obj(ATTBlocks.Multiblocks.POWER_LOOM.get(), "multiblock/power_loom.obj")
             .texture("texture", modLoc("multiblock/power_loom"));
 
         ModelBuilder<?>.TransformsBuilder trans = model.transforms();

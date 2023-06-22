@@ -9,7 +9,7 @@
       "particle": "advancedtfctech:multiblock/grist_mill"
     },
     "loader": "forge:obj",
-    "model": "advancedtfctech:models/multiblock/obj/grist_mill_mirrored.obj",
+    "model": "advancedtfctech:models/multiblock/grist_mill_mirrored.obj",
     "detectCullableFaces": false,
     "flip-v": true
   },

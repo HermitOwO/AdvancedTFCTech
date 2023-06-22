@@ -9,7 +9,7 @@
       "particle": "advancedtfctech:multiblock/grist_mill"
     },
     "loader": "forge:obj",
-    "model": "advancedtfctech:models/multiblock/obj/grist_mill.obj",
+    "model": "advancedtfctech:models/multiblock/grist_mill.obj",
     "detectCullableFaces": false,
     "flip-v": true
   },

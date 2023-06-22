@@ -91,6 +91,6 @@
     "texture": "advancedtfctech:multiblock/power_loom"
   },
   "loader": "forge:obj",
-  "model": "advancedtfctech:models/multiblock/obj/power_loom.obj",
+  "model": "advancedtfctech:models/multiblock/power_loom.obj",
   "flip-v": true
 }
