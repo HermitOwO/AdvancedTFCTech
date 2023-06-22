@@ -1,5 +1,6 @@
 package com.hermitowo.advancedtfctech.common.container;
 
+import blusunrize.immersiveengineering.common.gui.sync.GenericContainerData;
 import com.hermitowo.advancedtfctech.common.blockentities.GristMillBlockEntity;
 import com.hermitowo.advancedtfctech.common.multiblocks.GristMillMultiblock;
 import net.minecraft.world.entity.player.Inventory;
@@ -7,13 +8,13 @@ import net.minecraft.world.inventory.MenuType;
 
 public class GristMillContainer extends MultiblockAwareGuiContainer<GristMillBlockEntity>
 {
-    public GristMillContainer(MenuType<?> type, int id, Inventory playerInventory, final GristMillBlockEntity blockentity)
+    public GristMillContainer(MenuType<?> type, int id, Inventory playerInventory, final GristMillBlockEntity blockEntity)
     {
-        super(type, blockentity, id, GristMillMultiblock.INSTANCE);
+        super(type, blockEntity, id, GristMillMultiblock.INSTANCE);
 
         for (int i = 0; i < 6; i++)
         {
-            addSlot(new ATTSlot.GristMillInput(this, this.inv, i, 62 + 18 * (i % 3), 16 + 18 * (i / 3), blockentity.getLevel()));
+            addSlot(new ATTSlot.GristMillInput(this, this.inv, i, 62 + 18 * (i % 3), 16 + 18 * (i / 3), blockEntity.getLevel()));
         }
         for (int i = 0; i < 6; i++)
         {
@@ -24,5 +25,7 @@ public class GristMillContainer extends MultiblockAwareGuiContainer<GristMillBlo
 
         addPlayerInventorySlots(playerInventory, 8, 126);
         addPlayerHotbarSlots(playerInventory, 8, 184);
+
+        addGenericData(GenericContainerData.energy(blockEntity.energyStorage));
     }
 }
