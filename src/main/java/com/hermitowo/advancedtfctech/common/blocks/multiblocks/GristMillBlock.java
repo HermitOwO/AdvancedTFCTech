@@ -6,7 +6,6 @@ import com.hermitowo.advancedtfctech.common.blocks.ATTMetalMultiblock;
 
 public class GristMillBlock extends ATTMetalMultiblock<GristMillBlockEntity>
 {
-
     public GristMillBlock()
     {
         super(ATTBlockEntities.GRIST_MILL);

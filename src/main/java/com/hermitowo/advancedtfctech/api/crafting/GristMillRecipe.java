@@ -18,7 +18,7 @@ public class GristMillRecipe extends ATTMultiblockRecipe
 {
     public static final CachedRecipeList<GristMillRecipe> RECIPES = new CachedRecipeList<>(ATTRecipeTypes.GRIST_MILL);
 
-    public IngredientWithSize input;
+    public final IngredientWithSize input;
     public final ItemStackProvider output;
 
     public GristMillRecipe(ResourceLocation id, ItemStackProvider output, IngredientWithSize input, int time, int energy)

@@ -19,7 +19,7 @@ public class ThresherRecipe extends ATTMultiblockRecipe
 {
     public static final CachedRecipeList<ThresherRecipe> RECIPES = new CachedRecipeList<>(ATTRecipeTypes.THRESHER);
 
-    public IngredientWithSize input;
+    public final IngredientWithSize input;
     public final ItemStackProvider output;
     public final NonNullList<Lazy<ItemStack>> secondaryOutputs = NonNullList.create();
 
