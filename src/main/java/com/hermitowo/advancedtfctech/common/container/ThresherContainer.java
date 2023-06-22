@@ -13,13 +13,10 @@ public class ThresherContainer extends MultiblockAwareGuiContainer<ThresherBlock
         super(type, blockEntity, id, ThresherMultiblock.INSTANCE);
 
         for (int i = 0; i < 6; i++)
-        {
             addSlot(new ATTSlot.ThresherInput(this, this.inv, i, 62 + 18 * (i % 3), 16 + 18 * (i / 3), blockEntity.getLevel()));
-        }
+
         for (int i = 0; i < 6; i++)
-        {
-            addSlot(new ATTSlot.ItemOutput(this, this.inv, i + 6, 62 + 18 * (i % 3), 74 + 18 * (i / 3)));
-        }
+            addSlot(new ATTSlot.NotPlaceable(this, this.inv, i + 6, 62 + 18 * (i % 3), 74 + 18 * (i / 3)));
 
         slotCount = 12;
 

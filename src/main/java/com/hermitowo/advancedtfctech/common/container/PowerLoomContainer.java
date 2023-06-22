@@ -14,16 +14,17 @@ public class PowerLoomContainer extends MultiblockAwareGuiContainer<PowerLoomBlo
     {
         super(type, blockEntity, id, PowerLoomMultiblock.INSTANCE);
 
+        // Pirn Input
         for (int i = 0; i < 8; i++)
-        {
-            addSlot(new ATTSlot.PirnInput(this, this.inv, i, (int) round(cos(PI * i / 4) * 30) + 80, (int) round(sin(PI * i / 4) * 30) + 70, blockEntity.getLevel()));
-        }
+            addSlot(new ATTSlot.NotPlaceable(this, this.inv, i, (int) round(cos(PI * i / 4) * 30) + 80, (int) round(sin(PI * i / 4) * 30) + 70));
+
+        // Weave Input
         for (int i = 0; i < 3; i++)
-        {
-            addSlot(new ATTSlot.WeaveInput(this, this.inv, i + 8, 62 + 18 * i, 10, blockEntity.getLevel()));
-        }
-        addSlot(new ATTSlot.SecondaryWeaveInput(this, this.inv, 11, 10, 10, blockEntity.getLevel()));
-        addSlot(new ATTSlot.ItemOutput(this, this.inv, 12, 132, 98));
+            addSlot(new ATTSlot.NotPlaceable(this, this.inv, i + 8, 62 + 18 * i, 10));
+
+        // Secondary Weave Input
+        addSlot(new ATTSlot.NotPlaceable(this, this.inv, 11, 10, 10));
+        addSlot(new ATTSlot.NotPlaceable(this, this.inv, 12, 132, 98));
 
         slotCount = 13;
 

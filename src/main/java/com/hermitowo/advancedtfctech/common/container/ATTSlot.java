@@ -25,9 +25,9 @@ public abstract class ATTSlot extends Slot
         return true;
     }
 
-    public static class ItemOutput extends ATTSlot
+    public static class NotPlaceable extends ATTSlot
     {
-        public ItemOutput(AbstractContainerMenu container, Container inv, int id, int xPosition, int yPosition)
+        public NotPlaceable(AbstractContainerMenu container, Container inv, int id, int xPosition, int yPosition)
         {
             super(container, inv, id, xPosition, yPosition);
         }
@@ -70,63 +70,6 @@ public abstract class ATTSlot extends Slot
         public boolean mayPlace(ItemStack stack)
         {
             return !stack.isEmpty() && GristMillRecipe.isValidRecipeInput(level, stack);
-        }
-    }
-
-    public static class PirnInput extends ATTSlot
-    {
-        private final Level level;
-
-        public PirnInput(AbstractContainerMenu container, Container inv, int id, int x, int y, Level level)
-        {
-            super(container, inv, id, x, y);
-            this.level = level;
-        }
-
-        @Override
-        public boolean mayPlace(ItemStack stack)
-        {
-            return false;
-        }
-
-        @Override
-        public int getMaxStackSize()
-        {
-            return 1;
-        }
-    }
-
-    public static class WeaveInput extends ATTSlot
-    {
-        private final Level level;
-
-        public WeaveInput(AbstractContainerMenu container, Container inv, int id, int x, int y, Level level)
-        {
-            super(container, inv, id, x, y);
-            this.level = level;
-        }
-
-        @Override
-        public boolean mayPlace(ItemStack stack)
-        {
-            return false;
-        }
-    }
-
-    public static class SecondaryWeaveInput extends ATTSlot
-    {
-        private final Level level;
-
-        public SecondaryWeaveInput(AbstractContainerMenu container, Container inv, int id, int x, int y, Level level)
-        {
-            super(container, inv, id, x, y);
-            this.level = level;
-        }
-
-        @Override
-        public boolean mayPlace(ItemStack stack)
-        {
-            return false;
         }
     }
 }

@@ -13,13 +13,10 @@ public class GristMillContainer extends MultiblockAwareGuiContainer<GristMillBlo
         super(type, blockEntity, id, GristMillMultiblock.INSTANCE);
 
         for (int i = 0; i < 6; i++)
-        {
             addSlot(new ATTSlot.GristMillInput(this, this.inv, i, 62 + 18 * (i % 3), 16 + 18 * (i / 3), blockEntity.getLevel()));
-        }
+
         for (int i = 0; i < 6; i++)
-        {
-            addSlot(new ATTSlot.ItemOutput(this, this.inv, i + 6, 62 + 18 * (i % 3), 74 + 18 * (i / 3)));
-        }
+            addSlot(new ATTSlot.NotPlaceable(this, this.inv, i + 6, 62 + 18 * (i % 3), 74 + 18 * (i / 3)));
 
         slotCount = 12;
 
