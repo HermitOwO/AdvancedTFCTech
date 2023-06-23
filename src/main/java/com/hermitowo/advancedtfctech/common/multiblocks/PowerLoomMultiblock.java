@@ -29,5 +29,4 @@ public class PowerLoomMultiblock extends ATTTemplateMultiblock
     {
         consumer.accept(new ATTClientMultiblockProperties(this, 1.25, 0.75, 2.75));
     }
-
 }

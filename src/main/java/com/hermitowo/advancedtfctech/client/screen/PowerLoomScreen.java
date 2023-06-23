@@ -19,13 +19,12 @@ import net.minecraft.world.entity.player.Inventory;
 public class PowerLoomScreen extends IEContainerScreen<PowerLoomContainer>
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(ImmersiveEngineering.MODID, "textures/gui/arc_furnace.png");
-
-    PowerLoomBlockEntity tile;
+    private final PowerLoomBlockEntity tile;
 
     public PowerLoomScreen(PowerLoomContainer container, Inventory playerInventory, Component title)
     {
         super(container, playerInventory, title, TEXTURE);
-        this.tile = menu.tile;
+        this.tile = container.tile;
 
         this.imageWidth = 176;
         this.imageHeight = 207;
@@ -41,7 +40,7 @@ public class PowerLoomScreen extends IEContainerScreen<PowerLoomContainer>
     @Override
     protected List<InfoArea> makeInfoAreas()
     {
-        return List.of(new EnergyDisplay(this.leftPos + 157, this.topPos + 22, 7, 46, this.tile.energyStorage));
+        return List.of(new EnergyDisplay(leftPos + 157, topPos + 22, 7, 46, tile.energyStorage));
     }
 
     @Override

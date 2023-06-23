@@ -29,5 +29,4 @@ public class GristMillMultiblock extends ATTTemplateMultiblock
     {
         consumer.accept(new ATTClientMultiblockProperties(this, 1.0, 0.75, 2.0));
     }
-
 }

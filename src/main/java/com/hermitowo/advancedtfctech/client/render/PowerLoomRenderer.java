@@ -1,8 +1,8 @@
 package com.hermitowo.advancedtfctech.client.render;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.render.tile.BERenderUtils;
 import blusunrize.immersiveengineering.client.render.tile.IEBlockEntityRenderer;
@@ -43,14 +43,10 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
     public void render(PowerLoomBlockEntity be, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay)
     {
         Direction facing = be.getFacing();
-        boolean north = facing == Direction.NORTH;
-        boolean east = facing == Direction.EAST;
-        boolean south = facing == Direction.SOUTH;
-        boolean west = facing == Direction.WEST;
 
         boolean isMirrored = be.getIsMirrored();
-        boolean active = be.shouldRenderAsActive();
-        float angle = active ? (be.getLevel().getGameTime() + partialTicks) * 1.5F : 0F;
+        boolean active = !be.processQueue.isEmpty();
+        float angle = be.animation_rodRotation + (be.shouldRenderAsActive() ? 1.75F * partialTicks : 0);
         final MultiBufferSource bufferMirrored = BERenderUtils.mirror(be, poseStack, buffer);
         VertexConsumer vertexConsumer = material.buffer(bufferMirrored, RenderType::entitySolid);
 
@@ -84,13 +80,13 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
 
         rotateRackForFacing(poseStack, facing);
 
-        if (north)
+        if (facing == Direction.NORTH)
             poseStack.translate(-1.211 - rack, 0, 1.9375);
-        if (east)
+        if (facing == Direction.EAST)
             poseStack.translate(-1.9375, 0, -1.211 - rack);
-        if (south)
+        if (facing == Direction.SOUTH)
             poseStack.translate(-0.789 + rack, 0, -1.9375);
-        if (west)
+        if (facing == Direction.WEST)
             poseStack.translate(1.9375, 0, -0.789 + rack);
 
         rotateForFacingMirrored(poseStack, facing, isMirrored);
@@ -146,22 +142,23 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
         ItemStack pirn = be.pirnList.stream().filter(s -> !s.isEmpty()).findAny().orElse(ItemStack.EMPTY);
         int amountPirns = 0;
         for (int i = 0; i < 8; i++)
-            amountPirns += be.getInventory().get(i).getCount();
+            amountPirns += be.inventory.get(i).getCount();
         amountPirns = active ? amountPirns - 1 : amountPirns;
 
-        TextureAtlasSprite pirnTexture = blockMap.getSprite(new ResourceLocation("forge:white"));
+        Map<String, String> pirnTextures = new HashMap<>();
+        pirnTextures.put("advancedtfctech:fiber_winded_pirn", "advancedtfctech:multiblock/power_loom/fiber_winded_pirn");
+        pirnTextures.put("advancedtfctech:silk_winded_pirn", "advancedtfctech:multiblock/power_loom/wool_winded_pirn");
+        pirnTextures.put("advancedtfctech:wool_winded_pirn", "advancedtfctech:multiblock/power_loom/wool_winded_pirn");
+        pirnTextures.put("advancedtfctech:pineapple_winded_pirn", "advancedtfctech:multiblock/power_loom/pineapple_winded_pirn");
 
-        List<List<? extends String>> pirnTextureList = new ArrayList<>(Arrays.asList(
-            Arrays.asList("advancedtfctech:fiber_winded_pirn", "advancedtfctech:multiblock/power_loom/fiber_winded_pirn"),
-            Arrays.asList("advancedtfctech:silk_winded_pirn", "advancedtfctech:multiblock/power_loom/wool_winded_pirn"),
-            Arrays.asList("advancedtfctech:wool_winded_pirn", "advancedtfctech:multiblock/power_loom/wool_winded_pirn"),
-            Arrays.asList("advancedtfctech:pineapple_winded_pirn", "advancedtfctech:multiblock/power_loom/pineapple_winded_pirn")));
+        Map<String, String> configTextures =
+            ATTConfig.CLIENT.additionalPowerLoomPirnTextures.get().stream().collect(Collectors.toMap(list -> list.get(0), list -> list.get(1)));
 
-        pirnTextureList.addAll(ATTConfig.CLIENT.additionalPowerLoomPirnTextures.get());
+        pirnTextures.putAll(configTextures);
 
-        for (List<? extends String> list : pirnTextureList)
-            if (list.get(0).equals(pirn.getItem().getRegistryName().toString()))
-                pirnTexture = blockMap.getSprite(new ResourceLocation(list.get(1)));
+        TextureAtlasSprite pirnTexture = blockMap.getSprite(new ResourceLocation(
+            pirnTextures.entrySet().stream().filter(entry -> entry.getKey().equals(pirn.getItem().getRegistryName().toString())).map(Map.Entry::getValue).findAny().orElse("forge:white")
+        ));
 
         // Pirns
         for (int i = 0; i < amountPirns; i++)

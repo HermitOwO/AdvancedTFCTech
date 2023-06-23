@@ -19,13 +19,12 @@ import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
 public class ThresherScreen extends IEContainerScreen<ThresherContainer>
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(MOD_ID, "textures/gui/thresher.png");
-
-    ThresherBlockEntity tile;
+    private final ThresherBlockEntity tile;
 
     public ThresherScreen(ThresherContainer container, Inventory playerInventory, Component title)
     {
         super(container, playerInventory, title, TEXTURE);
-        this.tile = menu.tile;
+        this.tile = container.tile;
 
         this.imageWidth = 176;
         this.imageHeight = 207;
@@ -41,7 +40,7 @@ public class ThresherScreen extends IEContainerScreen<ThresherContainer>
     @Override
     protected List<InfoArea> makeInfoAreas()
     {
-        return List.of(new EnergyDisplay(this.leftPos + 157, this.topPos + 40, 7, 46, this.tile.energyStorage));
+        return List.of(new EnergyDisplay(leftPos + 157, topPos + 40, 7, 46, tile.energyStorage));
     }
 
     @Override

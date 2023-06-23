@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
 
+@SuppressWarnings("unused")
 public class PowerLoomParts extends Model
 {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(MOD_ID, "powerloomparts"), "main");

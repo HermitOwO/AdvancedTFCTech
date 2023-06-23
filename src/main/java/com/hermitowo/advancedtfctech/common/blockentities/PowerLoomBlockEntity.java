@@ -1,6 +1,7 @@
 package com.hermitowo.advancedtfctech.common.blockentities;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
@@ -24,6 +25,7 @@ import com.hermitowo.advancedtfctech.common.multiblocks.PowerLoomMultiblock;
 import com.hermitowo.advancedtfctech.config.ATTConfig;
 import com.mojang.datafixers.util.Pair;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -49,7 +51,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoomBlockEntity, PowerLoomRecipe> implements ATTCommonTickableBlock, ATTContainerProvider<PowerLoomBlockEntity>, IEBlockInterfaces.IBlockBounds, IEBlockInterfaces.IPlayerInteraction
 {
@@ -65,8 +66,8 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     private static final BlockPos SECONDARY_WEAVE_IN_POS = new BlockPos(1, 1, 2);
 
     public NonNullList<ItemStack> inventory = NonNullList.withSize(13, ItemStack.EMPTY);
-    public List<ItemStack> pirnList = this.getInventory().subList(0, 8);
-    public List<ItemStack> inputList = this.getInventory().subList(8, 11);
+    public List<ItemStack> pirnList = inventory.subList(0, 8);
+    public List<ItemStack> inputList = inventory.subList(8, 11);
 
     private final CapabilityReference<IItemHandler> secondaryInput = CapabilityReference.forBlockEntityAt(this,
         () -> new DirectionalBlockPos(this.getBlockPosForPos(PIRN_IN_POS).relative(getFacing(), 2), getFacing().getOpposite()),
@@ -97,6 +98,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         super(PowerLoomMultiblock.INSTANCE, 32000, true, type, pos, state);
     }
 
+    public float animation_rodRotation = 0;
     public float animation_rack = 0;
     public float animation_rack_side = 0;
     public float animation_rack2 = 0;
@@ -113,24 +115,16 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     public boolean animation_rack_side_b = true;
     public boolean animation_rack2_b = true;
     public boolean animation_pirn_b = true;
-    @Nullable public ResourceLocation lastTexture;
+    public ResourceLocation lastTexture;
 
     @Override
     public void readCustomNBT(CompoundTag nbt, boolean descPacket)
     {
         super.readCustomNBT(nbt, descPacket);
+        Collections.fill(inventory, ItemStack.EMPTY);
         ContainerHelper.loadAllItems(nbt, inventory);
         this.holderRotation = nbt.getInt("holderRotation");
-        this.lastTexture = nbt.contains("lastTexture", Tag.TAG_STRING) ? new ResourceLocation(nbt.getString("lastTexture")) : null;
-        short inventoryStatus = nbt.getShort("inventoryStatus");
-        for (int i = 0; i < 13; ++i)
-        {
-            boolean hasServer = (inventoryStatus & 1) != 0;
-            boolean hasClient = !inventory.get(i).isEmpty();
-            if (!hasServer && hasClient)
-                inventory.set(i, ItemStack.EMPTY);
-            inventoryStatus >>>= 1;
-        }
+        this.lastTexture = nbt.contains("lastTexture", Tag.TAG_STRING) ? new ResourceLocation(nbt.getString("lastTexture")) : new ResourceLocation("forge:white");
     }
 
     @Override
@@ -139,47 +133,41 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         super.writeCustomNBT(nbt, descPacket);
         ContainerHelper.saveAllItems(nbt, inventory);
         nbt.putInt("holderRotation", this.holderRotation);
-        if (this.lastTexture != null)
+        if (!this.lastTexture.toString().equals("forge:white"))
             nbt.putString("lastTexture", this.lastTexture.toString());
-        short packed = 0;
-        short mask = 1;
-        for (int i = 0; i < 13; ++i)
-        {
-            if (!inventory.get(i).isEmpty())
-                packed += mask;
-            mask *= 2;
-        }
-        nbt.putShort("inventoryStatus", packed);
     }
 
     @Override
     public void tickClient()
     {
-        if (this.processQueue.isEmpty())
-        {
-            if (animation_rack < 0.65625F)
-                animation_rack = Math.min(0.65625F, animation_rack + 0.046875F);
-
-            if (animation_rack_side < 0.25F)
-                animation_rack_side = Math.min(0.25F, animation_rack_side + 0.125F);
-
-            if (animation_rack2 < 0.4375F)
-                animation_rack2 = Math.min(0.4375F, animation_rack2 + 0.0875F);
-
-            if (angle_long_thread < 19.0F)
-                angle_long_thread = Math.min(19.0F, angle_long_thread + 3.8F);
-
-            if (angle_short_thread < 42.0F)
-                angle_short_thread = Math.min(42.0F, angle_short_thread + 8.4F);
-
-            animation_pirn = 0;
-            animation_pirn_x = 0;
-            animation_pirn_y = 0;
-            animation_pirn_z = 0;
-        }
-
         if (shouldRenderAsActive())
         {
+            if (processQueue.isEmpty())
+            {
+                if (animation_rack < 0.65625F)
+                    animation_rack = Math.min(0.65625F, animation_rack + 0.046875F);
+
+                if (animation_rack_side < 0.25F)
+                    animation_rack_side = Math.min(0.25F, animation_rack_side + 0.125F);
+
+                if (animation_rack2 < 0.4375F)
+                    animation_rack2 = Math.min(0.4375F, animation_rack2 + 0.0875F);
+
+                if (angle_long_thread < 19.0F)
+                    angle_long_thread = Math.min(19.0F, angle_long_thread + 3.8F);
+
+                if (angle_short_thread < 42.0F)
+                    angle_short_thread = Math.min(42.0F, angle_short_thread + 8.4F);
+
+                animation_pirn = 0;
+                animation_pirn_x = 0;
+                animation_pirn_y = 0;
+                animation_pirn_z = 0;
+            }
+
+            animation_rodRotation += 1.75f;
+            animation_rodRotation %= 360f;
+
             for (MultiblockProcess<PowerLoomRecipe> process : this.processQueue)
             {
                 int tick = process.processTick;
@@ -310,8 +298,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                                         this.addProcessToQueue(process, false);
                                         update = true;
 
-                                        PowerLoomBlockEntity master = master();
-                                        master.lastTexture = recipe.inProgressTexture;
+                                        this.lastTexture = recipe.inProgressTexture;
                                     }
                                 }
                             }
@@ -319,6 +306,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                     }
                 }
             }
+            assert level != null;
             if (level.getGameTime() % 8 == 0)
             {
                 sort();
@@ -430,7 +418,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                             ItemStack stack = master.inventory.get(i);
                             if (!stack.isEmpty())
                             {
-                                player.getInventory().add(stack);
+                                ItemHandlerHelper.giveItemToPlayer(player, stack.copy());
                                 int size = stack.getCount();
                                 stack.shrink(size);
                                 return true;
@@ -478,7 +466,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                             ItemStack stack = master.inventory.get(i);
                             if (!stack.isEmpty())
                             {
-                                player.getInventory().add(stack);
+                                ItemHandlerHelper.giveItemToPlayer(player, stack.copy());
                                 int size = stack.getCount();
                                 stack.shrink(size);
                                 return true;
@@ -496,7 +484,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                         ItemStack stack = master.inventory.get(11);
                         if (!stack.isEmpty())
                         {
-                            player.getInventory().add(stack);
+                            ItemHandlerHelper.giveItemToPlayer(player, stack.copy());
                             int size = stack.getCount();
                             stack.shrink(size);
                             return true;
@@ -543,7 +531,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                     ItemStack stack = master.inventory.get(12);
                     if (!stack.isEmpty())
                     {
-                        player.getInventory().add(stack);
+                        ItemHandlerHelper.giveItemToPlayer(player, stack.copy());
                         int size = stack.getCount();
                         stack.shrink(size);
                         return true;
@@ -695,7 +683,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     public boolean additionalCanProcessCheck(MultiblockProcess<PowerLoomRecipe> process)
     {
         PowerLoomRecipe recipe = process.getRecipe(level);
-        ItemStack stack = this.getInventory().get(11);
+        ItemStack stack = inventory.get(11);
         if (recipe != null && !stack.isEmpty())
             return recipe.secondaryInput.test(stack);
         return false;
@@ -715,6 +703,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     public void onProcessFinish(MultiblockProcess<PowerLoomRecipe> process)
     {
         PowerLoomRecipe recipe = process.getRecipe(level);
+        assert recipe != null;
         for (Lazy<ItemStack> out : recipe.secondaryOutputs)
         {
             ItemStack stack = out.get();

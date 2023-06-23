@@ -25,6 +25,7 @@ import com.hermitowo.advancedtfctech.common.container.ATTContainerTypes;
 import com.hermitowo.advancedtfctech.common.multiblocks.ThresherMultiblock;
 import com.mojang.datafixers.util.Pair;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -48,10 +49,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import net.dries007.tfc.common.capabilities.food.FoodCapability;
-import net.dries007.tfc.common.capabilities.food.IFood;
 
 public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBlockEntity, ThresherRecipe> implements ATTCommonTickableBlock, ATTContainerProvider<ThresherBlockEntity>, IEBlockInterfaces.IBlockBounds, IEBlockInterfaces.ISoundBE
 {
@@ -60,7 +57,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
     private static final int[] OUTPUT_SLOTS = new int[] {6, 7, 8, 9, 10, 11};
 
     public NonNullList<ItemStack> inventory = NonNullList.withSize(12, ItemStack.EMPTY);
-    public List<ItemStack> outputList = this.getInventory().subList(6, 12);
+    public List<ItemStack> outputList = inventory.subList(6, 12);
 
     private final CapabilityReference<IItemHandler> output = CapabilityReference.forBlockEntityAt(this,
         () -> new DirectionalBlockPos(this.getBlockPosForPos(MAIN_OUT_POS).relative(getFacing()), getFacing().getOpposite()),
@@ -132,7 +129,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
                 }
                 for (int slot = 0; slot < 6; slot++)
                 {
-                    ItemStack stack = this.getInventory().get(slot);
+                    ItemStack stack = inventory.get(slot);
                     if (!stack.isEmpty())
                     {
                         stack = stack.copy();
@@ -153,6 +150,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
                     }
                 }
             }
+            assert level != null;
             if (level.getGameTime() % 8 == 0)
             {
                 sort();
@@ -198,35 +196,36 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
             {
                 ItemStack holder1 = outputList.get(i);
                 ItemStack holder2 = outputList.get(j);
-                IFood cap1 = holder1.getCapability(FoodCapability.CAPABILITY).resolve().orElse(null);
-                IFood cap2 = holder2.getCapability(FoodCapability.CAPABILITY).resolve().orElse(null);
                 int size1 = holder1.getCount();
                 int size2 = holder2.getCount();
                 int sizeMax = holder1.getMaxStackSize();
-                if (!holder1.isEmpty() && size1 < sizeMax && !holder2.isEmpty() && size2 < sizeMax && holder1.is(holder2.getItem()) && cap1.getCreationDate() == cap2.getCreationDate())
+                if (!holder1.isEmpty() && size1 < sizeMax && !holder2.isEmpty() && size2 < sizeMax && holder1.is(holder2.getItem()))
                 {
-                    if (size1 + size2 > sizeMax)
+                    if (Utils.compareItemNBT(holder1, holder2))
                     {
-                        if (size1 >= size2)
+                        if (size1 + size2 > sizeMax)
                         {
-                            int amount = sizeMax - size2;
-                            this.inventory.get(i + 6).shrink(amount);
-                            this.inventory.get(j + 6).grow(amount);
+                            if (size1 >= size2)
+                            {
+                                int amount = sizeMax - size2;
+                                this.inventory.get(i + 6).shrink(amount);
+                                this.inventory.get(j + 6).grow(amount);
+                            }
+                            else
+                            {
+                                int amount = sizeMax - size1;
+                                this.inventory.get(i + 6).grow(amount);
+                                this.inventory.get(j + 6).shrink(amount);
+                            }
                         }
                         else
                         {
-                            int amount = sizeMax - size1;
-                            this.inventory.get(i + 6).grow(amount);
-                            this.inventory.get(j + 6).shrink(amount);
+                            ItemStack stack = new ItemStack(outputList.get(j).getItem(), outputList.get(i).getCount() + outputList.get(j).getCount());
+                            this.inventory.set(i + 6, stack);
+                            this.inventory.set(j + 6, ItemStack.EMPTY);
                         }
+                        sort();
                     }
-                    else
-                    {
-                        ItemStack stack = new ItemStack(outputList.get(j).getItem(), outputList.get(i).getCount() + outputList.get(j).getCount());
-                        this.inventory.set(i + 6, stack);
-                        this.inventory.set(j + 6, ItemStack.EMPTY);
-                    }
-                    sort();
                 }
             }
         }
@@ -246,7 +245,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
 
     private final MultiblockCapability<IItemHandler> insertionHandler = MultiblockCapability.make(
         this, be -> be.insertionHandler, ThresherBlockEntity::master,
-        registerCapability(new IEInventoryHandler(6, this, 0, new boolean[] {true, true, true, true, true, true}, new boolean[6]))
+        registerCapability(new IEInventoryHandler(6, this, 0, true, false))
     );
     private final MultiblockCapability<IItemHandler> outputHandler = MultiblockCapability.make(
         this, be -> be.outputHandler, ThresherBlockEntity::master,
@@ -357,6 +356,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
     public void onProcessFinish(MultiblockProcess<ThresherRecipe> process)
     {
         ThresherRecipe recipe = process.getRecipe(level);
+        assert recipe != null;
         for (Lazy<ItemStack> out : recipe.secondaryOutputs)
         {
             ItemStack stack = out.get();
@@ -475,6 +475,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
             ThresherRecipe recipe = getRecipe(multiblock.getLevel());
             if (recipe == null)
                 return NonNullList.create();
+            assert multiblock.getInventory() != null;
             ItemStack input = multiblock.getInventory().get(this.inputSlots[0]);
             return recipe.generateActualOutput(input);
         }

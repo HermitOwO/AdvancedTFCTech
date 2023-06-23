@@ -1,6 +1,5 @@
 package com.hermitowo.advancedtfctech.compat.jei;
 
-import java.util.List;
 import com.hermitowo.advancedtfctech.api.crafting.GristMillRecipe;
 import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -15,7 +14,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 
 import net.dries007.tfc.common.recipes.ingredients.ItemStackIngredient;
 import net.dries007.tfc.compat.jei.category.BaseRecipeCategory;
@@ -44,11 +42,8 @@ public class GristMillRecipeCategory extends BaseRecipeCategory<GristMillRecipe>
         IRecipeSlotBuilder input = builder.addSlot(RecipeIngredientRole.INPUT, 20, 11);
         IRecipeSlotBuilder output = builder.addSlot(RecipeIngredientRole.OUTPUT, 84, 11);
 
-        final Ingredient ingredient = recipe.input.getBaseIngredient();
-        final List<ItemStack> inputList = List.of(ingredient.getItems());
-
         input.addItemStacks(collapse(new ItemStackIngredient(recipe.input.getBaseIngredient(), recipe.input.getCount())));
-        output.addItemStacks(collapse(inputList, recipe.output));
+        output.addItemStacks(collapse(recipe.input.getMatchingStackList(), recipe.output));
 
         input.setBackground(slot, -1, -1);
         output.setBackground(slot, -1, -1);
