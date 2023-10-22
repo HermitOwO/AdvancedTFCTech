@@ -48,5 +48,8 @@
     }
   ],
   "read_by_default": true,
-  "sortnum": 2
+  "sortnum": 2,
+  "extra_recipe_mappings": {
+    "advancedtfctech:grist_mill": 0
+  }
 }

@@ -1,0 +1,96 @@
+{
+  "display": {
+    "firstperson_lefthand": {
+      "scale": [
+        0.165,
+        0.165,
+        0.165
+      ]
+    },
+    "firstperson_righthand": {
+      "scale": [
+        0.165,
+        0.165,
+        0.165
+      ]
+    },
+    "thirdperson_lefthand": {
+      "scale": [
+        0.165,
+        0.165,
+        0.165
+      ]
+    },
+    "thirdperson_righthand": {
+      "scale": [
+        0.165,
+        0.165,
+        0.165
+      ]
+    },
+    "head": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "translation": [
+        0,
+        7.6,
+        0
+      ],
+      "scale": [
+        0.165,
+        0.165,
+        0.165
+      ]
+    },
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "translation": [
+        2,
+        -2,
+        2
+      ],
+      "scale": [
+        0.165,
+        0.165,
+        0.165
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        1,
+        0
+      ],
+      "scale": [
+        0.165,
+        0.165,
+        0.165
+      ]
+    },
+    "fixed": {
+      "translation": [
+        0,
+        -8,
+        0
+      ],
+      "scale": [
+        0.165,
+        0.165,
+        0.165
+      ]
+    }
+  },
+  "textures": {
+    "texture": "advancedtfctech:multiblock/beamhouse"
+  },
+  "loader": "forge:obj",
+  "model": "advancedtfctech:models/multiblock/beamhouse.obj",
+  "flip-v": true
+}

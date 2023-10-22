@@ -1,0 +1,11 @@
+Beamhouse
+High Quality Leather
+The Beamhouse handles liming, washing and tanning of hides in the leather production process.
+
+For fluid input, either put a filled bucket inside the GUI or rightclick the fluid input port with the filled bucket. Unwanted fluid can be removed by rightclicking the same port with an empty bucket.
+
+It consumes <config;i;beamhouse_operationcost>IF/t.
+
+<np><&machine_made>Raw hides will obtain the "Machine-Made" tag after getting processed by the Beamhouse. The tag will be inherited if the subsequent washing, fleshing (scraping) and tanning process are handled by the Beamhouse and the Fleshing Machine.
+
+Going through all these processes, the amount of leather obtained will be §2double§r the normal amount. Note that if any step of the process is not handled by machines, the "Machine-Made" tag will be lost and the bonus of double output cannot be retained.

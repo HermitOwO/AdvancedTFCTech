@@ -1,0 +1,5 @@
+# Blender 3.5.1 MTL File: 'beamhouse_base.blend'
+# www.blender.org
+
+newmtl beamhouse
+map_Kd advancedtfctech:multiblock/beamhouse

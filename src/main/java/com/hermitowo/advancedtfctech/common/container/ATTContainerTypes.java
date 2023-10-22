@@ -4,6 +4,8 @@ import java.util.function.Supplier;
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.common.gui.IEBaseContainer;
 import blusunrize.immersiveengineering.common.register.IEContainerTypes;
+import com.hermitowo.advancedtfctech.common.blockentities.BeamhouseBlockEntity;
+import com.hermitowo.advancedtfctech.common.blockentities.FleshingMachineBlockEntity;
 import com.hermitowo.advancedtfctech.common.blockentities.GristMillBlockEntity;
 import com.hermitowo.advancedtfctech.common.blockentities.PowerLoomBlockEntity;
 import com.hermitowo.advancedtfctech.common.blockentities.ThresherBlockEntity;
@@ -28,6 +30,8 @@ public class ATTContainerTypes
     public static final ATTContainerProvider.BEContainerATT<ThresherBlockEntity, ThresherContainer> THRESHER = register("thresher", ThresherContainer::new);
     public static final ATTContainerProvider.BEContainerATT<GristMillBlockEntity, GristMillContainer> GRIST_MILL = register("grist_mill", GristMillContainer::new);
     public static final ATTContainerProvider.BEContainerATT<PowerLoomBlockEntity, PowerLoomContainer> POWER_LOOM = register("power_loom", PowerLoomContainer::new);
+    public static final ATTContainerProvider.BEContainerATT<BeamhouseBlockEntity, BeamhouseContainer> BEAMHOUSE = register("beamhouse", BeamhouseContainer::new);
+    public static final ATTContainerProvider.BEContainerATT<FleshingMachineBlockEntity, FleshingMachineContainer> FLESHING_MACHINE = register("fleshing_machine", FleshingMachineContainer::new);
 
     public static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenu(String name, Supplier<MenuType<T>> factory)
     {

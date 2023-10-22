@@ -20,6 +20,8 @@ public class ATTBlockEntities
     public static final MultiblockBEType<ThresherBlockEntity> THRESHER = registerMultiblockBE("thresher", ThresherBlockEntity::new, ATTBlocks.Multiblocks.THRESHER);
     public static final MultiblockBEType<GristMillBlockEntity> GRIST_MILL = registerMultiblockBE("grist_mill", GristMillBlockEntity::new, ATTBlocks.Multiblocks.GRIST_MILL);
     public static final MultiblockBEType<PowerLoomBlockEntity> POWER_LOOM = registerMultiblockBE("power_loom", PowerLoomBlockEntity::new, ATTBlocks.Multiblocks.POWER_LOOM);
+    public static final MultiblockBEType<BeamhouseBlockEntity> BEAMHOUSE = registerMultiblockBE("beamhouse", BeamhouseBlockEntity::new, ATTBlocks.Multiblocks.BEAMHOUSE);
+    public static final MultiblockBEType<FleshingMachineBlockEntity> FLESHING_MACHINE = registerMultiblockBE("fleshing_machine", FleshingMachineBlockEntity::new, ATTBlocks.Blocks.FLESHING_MACHINE);
 
     public static <T extends BlockEntity & IEBlockInterfaces.IGeneralMultiblock> MultiblockBEType<T> registerMultiblockBE(String name, MultiblockBEType.BEWithTypeConstructor<T> factory, Supplier<? extends Block> valid)
     {

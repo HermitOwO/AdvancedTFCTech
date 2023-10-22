@@ -23,6 +23,23 @@ java {
     toolchain.languageVersion = JavaLanguageVersion.of(17)
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs = [
+                    "$rootDir/src/main/resources",
+                    "$rootDir/src/generated/resources"
+            ]
+        }
+    }
+    datagen {
+        compileClasspath += main.compileClasspath
+        runtimeClasspath += main.runtimeClasspath
+        compileClasspath += main.output
+        runtimeClasspath += main.output
+    }
+}
+
 minecraft {
     mappings channel: 'parchment', version: '2022.11.06-1.18.2'
 
@@ -84,9 +101,12 @@ minecraft {
 
             args '--mod', 'advancedtfctech', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
+            ideaModule project.name + '.datagen'
+
             mods {
                 advancedtfctech {
                     source sourceSets.main
+                    source sourceSets.datagen
                 }
             }
         }
@@ -97,17 +117,6 @@ mixin {
     add sourceSets.main, "AdvancedTFCTech.refmap.json"
 
     config "AdvancedTFCTech.mixins.json"
-}
-
-sourceSets {
-    main {
-        resources {
-            srcDirs = [
-                    "$rootDir/src/main/resources",
-                    "$rootDir/src/generated/resources"
-            ]
-        }
-    }
 }
 
 repositories {

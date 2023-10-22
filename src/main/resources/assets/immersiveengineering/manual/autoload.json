@@ -5,7 +5,9 @@
     "entry_list": [
       "advancedtfctech:power_loom",
       "advancedtfctech:thresher",
-      "advancedtfctech:grist_mill"
+      "advancedtfctech:grist_mill",
+      "advancedtfctech:beamhouse",
+      "advancedtfctech:fleshing_machine"
     ]
   }
 }

@@ -1,0 +1,15 @@
+{
+  "start": {
+    "type": "multiblock",
+    "name": "advancedtfctech:multiblocks/beamhouse"
+  },
+  "machine_made": {
+    "type": "item_display",
+    "items": [
+      {
+        "item": "tfc:large_prepared_hide",
+        "nbt": "{machine_made:1b}"
+      }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+Fleshing Machine
+The Taxidermy
+<&recipe>The Fleshing Machine removes excess fat and flesh from hides using a rotating cylinder with sharp blades that scrap the hide as it passes through the machine.
+
+<&blades>In order to operate the Fleshing Machine, Fleshing Blades need to be put on the cylinder inside the machine by rightclicking the machine with Fleshing Blades.
+
+Output will be tagged with <link;advancedtfctech:beamhouse;"Machine-Made";machine_made> if the input has the same tag.
+
+It consumes 20IF/t by default.

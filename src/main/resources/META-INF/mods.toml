@@ -1,11 +1,14 @@
 modLoader = "javafml"
 loaderVersion = "[40,)"
+issueTrackerURL = "https://github.com/HermitOwO/AdvancedTFCTech/issues"
 license = "MIT"
 
 [[mods]]
 modId = "advancedtfctech"
 version = "${file.jarVersion}"
 displayName = "Advanced TFC Tech Unofficial"
+displayURL = "https://www.curseforge.com/minecraft/mc-mods/advanced-tfc-tech-unofficial"
+credits = "Special thanks to PyralIron for creating the original mod and tao6626 for recreating multiblock models."
 authors = "HermitOwO"
 description = '''
 Unofficial port of Advanced TFC Tech by PyralIron.

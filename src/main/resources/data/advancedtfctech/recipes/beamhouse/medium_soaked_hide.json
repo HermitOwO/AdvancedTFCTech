@@ -1,0 +1,24 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "type": "advancedtfctech:beamhouse",
+  "result": {
+    "stack": {
+      "item": "tfc:medium_soaked_hide"
+    },
+    "modifiers": [
+      {
+        "type": "advancedtfctech:add_tag",
+        "tag": "machine_made"
+      }
+    ]
+  },
+  "input": {
+    "item": "tfc:medium_raw_hide"
+  },
+  "fluid": {
+    "tag": "tfc:limewater",
+    "amount": 400
+  },
+  "time": 300,
+  "energy": 6000
+}

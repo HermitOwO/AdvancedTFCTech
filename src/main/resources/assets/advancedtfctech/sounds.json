@@ -1,0 +1,30 @@
+{
+  "thresher": {
+    "category": "block",
+    "sounds": [
+      "immersiveengineering:crusher"
+    ],
+    "subtitle": "subtitle.advancedtfctech.thresher"
+  },
+  "grist_mill": {
+    "category": "block",
+    "sounds": [
+      "immersiveengineering:crusher"
+    ],
+    "subtitle": "subtitle.advancedtfctech.grist_mill"
+  },
+  "beamhouse": {
+    "category": "block",
+    "sounds": [
+      "immersiveengineering:refinery"
+    ],
+    "subtitle": "subtitle.advancedtfctech.beamhouse"
+  },
+  "fleshing_machine": {
+    "category": "block",
+    "sounds": [
+      "immersiveengineering:saw_full"
+    ],
+    "subtitle": "subtitle.advancedtfctech.fleshing_machine"
+  }
+}

@@ -16,12 +16,12 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 import com.google.common.collect.ImmutableSet;
-import com.hermitowo.advancedtfctech.api.crafting.PowerLoomRecipe;
 import com.hermitowo.advancedtfctech.common.blocks.ticking.ATTCommonTickableBlock;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerProvider;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerTypes;
 import com.hermitowo.advancedtfctech.common.items.ATTItems;
 import com.hermitowo.advancedtfctech.common.multiblocks.PowerLoomMultiblock;
+import com.hermitowo.advancedtfctech.common.recipes.PowerLoomRecipe;
 import com.hermitowo.advancedtfctech.config.ATTConfig;
 import com.mojang.datafixers.util.Pair;
 import javax.annotation.Nonnull;
@@ -50,7 +50,6 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
-import org.jetbrains.annotations.NotNull;
 
 public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoomBlockEntity, PowerLoomRecipe> implements ATTCommonTickableBlock, ATTContainerProvider<PowerLoomBlockEntity>, IEBlockInterfaces.IBlockBounds, IEBlockInterfaces.IPlayerInteraction
 {
@@ -115,7 +114,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     public boolean animation_rack_side_b = true;
     public boolean animation_rack2_b = true;
     public boolean animation_pirn_b = true;
-    public ResourceLocation lastTexture;
+    public ResourceLocation lastTexture = new ResourceLocation("forge:white");
 
     @Override
     public void readCustomNBT(CompoundTag nbt, boolean descPacket)
@@ -165,10 +164,10 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                 animation_pirn_z = 0;
             }
 
-            animation_rodRotation += 1.75f;
-            animation_rodRotation %= 360f;
+            animation_rodRotation += 1.75F;
+            animation_rodRotation %= 360F;
 
-            for (MultiblockProcess<PowerLoomRecipe> process : this.processQueue)
+            for (MultiblockProcess<PowerLoomRecipe> process : processQueue)
             {
                 int tick = process.processTick;
                 int delayedTick = tick - 20;
@@ -274,6 +273,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
 
         if (!isRSDisabled() && energyStorage.getEnergyStored() > 0)
         {
+            assert level != null;
             if (this.processQueue.size() < this.getProcessQueueMaxLength())
             {
                 for (int i = 0; i < 8; i++)
@@ -306,7 +306,6 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                     }
                 }
             }
-            assert level != null;
             if (level.getGameTime() % 8 == 0)
             {
                 sort();
@@ -387,6 +386,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         PowerLoomBlockEntity master = master();
         if (master != null)
         {
+            assert level != null;
             if (bX == 1 && bY == 1 && bZ == 4)
             {
                 IItemHandler insertionHandler = pirnInput.getNullable();
@@ -576,7 +576,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing)
+    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
@@ -645,7 +645,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         return this.inventory;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public BEContainerATT<? super PowerLoomBlockEntity, ?> getContainerTypeATT()
     {
@@ -655,6 +655,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     @Override
     public boolean isStackValid(int slot, ItemStack stack)
     {
+        assert level != null;
         if (slot >= 0 && slot < 8)
             return PowerLoomRecipe.isValidPirnInput(level, stack);
         if (slot >= 8 && slot < 11)
@@ -746,7 +747,7 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
 
     private static final CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(PowerLoomBlockEntity::getShape);
 
-    @NotNull
+    @Nonnull
     @Override
     public VoxelShape getBlockBounds(@Nullable CollisionContext ctx)
     {

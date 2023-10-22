@@ -4,7 +4,7 @@
   "result": {
     "stack": {
       "item": "tfc:food/oat_flour",
-      "count": 3
+      "count": 2
     },
     "modifiers": [
       "tfc:copy_food"

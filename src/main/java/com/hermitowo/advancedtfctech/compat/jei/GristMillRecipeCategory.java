@@ -1,6 +1,6 @@
 package com.hermitowo.advancedtfctech.compat.jei;
 
-import com.hermitowo.advancedtfctech.api.crafting.GristMillRecipe;
+import com.hermitowo.advancedtfctech.common.recipes.GristMillRecipe;
 import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;

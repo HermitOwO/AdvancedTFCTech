@@ -1,9 +1,10 @@
-from typing import Dict, Tuple, NamedTuple
+from typing import Dict, NamedTuple
 
-ITEMS = ('pirn', 'fiber_winded_pirn', 'silk_winded_pirn', 'wool_winded_pirn', 'pineapple_winded_pirn')
+SMALL_ITEMS = ('pirn', 'fiber_winded_pirn', 'silk_winded_pirn', 'wool_winded_pirn', 'pineapple_winded_pirn')
 WINDED_PIRNS = ('fiber_winded_pirn', 'silk_winded_pirn', 'wool_winded_pirn')
-MULTIBLOCKS = ('thresher', 'grist_mill', 'power_loom')
+MULTIBLOCKS = ('thresher', 'grist_mill', 'power_loom', 'beamhouse')
 TFC_GRAINS = ('wheat', 'rye', 'barley', 'rice', 'maize', 'oat')
+
 
 class Weave(NamedTuple):
     ingredient: str
@@ -13,6 +14,7 @@ class Weave(NamedTuple):
     in_progress_texture: str
     time: int
     energy: int
+
 
 LOOM: Dict[str, Weave] = {
     'burlap_cloth': Weave('tfc:jute_fiber', 'fiber_winded_pirn', 48, 8, 'advancedtfctech:multiblock/power_loom/burlap', 500, 40000),
@@ -32,13 +34,27 @@ DEFAULT_LANG = {
     'tfc.jei.thresher': 'Thresher',
     'tfc.jei.grist_mill': 'Grist Mill',
     'tfc.jei.power_loom': 'Power Loom',
+    'tfc.jei.fleshing_machine': 'Fleshing Machine',
+    'tfc.jei.beamhouse': 'Beamhouse',
+
+    'advancedtfctech.jei.not_consumed': 'Not Consumed',
+    'advancedtfctech.jei.double_if_has_tag': 'Output will be doubled if input is Machine-Made',
+
+    'advancedtfctech.tooltip.firmalife_not_loaded': 'Dummy item because Firmalife is not loaded',
+    'advancedtfctech.tooltip.machine_made': 'Machine-Made',
+
+    'advancedtfctech.gui.distribute': 'Distribute Inputs',
 
     'manual.advancedtfctech.advancedtfctech': 'TerraFirmaCraft Tech',
 
-    'advancedtfctech.jei.not_consumed': 'Not Consumed',
+    'subtitle.advancedtfctech.thresher': 'Thresher whirs',
+    'subtitle.advancedtfctech.grist_mill': 'Grist Mill grinds',
+    'subtitle.advancedtfctech.beamhouse': 'Beamhouse barrel spins',
+    'subtitle.advancedtfctech.fleshing_machine': 'Fleshing Machine operates',
 
-    'advancedtfctech.tooltip.firmalife_not_loaded': 'Dummy item because Firmalife is not loaded'
+    'desc.advancedtfctech.bladeIntegrity': 'Integrity %1$s %%'
 }
+
 
 def lang(key: str, *args) -> str:
     return ((key % args) if len(args) > 0 else key).replace('_', ' ').replace('/', ' ').title()

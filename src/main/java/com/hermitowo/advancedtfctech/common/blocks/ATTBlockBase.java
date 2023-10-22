@@ -9,19 +9,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.RegistryObject;
 
 public class ATTBlockBase extends Block
 {
     public ATTBlockBase(Properties properties)
     {
         super(properties);
-    }
-
-    @Nullable
-    public static <E extends BlockEntity & ATTCommonTickableBlock, A extends BlockEntity> BlockEntityTicker<A> createCommonTicker(boolean isClient, BlockEntityType<A> actual, RegistryObject<BlockEntityType<E>> expected)
-    {
-        return createCommonTicker(isClient, actual, expected.get());
     }
 
     @Nullable

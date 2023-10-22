@@ -1,0 +1,67 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "name": "Beamhouse",
+  "category": "advancedtfctech:main",
+  "icon": "advancedtfctech:beamhouse",
+  "pages": [
+    {
+      "type": "patchouli:multiblock",
+      "multiblock": {
+        "pattern": [
+          [
+            "    ",
+            " mmm",
+            " MMM",
+            " mmm"
+          ],
+          [
+            " L L",
+            "RMHM",
+            "LM M",
+            "LMMM"
+          ],
+          [
+            "SPSL",
+            "SP0S",
+            "LPSS",
+            "LSSS"
+          ]
+        ],
+        "mapping": {
+          "S": "immersiveengineering:steel_scaffolding_standard",
+          "M": "immersiveengineering:sheetmetal_iron",
+          "m": "immersiveengineering:slab_sheetmetal_iron",
+          "P": "minecraft:orange_wool",
+          "H": "immersiveengineering:heavy_engineering",
+          "L": "immersiveengineering:light_engineering",
+          "R": "immersiveengineering:rs_engineering",
+          "0": "immersiveengineering:steel_scaffolding_standard"
+        }
+      },
+      "name": "Beamhouse",
+      "text": "$(item)Right click$() the $(thing)Heavy Engineering Block$() with the Hammer. $(#007500)Orange wool$() should be $(#007500)fluid pipes$() but they crash if rendered.",
+      "enable_visualize": true
+    },
+    {
+      "type": "patchouli:text",
+      "text": "The $(thing)Beamhouse$() handles liming, washing and tanning of hides in the leather production process.$(br2)For fluid input, either put a filled bucket inside the GUI or $(item)rightclick$() the fluid input port with the filled bucket. Unwanted fluid can be removed by $(item)rightclick$() the same port with an empty bucket.$(br2)By default, it consumes 20IF/t."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "anchor": "machine_made",
+      "item": "tfc:large_prepared_hide{machine_made:1b}",
+      "title": "Machine-Made Hides",
+      "link_recipes": false,
+      "text": "Raw hides will obtain the $(thing)\"Machine-Made\"$() tag after getting processed by the $(thing)Beamhouse$(). The tag will be inherited if the subsequent washing, fleshing (scraping) and tanning process are handled by the $(thing)Beamhouse$() and the $(l:advancedtfctech:main/fleshing_machine)Fleshing Machine$()."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Going through all these processes, the amount of leather obtained will be $(thing)double$() the normal amount.$(br2)Note that if any step of the process is not handled by machines, the $(thing)\"Machine-Made\"$() tag will be lost and the bonus of double output cannot be retained."
+    }
+  ],
+  "read_by_default": true,
+  "sortnum": 3,
+  "extra_recipe_mappings": {
+    "advancedtfctech:beamhouse": 0
+  }
+}

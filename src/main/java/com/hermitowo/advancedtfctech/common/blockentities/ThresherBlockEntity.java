@@ -12,17 +12,17 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
-import blusunrize.immersiveengineering.common.util.IESounds;
 import blusunrize.immersiveengineering.common.util.MultiblockCapability;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import blusunrize.immersiveengineering.common.util.orientation.RelativeBlockFace;
 import com.google.common.collect.ImmutableSet;
-import com.hermitowo.advancedtfctech.api.crafting.ThresherRecipe;
+import com.hermitowo.advancedtfctech.client.ATTSounds;
 import com.hermitowo.advancedtfctech.common.blocks.ticking.ATTCommonTickableBlock;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerProvider;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerTypes;
 import com.hermitowo.advancedtfctech.common.multiblocks.ThresherMultiblock;
+import com.hermitowo.advancedtfctech.common.recipes.ThresherRecipe;
 import com.mojang.datafixers.util.Pair;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,7 +48,6 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
-import org.jetbrains.annotations.NotNull;
 
 public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBlockEntity, ThresherRecipe> implements ATTCommonTickableBlock, ATTContainerProvider<ThresherBlockEntity>, IEBlockInterfaces.IBlockBounds, IEBlockInterfaces.ISoundBE
 {
@@ -69,7 +68,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
 
     public ThresherBlockEntity(BlockEntityType<ThresherBlockEntity> type, BlockPos pos, BlockState state)
     {
-        super(ThresherMultiblock.INSTANCE, 16000, true, type, pos, state);
+        super(ThresherMultiblock.INSTANCE, 32000, true, type, pos, state);
     }
 
     @Override
@@ -92,7 +91,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
     public void tickClient()
     {
         boolean active = shouldRenderAsActive();
-        ImmersiveEngineering.proxy.handleTileSound(IESounds.crusher, this, active, .25f, 1);
+        ImmersiveEngineering.proxy.handleTileSound(ATTSounds.THRESHER.get(), this, active, .25f, 1);
     }
 
     @Override
@@ -114,6 +113,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
 
         if (!isRSDisabled() && this.energyStorage.getEnergyStored() > 0)
         {
+            assert level != null;
             if (this.processQueue.size() < this.getProcessQueueMaxLength())
             {
                 final int[] usedInvSlots = new int[6];
@@ -150,7 +150,6 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
                     }
                 }
             }
-            assert level != null;
             if (level.getGameTime() % 8 == 0)
             {
                 sort();
@@ -254,7 +253,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing)
+    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
@@ -317,7 +316,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
         return this.inventory;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public BEContainerATT<? super ThresherBlockEntity, ?> getContainerTypeATT()
     {
@@ -327,6 +326,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
     @Override
     public boolean isStackValid(int slot, ItemStack stack)
     {
+        assert level != null;
         return ThresherRecipe.isValidRecipeInput(level, stack);
     }
 
@@ -395,7 +395,7 @@ public class ThresherBlockEntity extends PoweredMultiblockBlockEntity<ThresherBl
 
     private static final CachedShapesWithTransform<BlockPos, Pair<Direction, Boolean>> SHAPES = CachedShapesWithTransform.createForMultiblock(ThresherBlockEntity::getShape);
 
-    @NotNull
+    @Nonnull
     @Override
     public VoxelShape getBlockBounds(@Nullable CollisionContext ctx)
     {

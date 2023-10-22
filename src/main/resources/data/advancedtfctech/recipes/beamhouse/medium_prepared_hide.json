@@ -1,0 +1,24 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "type": "advancedtfctech:beamhouse",
+  "result": {
+    "stack": {
+      "item": "tfc:medium_prepared_hide"
+    },
+    "modifiers": [
+      {
+        "type": "advancedtfctech:copy_tag",
+        "tag": "machine_made"
+      }
+    ]
+  },
+  "input": {
+    "item": "tfc:medium_scraped_hide"
+  },
+  "fluid": {
+    "tag": "tfc:fresh_water",
+    "amount": 400
+  },
+  "time": 300,
+  "energy": 6000
+}

@@ -13,8 +13,9 @@ import net.minecraft.core.Direction;
 
 public class GristMillRenderer extends IEBlockEntityRenderer<GristMillBlockEntity>
 {
-    public static String NAME = "grist_mill_animation";
+    public static String NAME = "grist_mill_rod";
     public static DynamicModel DRIVER;
+    private static final IVertexBufferHolder DRIVER_BUFFER = IVertexBufferHolder.create(() -> DRIVER.getNullQuads());
 
     @Override
     public void render(GristMillBlockEntity be, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay)
@@ -32,8 +33,7 @@ public class GristMillRenderer extends IEBlockEntityRenderer<GristMillBlockEntit
 
         poseStack.mulPose(Vector3f.XP.rotationDegrees(angle));
 
-        IVertexBufferHolder.create(() -> DRIVER.getNullQuads())
-            .render(RenderType.solid(), combinedLight, combinedOverlay, bufferMirrored, poseStack);
+        DRIVER_BUFFER.render(RenderType.solid(), combinedLight, combinedOverlay, bufferMirrored, poseStack, be.getIsMirrored());
 
         poseStack.popPose();
     }
@@ -61,5 +61,10 @@ public class GristMillRenderer extends IEBlockEntityRenderer<GristMillBlockEntit
         }
 
         rotateForFacing(stack, facing);
+    }
+
+    public static void reset()
+    {
+        DRIVER_BUFFER.reset();
     }
 }

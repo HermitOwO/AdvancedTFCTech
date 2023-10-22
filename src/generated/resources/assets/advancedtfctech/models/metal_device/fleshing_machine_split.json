@@ -1,0 +1,31 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "advancedtfctech:metal_device/fleshing_machine"
+  },
+  "loader": "immersiveengineering:basic_split",
+  "dynamic": false,
+  "inner_model": {
+    "parent": "minecraft:block/block",
+    "textures": {
+      "texture": "advancedtfctech:metal_device/fleshing_machine",
+      "particle": "advancedtfctech:metal_device/fleshing_machine"
+    },
+    "loader": "forge:obj",
+    "model": "advancedtfctech:models/metal_device/fleshing_machine.obj",
+    "detectCullableFaces": false,
+    "flip-v": true
+  },
+  "split_parts": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0
+    ]
+  ]
+}

@@ -2,6 +2,7 @@ package com.hermitowo.advancedtfctech.client;
 
 import java.util.List;
 import com.hermitowo.advancedtfctech.common.items.ATTItems;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -25,8 +26,15 @@ public class ATTClientForgeEvents
         final ItemStack stack = event.getItemStack();
         final List<Component> text = event.getToolTip();
         if (!stack.isEmpty())
+        {
             if (!ModList.get().isLoaded("firmalife"))
                 if (Helpers.isItem(stack, ATTItems.PINEAPPLE_WINDED_PIRN.get()))
                     text.add(Helpers.translatable("advancedtfctech.tooltip.firmalife_not_loaded"));
+
+            CompoundTag tag = stack.getTag();
+            if (tag != null)
+                if (tag.getBoolean("machine_made"))
+                    text.add(Helpers.translatable("advancedtfctech.tooltip.machine_made"));
+        }
     }
 }

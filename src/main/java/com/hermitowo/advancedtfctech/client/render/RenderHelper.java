@@ -17,6 +17,12 @@ public class RenderHelper
         renderBox(wr, stack, x0 / 16, y0 / 16, z0 / 16, x1 / 16, y1 / 16, z1 / 16, u0, v0, pixel, light);
     }
 
+    // minU and minV default to 0 when unspecified
+    public static void renderTexturedBox(VertexConsumer wr, PoseStack stack, float x0, float y0, float z0, float x1, float y1, float z1, TextureAtlasSprite texture, int light)
+    {
+        renderTexturedBox(wr, stack, x0, y0, z0, x1, y1, z1, texture, 0, 0, light);
+    }
+
     public static void renderBox(VertexConsumer wr, PoseStack stack, float x0, float y0, float z0, float x1, float y1, float z1, float u0, float v0, float pixel, int light)
     {
         float normalX = 0;

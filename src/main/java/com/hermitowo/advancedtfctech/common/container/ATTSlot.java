@@ -1,14 +1,16 @@
 package com.hermitowo.advancedtfctech.common.container;
 
-import com.hermitowo.advancedtfctech.api.crafting.GristMillRecipe;
-import com.hermitowo.advancedtfctech.api.crafting.ThresherRecipe;
-import javax.annotation.Nonnull;
+import com.hermitowo.advancedtfctech.common.recipes.BeamhouseRecipe;
+import com.hermitowo.advancedtfctech.common.recipes.GristMillRecipe;
+import com.hermitowo.advancedtfctech.common.recipes.ThresherRecipe;
+import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
+@ParametersAreNonnullByDefault
 public abstract class ATTSlot extends Slot
 {
     final AbstractContainerMenu containerMenu;
@@ -19,12 +21,6 @@ public abstract class ATTSlot extends Slot
         this.containerMenu = containerMenu;
     }
 
-    @Override
-    public boolean mayPlace(ItemStack stack)
-    {
-        return true;
-    }
-
     public static class NotPlaceable extends ATTSlot
     {
         public NotPlaceable(AbstractContainerMenu container, Container inv, int id, int xPosition, int yPosition)
@@ -33,7 +29,7 @@ public abstract class ATTSlot extends Slot
         }
 
         @Override
-        public boolean mayPlace(@Nonnull ItemStack stack)
+        public boolean mayPlace(ItemStack stack)
         {
             return false;
         }
@@ -70,6 +66,23 @@ public abstract class ATTSlot extends Slot
         public boolean mayPlace(ItemStack stack)
         {
             return !stack.isEmpty() && GristMillRecipe.isValidRecipeInput(level, stack);
+        }
+    }
+
+    public static class BeamhouseInput extends ATTSlot
+    {
+        private final Level level;
+
+        public BeamhouseInput(AbstractContainerMenu container, Container inv, int id, int x, int y, Level level)
+        {
+            super(container, inv, id, x, y);
+            this.level = level;
+        }
+
+        @Override
+        public boolean mayPlace(ItemStack stack)
+        {
+            return !stack.isEmpty() && BeamhouseRecipe.isValidRecipeInput(level, stack);
         }
     }
 }

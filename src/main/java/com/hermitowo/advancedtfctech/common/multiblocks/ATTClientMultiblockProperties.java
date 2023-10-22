@@ -37,11 +37,6 @@ public class ATTClientMultiblockProperties implements ClientMultiblocks.Multiblo
         this(multiblock, new Vec3(offX, offY, offZ));
     }
 
-    public ATTClientMultiblockProperties(ATTTemplateMultiblock multiblock)
-    {
-        this(multiblock, null);
-    }
-
     @Override
     public NonNullList<ItemStack> getTotalMaterials()
     {

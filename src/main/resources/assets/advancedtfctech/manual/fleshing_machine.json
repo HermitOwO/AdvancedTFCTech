@@ -1,0 +1,14 @@
+{
+  "recipe": {
+    "type": "crafting",
+    "recipe": "advancedtfctech:crafting/fleshing_machine"
+  },
+  "blades": {
+    "type": "item_display",
+    "items": [
+      {
+        "item": "advancedtfctech:fleshing_blades"
+      }
+    ]
+  }
+}

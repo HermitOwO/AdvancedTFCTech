@@ -1,0 +1,5 @@
+{
+  "loader": "forge:obj",
+  "model": "advancedtfctech:models/multiblock/beamhouse_barrel.obj",
+  "flip-v": true
+}

@@ -13,6 +13,7 @@ public class ATTClientConfig
 {
     public final ConfigValue<List<? extends String>> additionalPowerLoomClothTextures;
     public final ConfigValue<List<? extends List<? extends String>>> additionalPowerLoomPirnTextures;
+    public final ConfigValue<List<? extends List<? extends String>>> additionalFleshingMachineTextures;
 
     ATTClientConfig(Builder innerBuilder)
     {
@@ -33,6 +34,13 @@ public class ATTClientConfig
             "Instead, the textures need to be located in a resourcepack.",
             "Example: additionalPowerLoomPirnTextures = [[\"domain:registry_name1\", \"domain:texture_location1\"], [\"domain:registry_name2\", \"domain:texture_location2\"]]"
         ).defineList("additionalPowerLoomPirnTextures", ArrayList::new, o -> o instanceof List);
+
+        additionalFleshingMachineTextures = builder.apply("additionalFleshingMachineTextures").comment(
+            "If you use custom inputs and outputs in a Fleshing Machine recipe, the registry name of the items and the textures need to be added to this list.",
+            "Note that the custom textures cannot be located in a datapack because datapacks are loaded after all the textures are stitched.",
+            "Instead, the textures need to be located in a resourcepack.",
+            "Example: additionalFleshingMachineTextures = [[\"domain:registry_name1\", \"domain:texture_location1\"], [\"domain:registry_name2\", \"domain:texture_location2\"]]"
+        ).defineList("additionalFleshingMachineTextures", ArrayList::new, o -> o instanceof List);
 
         innerBuilder.pop();
     }

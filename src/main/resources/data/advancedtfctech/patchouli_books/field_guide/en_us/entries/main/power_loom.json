@@ -59,5 +59,8 @@
     }
   ],
   "read_by_default": true,
-  "sortnum": 0
+  "sortnum": 0,
+  "extra_recipe_mappings": {
+    "advancedtfctech:power_loom": 0
+  }
 }

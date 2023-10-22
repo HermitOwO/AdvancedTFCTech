@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.render.tile.BERenderUtils;
 import blusunrize.immersiveengineering.client.render.tile.IEBlockEntityRenderer;
-import com.hermitowo.advancedtfctech.api.crafting.PowerLoomRecipe;
+import com.hermitowo.advancedtfctech.common.recipes.PowerLoomRecipe;
 import com.hermitowo.advancedtfctech.client.model.PowerLoomParts;
 import com.hermitowo.advancedtfctech.common.blockentities.PowerLoomBlockEntity;
 import com.hermitowo.advancedtfctech.config.ATTConfig;

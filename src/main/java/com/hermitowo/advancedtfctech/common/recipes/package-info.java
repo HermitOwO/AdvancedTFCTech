@@ -1,0 +1,4 @@
+@ParametersAreNonnullByDefault
+package com.hermitowo.advancedtfctech.common.recipes;
+
+import javax.annotation.ParametersAreNonnullByDefault;

@@ -1,0 +1,25 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "type": "advancedtfctech:beamhouse",
+  "result": {
+    "stack": {
+      "item": "minecraft:leather",
+      "count": 3
+    },
+    "modifiers": [
+      {
+        "type": "advancedtfctech:double_if_has_tag",
+        "tag": "machine_made"
+      }
+    ]
+  },
+  "input": {
+    "item": "tfc:large_prepared_hide"
+  },
+  "fluid": {
+    "tag": "tfc:tannin",
+    "amount": 500
+  },
+  "time": 400,
+  "energy": 8000
+}

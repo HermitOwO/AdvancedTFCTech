@@ -1,7 +1,7 @@
 package com.hermitowo.advancedtfctech.compat.jei;
 
 import java.util.Arrays;
-import com.hermitowo.advancedtfctech.api.crafting.PowerLoomRecipe;
+import com.hermitowo.advancedtfctech.common.recipes.PowerLoomRecipe;
 import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;

@@ -1,0 +1,5 @@
+{
+  "loader": "forge:obj",
+  "model": "advancedtfctech:models/multiblock/grist_mill_rod.obj",
+  "flip-v": true
+}

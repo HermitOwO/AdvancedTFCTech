@@ -12,7 +12,6 @@ import recipes
 import advancements
 
 
-
 class ModificationLoggingResourceManager(ResourceManager):
 
     def write(self, path_parts: Sequence[str], data_in: Json):
@@ -53,6 +52,7 @@ def generate_all(rm: ResourceManager):
     advancements.generate(rm)
 
     rm.flush()
+
 
 if __name__ == '__main__':
     main()

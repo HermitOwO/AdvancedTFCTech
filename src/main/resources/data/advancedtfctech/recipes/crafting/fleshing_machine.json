@@ -1,0 +1,29 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IEI",
+    "BMB",
+    "ICI"
+  ],
+  "key": {
+    "I": {
+      "tag": "forge:sheetmetals/iron"
+    },
+    "E": {
+      "item": "immersiveengineering:component_electronic"
+    },
+    "B": {
+      "item": "tfc:brass_mechanisms"
+    },
+    "M": {
+      "item": "immersiveengineering:component_iron"
+    },
+    "C": {
+      "item": "immersiveengineering:coil_lv"
+    }
+  },
+  "result": {
+    "item": "advancedtfctech:fleshing_machine"
+  }
+}
