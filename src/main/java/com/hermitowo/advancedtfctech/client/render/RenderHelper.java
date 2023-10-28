@@ -1,9 +1,13 @@
 package com.hermitowo.advancedtfctech.client.render;
 
+import blusunrize.immersiveengineering.client.render.tile.BERenderUtils;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.Direction;
 
 public class RenderHelper
 {
@@ -124,6 +128,24 @@ public class RenderHelper
         putVertex(wr, stack, x1, y1, z1, u0 + dZ, v0 + s, normalX, normalY, normalZ, light);
         putVertex(wr, stack, x1, y0, z1, u0 + dZ, v0 + dY + s, normalX, normalY, normalZ, light);
         putVertex(wr, stack, x1, y0, z0, u0, v0 + dY + s, normalX, normalY, normalZ, light);
+    }
+
+    public static <T extends IEBlockInterfaces.IMirrorAble & IEBlockInterfaces.IDirectionalBE> MultiBufferSource mirror(
+        T tile,
+        PoseStack mat,
+        MultiBufferSource builderIn)
+    {
+        mat.translate(0.5, 0.5, 0.5);
+        builderIn = BERenderUtils.mirror(tile, mat, builderIn);
+        mat.translate(-0.5, -0.5, -0.5);
+        return builderIn;
+    }
+
+    public static void translate(PoseStack stack, double x, double y, double z)
+    {
+        stack.translate(0.5, 0.5, 0.5);
+        stack.translate(x, y, z);
+        stack.translate(-0.5, -0.5, -0.5);
     }
 
     private static void putVertex(VertexConsumer b, PoseStack mat, float x, float y, float z, float u, float v, float nX, float nY, float nZ, int light)

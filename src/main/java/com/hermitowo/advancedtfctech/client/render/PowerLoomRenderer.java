@@ -4,11 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.client.render.tile.BERenderUtils;
 import blusunrize.immersiveengineering.client.render.tile.IEBlockEntityRenderer;
-import com.hermitowo.advancedtfctech.common.recipes.PowerLoomRecipe;
 import com.hermitowo.advancedtfctech.client.model.PowerLoomParts;
 import com.hermitowo.advancedtfctech.common.blockentities.PowerLoomBlockEntity;
+import com.hermitowo.advancedtfctech.common.recipes.PowerLoomRecipe;
 import com.hermitowo.advancedtfctech.config.ATTConfig;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -23,8 +22,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
-
-import net.dries007.tfc.client.RenderHelpers;
 
 import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
 
@@ -44,17 +41,16 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
     {
         Direction facing = be.getFacing();
 
-        boolean isMirrored = be.getIsMirrored();
         boolean active = !be.processQueue.isEmpty();
         float angle = be.animation_rodRotation + (be.shouldRenderAsActive() ? 1.75F * partialTicks : 0);
-        final MultiBufferSource bufferMirrored = BERenderUtils.mirror(be, poseStack, buffer);
-        VertexConsumer vertexConsumer = material.buffer(bufferMirrored, RenderType::entitySolid);
+        buffer = RenderHelper.mirror(be, poseStack, buffer);
+        VertexConsumer vertexConsumer = material.buffer(buffer, RenderType::entitySolid);
 
         // Output Rod
         poseStack.pushPose();
 
-        translateForFacing(poseStack, facing, -0.6875, 0.625, -0.6875);
-        rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
+        rotateForFacing(poseStack, facing);
+        RenderHelper.translate(poseStack, -0.6875, 0.625, -0.6875);
 
         poseStack.mulPose(Vector3f.ZN.rotationDegrees(angle));
         powerLoomModel.rod.render(poseStack, vertexConsumer, combinedLight, combinedOverlay);
@@ -64,8 +60,8 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
         // Input Rod
         poseStack.pushPose();
 
-        translateForFacing(poseStack, facing, 1.6875, 0.625, -0.6875);
-        rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
+        rotateForFacing(poseStack, facing);
+        RenderHelper.translate(poseStack, 1.6875, 0.625, -0.6875);
 
         poseStack.mulPose(Vector3f.ZN.rotationDegrees(angle));
         powerLoomModel.rod.render(poseStack, vertexConsumer, combinedLight, combinedOverlay);
@@ -78,18 +74,9 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
 
         poseStack.pushPose();
 
-        rotateRackForFacing(poseStack, facing);
-
-        if (facing == Direction.NORTH)
-            poseStack.translate(-1.211 - rack, 0, 1.9375);
-        if (facing == Direction.EAST)
-            poseStack.translate(-1.9375, 0, -1.211 - rack);
-        if (facing == Direction.SOUTH)
-            poseStack.translate(-0.789 + rack, 0, -1.9375);
-        if (facing == Direction.WEST)
-            poseStack.translate(1.9375, 0, -0.789 + rack);
-
-        rotateForFacingMirrored(poseStack, facing, isMirrored);
+        rotateForFacing(poseStack, facing);
+        poseStack.mulPose(Vector3f.ZP.rotationDegrees(180));
+        RenderHelper.translate(poseStack, -1.211 - rack, 0, 1.9375);
 
         powerLoomModel.rack.render(poseStack, vertexConsumer, combinedLight, combinedOverlay);
 
@@ -102,8 +89,9 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
         // High Rack
         poseStack.pushPose();
 
-        rotateAndTranslate(poseStack, facing, -1.9375, 0.4375 - be.animation_rack2, 1.9375);
-        rotateForFacingMirrored(poseStack, facing, isMirrored);
+        rotateForFacing(poseStack,facing);
+        poseStack.mulPose(Vector3f.ZP.rotationDegrees(180));
+        RenderHelper.translate(poseStack, -1.9375, 0.4375 - be.animation_rack2, 1.9375);
 
         powerLoomModel.rack2.render(poseStack, vertexConsumer, combinedLight, combinedOverlay);
 
@@ -112,8 +100,9 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
         // Low Rack
         poseStack.pushPose();
 
-        rotateAndTranslate(poseStack, facing, -1.9375, -0.4375 + be.animation_rack2, 1.9375);
-        rotateForFacingMirrored(poseStack, facing, isMirrored);
+        rotateForFacing(poseStack,facing);
+        poseStack.mulPose(Vector3f.ZP.rotationDegrees(180));
+        RenderHelper.translate(poseStack, -1.9375, -0.4375 + be.animation_rack2, 1.9375);
 
         powerLoomModel.rack3.render(poseStack, vertexConsumer, combinedLight, combinedOverlay);
 
@@ -122,12 +111,12 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
         // Holder
         poseStack.pushPose();
 
-        rotateAndTranslate(poseStack, facing, -0.78125, -1.625, 2);
-        rotateForFacingMirrored(poseStack, facing, isMirrored);
+        rotateForFacing(poseStack,facing);
+        poseStack.mulPose(Vector3f.ZP.rotationDegrees(180));
+        RenderHelper.translate(poseStack, -0.78125, -1.625, 2);
 
         float tilt = be.holderRotation * 45.0F;
         poseStack.mulPose(Vector3f.ZP.rotationDegrees(be.animation_pirn + tilt));
-
         powerLoomModel.holder.render(poseStack, vertexConsumer, combinedLight, combinedOverlay);
 
         poseStack.popPose();
@@ -136,7 +125,7 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
          *
          */
 
-        VertexConsumer consumer = bufferMirrored.getBuffer(RenderType.solid());
+        VertexConsumer consumer = buffer.getBuffer(RenderType.solid());
         TextureAtlas blockMap = ClientUtils.mc().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS);
 
         ItemStack pirn = be.pirnList.stream().filter(s -> !s.isEmpty()).findAny().orElse(ItemStack.EMPTY);
@@ -165,8 +154,9 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
         {
             poseStack.pushPose();
 
-            rotateAndTranslate(poseStack, facing, -0.78125, -1.625, 2);
-            rotateForFacingMirrored(poseStack, facing, isMirrored);
+            rotateForFacing(poseStack,facing);
+            poseStack.mulPose(Vector3f.ZP.rotationDegrees(180));
+            RenderHelper.translate(poseStack, -0.78125, -1.625, 2);
 
             poseStack.mulPose(Vector3f.ZP.rotationDegrees(be.animation_pirn + 45.0F));
 
@@ -183,13 +173,13 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
         {
             poseStack.pushPose();
 
-            rotateAndTranslate(poseStack, facing, -0.78125, -1.625, 2);
-            rotateForFacingMirrored(poseStack, facing, isMirrored);
+            rotateForFacing(poseStack,facing);
+            poseStack.mulPose(Vector3f.ZP.rotationDegrees(180));
+            RenderHelper.translate(poseStack, -0.78125, -1.625, 2);
 
             poseStack.translate(be.animation_pirn_x - be.animation_pirn_x2, be.animation_pirn_y, -be.animation_pirn_z);
 
             poseStack.mulPose(Vector3f.ZP.rotationDegrees(be.animation_pirn + 45.0F));
-
             RenderHelper.renderTexturedPirn(consumer, poseStack, -1, -5, 0, 1, -3, 9, pirnTexture, combinedLight);
 
             poseStack.popPose();
@@ -207,12 +197,10 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
 
             poseStack.pushPose();
 
-            translateForFacing(poseStack, facing, -0.6875, 0.625, -0.5);
-            rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
+            rotateForFacing(poseStack, facing);
+            RenderHelper.translate(poseStack, -0.6875, 0.625, -0.5);
 
-            if (active)
-                poseStack.mulPose(Vector3f.ZN.rotationDegrees(angle));
-
+            poseStack.mulPose(Vector3f.ZN.rotationDegrees(angle));
             RenderHelper.renderTexturedBox(consumer, poseStack, -2 - count / 2F, -2 - count / 2F, 0, 2 + count / 2F, 2 + count / 2F, 32, outputTexture, 0, 38, combinedLight);
 
             poseStack.popPose();
@@ -233,12 +221,10 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
 
                 poseStack.pushPose();
 
-                translateForFacing(poseStack, facing, 1.6875, 0.625, -0.5);
-                rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
+                rotateForFacing(poseStack, facing);
+                RenderHelper.translate(poseStack, 1.6875, 0.625, -0.5);
 
-                if (active)
-                    poseStack.mulPose(Vector3f.ZN.rotationDegrees(angle));
-
+                poseStack.mulPose(Vector3f.ZN.rotationDegrees(angle));
                 RenderHelper.renderTexturedBox(consumer, poseStack, -2 - count / 2F, -2 - count / 2F, 0, 2 + count / 2F, 2 + count / 2F, 32, texture, 0, 38, combinedLight);
 
                 poseStack.popPose();
@@ -249,8 +235,8 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
                 // Rods
                 poseStack.pushPose();
 
-                translateForFacing(poseStack, facing, -0.6875, 1.5, -0.5);
-                rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
+                rotateForFacing(poseStack, facing);
+                RenderHelper.translate(poseStack, -0.6875, 1.5, -0.5);
 
                 RenderHelper.renderTexturedBox(consumer, poseStack, -2, -2, 0, 2, 2, 32, texture, 0, 38, combinedLight);
 
@@ -262,8 +248,9 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
                 // Cloths
                 poseStack.pushPose();
 
-                translateForFacing(poseStack, facing, -0.7, 0.7, -0.5);
-                rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
+                rotateForFacing(poseStack, facing);
+                RenderHelper.translate(poseStack, -0.7, 0.7, -0.5);
+
                 poseStack.mulPose(Vector3f.ZP.rotationDegrees(8.0F));
                 RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 11, 32, texture, 0, 38 + be.animation_weave, combinedLight);
 
@@ -271,10 +258,10 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
 
                 poseStack.pushPose();
 
-                translateForFacing(poseStack, facing, 1.575, 0.7, -0.5);
-                rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
-                poseStack.mulPose(Vector3f.ZN.rotationDegrees(8.0F));
+                rotateForFacing(poseStack, facing);
+                RenderHelper.translate(poseStack, 1.575, 0.7, -0.5);
 
+                poseStack.mulPose(Vector3f.ZN.rotationDegrees(8.0F));
                 RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 12, 32, texture, 0, be.animation_weave, combinedLight);
 
                 poseStack.popPose();
@@ -284,105 +271,45 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<PowerLoomBlockEntit
                 {
                     poseStack.pushPose();
 
-                    translateForFacing(poseStack, facing, -0.71875, 1.65, -0.5 + i * 0.125);
-                    rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
+                    rotateForFacing(poseStack, facing);
+                    RenderHelper.translate(poseStack, -0.71875, 1.65, -0.5 + i * 0.125);
+
                     poseStack.mulPose(Vector3f.ZN.rotationDegrees(80.0F + be.angle_long_thread));
-
                     RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 27, 1, texture, 0, 0, combinedLight);
 
                     poseStack.popPose();
 
                     poseStack.pushPose();
 
-                    translateForFacing(poseStack, facing, -0.71875, 1.65, -0.4375 + i * 0.125);
-                    rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
+                    rotateForFacing(poseStack, facing);
+                    RenderHelper.translate(poseStack, -0.71875, 1.65, -0.4375 + i * 0.125);
+
                     poseStack.mulPose(Vector3f.ZN.rotationDegrees(99.0F - be.angle_long_thread));
-
                     RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 27, 1, texture, 0, 0, combinedLight);
 
                     poseStack.popPose();
 
                     poseStack.pushPose();
 
-                    translateForFacing(poseStack, facing, 1.635, 1.585, -0.5 + i * 0.125);
-                    rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
-                    poseStack.mulPose(Vector3f.ZP.rotationDegrees(68.0F + be.angle_short_thread));
+                    rotateForFacing(poseStack, facing);
+                    RenderHelper.translate(poseStack, 1.635, 1.585, -0.5 + i * 0.125);
 
+                    poseStack.mulPose(Vector3f.ZP.rotationDegrees(68.0F + be.angle_short_thread));
                     RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 13, 1, texture, 0, 0, combinedLight);
 
                     poseStack.popPose();
 
                     poseStack.pushPose();
 
-                    translateForFacing(poseStack, facing, 1.635, 1.585, -0.4375 + i * 0.125);
-                    rotateForFacingMirroredInverted(poseStack, facing, isMirrored);
-                    poseStack.mulPose(Vector3f.ZP.rotationDegrees(110.0F - be.angle_short_thread));
+                    rotateForFacing(poseStack, facing);
+                    RenderHelper.translate(poseStack, 1.635, 1.585, -0.4375 + i * 0.125);
 
+                    poseStack.mulPose(Vector3f.ZP.rotationDegrees(110.0F - be.angle_short_thread));
                     RenderHelper.renderTexturedBox(consumer, poseStack, 0, 0, 0, 1, 13, 1, texture, 0, 0, combinedLight);
 
                     poseStack.popPose();
                 }
             }
         }
-    }
-
-    private static void translateForFacing(PoseStack stack, Direction facing, double x, double y, double z)
-    {
-        if (facing == Direction.EAST)
-            stack.translate(-z, y, x);
-        else if (facing == Direction.SOUTH)
-            stack.translate(-x, y, -z);
-        else if (facing == Direction.WEST)
-            stack.translate(z, y, -x);
-        else
-            stack.translate(x, y, z);
-    }
-
-    private static void rotateRackForFacing(PoseStack stack, Direction facing)
-    {
-        if (facing == Direction.EAST)
-            stack.mulPose(RenderHelpers.rotateDegreesX(180.0F));
-        else
-            stack.mulPose(RenderHelpers.rotateDegreesZ(180.0F));
-        if (facing == Direction.WEST)
-            stack.mulPose(RenderHelpers.rotateDegreesY(180.0F));
-    }
-
-    private static void rotateAndTranslate(PoseStack stack, Direction facing, double x, double y, double z)
-    {
-        rotateRackForFacing(stack, facing);
-
-        if (facing == Direction.SOUTH)
-            stack.translate(-2, 0, 0);
-        if (facing == Direction.WEST)
-            stack.translate(0, 0, -2);
-
-        translateForFacing(stack, facing, x, y, z);
-    }
-
-    private static void rotateForFacingMirrored(PoseStack stack, Direction facing, boolean isMirrored)
-    {
-        if (isMirrored)
-        {
-            if (facing == Direction.NORTH || facing == Direction.SOUTH)
-                stack.translate(1, 0, 0);
-            if (facing == Direction.EAST || facing == Direction.WEST)
-                stack.translate(0, 0, 1);
-        }
-
-        rotateForFacing(stack, facing);
-    }
-
-    private static void rotateForFacingMirroredInverted(PoseStack stack, Direction facing, boolean isMirrored)
-    {
-        if (isMirrored)
-        {
-            if (facing == Direction.NORTH || facing == Direction.SOUTH)
-                stack.translate(-1, 0, 0);
-            if (facing == Direction.EAST || facing == Direction.WEST)
-                stack.translate(0, 0, -1);
-        }
-
-        rotateForFacing(stack, facing);
     }
 }

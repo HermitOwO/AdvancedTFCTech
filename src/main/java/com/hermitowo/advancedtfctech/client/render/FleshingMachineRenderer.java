@@ -7,7 +7,6 @@ import blusunrize.immersiveengineering.api.client.IVertexBufferHolder;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.render.tile.IEBlockEntityRenderer;
 import blusunrize.immersiveengineering.client.render.tile.SawmillRenderer;
-import com.hermitowo.advancedtfctech.client.model.DynamicModel;
 import com.hermitowo.advancedtfctech.common.blockentities.FleshingMachineBlockEntity;
 import com.hermitowo.advancedtfctech.config.ATTConfig;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -47,16 +46,15 @@ public class FleshingMachineRenderer extends IEBlockEntityRenderer<FleshingMachi
             {
                 poseStack.pushPose();
 
-                translateForFacing(poseStack, facing, 0.0625 + 0.0625 * i, 0.6875, 0.4375);
-
                 rotateForFacing(poseStack, facing);
+                RenderHelper.translate(poseStack, 0.0625 + 0.0625 * i, 0.6875, 0.4375);
+
                 poseStack.mulPose(Vector3f.YP.rotationDegrees(90));
 
                 poseStack.scale(0.125F, 0.125F, 0.125F);
                 poseStack.scale(1.1F, 1.1F, 4F);
 
                 poseStack.mulPose(Vector3f.ZP.rotationDegrees(bladeRotation));
-
                 BLADES_BUFFER.render(RenderType.solid(), combinedLight, combinedOverlay, buffer, poseStack);
 
                 poseStack.popPose();
@@ -66,8 +64,8 @@ public class FleshingMachineRenderer extends IEBlockEntityRenderer<FleshingMachi
         // Blade rod
         poseStack.pushPose();
 
-        translateForFacing(poseStack, facing, 0.25, 0.6875, 0.4375);
         rotateForFacing(poseStack, facing);
+        RenderHelper.translate(poseStack, 0.25, 0.6875, 0.4375);
 
         poseStack.mulPose(Vector3f.XP.rotationDegrees(bladeRotation));
 
@@ -98,8 +96,9 @@ public class FleshingMachineRenderer extends IEBlockEntityRenderer<FleshingMachi
 
             poseStack.pushPose();
 
-            translateForFacing(poseStack, facing, 0.28125, 0.5, 0.625);
             rotateForFacing(poseStack, facing);
+            RenderHelper.translate(poseStack, 0.28125, 0.5, 0.625);
+
             poseStack.mulPose(Vector3f.XN.rotationDegrees(hideRotation));
 
             RenderHelper.renderTexturedBox(consumer, poseStack, 0, -2, -2, 20, 2, 2, hideTexture, combinedLight);
@@ -110,26 +109,14 @@ public class FleshingMachineRenderer extends IEBlockEntityRenderer<FleshingMachi
         // Input rod
         poseStack.pushPose();
 
-        translateForFacing(poseStack, facing, 0.25, 0.5, 0.625);
         rotateForFacing(poseStack, facing);
+        RenderHelper.translate(poseStack, 0.25, 0.5, 0.625);
 
         poseStack.mulPose(Vector3f.XN.rotationDegrees(hideRotation));
 
         RenderHelper.renderTexturedBox(consumer, poseStack, 0, -1, -1, 21, 1, 1, rodTexture, 86, 62, combinedLight);
 
         poseStack.popPose();
-    }
-
-    private static void translateForFacing(PoseStack stack, Direction facing, double x, double y, double z)
-    {
-        if (facing == Direction.EAST)
-            stack.translate(-z, y, x);
-        else if (facing == Direction.SOUTH)
-            stack.translate(-x, y, -z);
-        else if (facing == Direction.WEST)
-            stack.translate(z, y, -x);
-        else
-            stack.translate(x, y, z);
     }
 
     public static void reset()

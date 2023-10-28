@@ -139,126 +139,126 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
     @Override
     public void tickClient()
     {
+        if (processQueue.isEmpty())
+        {
+            if (animation_rack < 0.65625F)
+                animation_rack = Math.min(0.65625F, animation_rack + 0.046875F);
+
+            if (animation_rack_side < 0.25F)
+                animation_rack_side = Math.min(0.25F, animation_rack_side + 0.125F);
+
+            if (animation_rack2 < 0.4375F)
+                animation_rack2 = Math.min(0.4375F, animation_rack2 + 0.0875F);
+
+            if (angle_long_thread < 19.0F)
+                angle_long_thread = Math.min(19.0F, angle_long_thread + 3.8F);
+
+            if (angle_short_thread < 42.0F)
+                angle_short_thread = Math.min(42.0F, angle_short_thread + 8.4F);
+
+            animation_pirn = 0;
+            animation_pirn_x = 0;
+            animation_pirn_y = 0;
+            animation_pirn_z = 0;
+        }
+
         if (shouldRenderAsActive())
         {
-            if (processQueue.isEmpty())
+            animation_rodRotation += 1.75F;
+            animation_rodRotation %= 360F;
+        }
+
+        for (MultiblockProcess<PowerLoomRecipe> process : processQueue)
+        {
+            int tick = process.processTick;
+            int delayedTick = tick - 20;
+
+            if (delayedTick > 0)
             {
-                if (animation_rack < 0.65625F)
+                if (animation_rack_b)
+                    animation_rack = Math.max(0, animation_rack - 0.046875F);
+                else
                     animation_rack = Math.min(0.65625F, animation_rack + 0.046875F);
+                if (animation_rack <= 0 && animation_rack_b)
+                    animation_rack_b = false;
+                else if (animation_rack >= 0.65625F && !animation_rack_b)
+                    animation_rack_b = true;
+            }
+            else if (animation_rack < 0.65625F)
+                animation_rack = Math.min(0.65625F, animation_rack + 0.046875F);
 
-                if (animation_rack_side < 0.25F)
-                    animation_rack_side = Math.min(0.25F, animation_rack_side + 0.125F);
-
-                if (animation_rack2 < 0.4375F)
+            if (delayedTick / 28 >= 1 && delayedTick % 28 <= 4)
+            {
+                if (animation_rack2_b)
+                {
+                    animation_rack2 = Math.max(0, animation_rack2 - 0.0875F);
+                    angle_long_thread = Math.max(0, angle_long_thread - 3.8F);
+                    angle_short_thread = Math.max(0, angle_short_thread - 8.4F);
+                }
+                else
+                {
                     animation_rack2 = Math.min(0.4375F, animation_rack2 + 0.0875F);
-
-                if (angle_long_thread < 19.0F)
                     angle_long_thread = Math.min(19.0F, angle_long_thread + 3.8F);
-
-                if (angle_short_thread < 42.0F)
                     angle_short_thread = Math.min(42.0F, angle_short_thread + 8.4F);
+                }
+                if (animation_rack2 <= 0 && animation_rack2_b)
+                    animation_rack2_b = false;
+                else if (animation_rack2 >= 0.4375F && !animation_rack2_b)
+                    animation_rack2_b = true;
+            }
 
-                animation_pirn = 0;
+            if (tick <= 15)
+                animation_pirn = 3.0F * tick;
+            else
+                animation_pirn = 45.0F;
+
+            if (tick > 15 && tick <= 20)
+            {
+                animation_pirn_x = 0.02965F * (tick - 15);
+                animation_pirn_y = 0.046875F * (tick - 15);
+            }
+            else
+            {
+                animation_pirn_x = 0.14825F;
+                animation_pirn_y = 0.234375F;
+            }
+
+            if (delayedTick % 56 > 10 && delayedTick % 56 <= 18)
+            {
+                if (animation_pirn_b)
+                    animation_pirn_z = Math.max(0, animation_pirn_z - 0.703125F);
+                else
+                    animation_pirn_z = Math.min(2.8125F, animation_pirn_z + 0.703125F);
+                if (animation_pirn_z <= 0 && animation_pirn_b)
+                    animation_pirn_b = false;
+                else if (animation_pirn_z >= 2.8125F && !animation_pirn_b)
+                    animation_pirn_b = true;
+
+                if (animation_rack_side_b)
+                    animation_rack_side = Math.max(0, animation_rack_side - 0.0625F);
+                else
+                    animation_rack_side = Math.min(0.25F, animation_rack_side + 0.0625F);
+                if (animation_rack_side <= 0 && animation_rack_side_b)
+                    animation_rack_side_b = false;
+                else if (animation_rack_side >= 0.25F && !animation_rack_side_b)
+                    animation_rack_side_b = true;
+            }
+
+            if (tick <= 15)
+            {
                 animation_pirn_x = 0;
                 animation_pirn_y = 0;
                 animation_pirn_z = 0;
             }
-
-            animation_rodRotation += 1.75F;
-            animation_rodRotation %= 360F;
-
-            for (MultiblockProcess<PowerLoomRecipe> process : processQueue)
+            if (delayedTick % 56 == 18)
             {
-                int tick = process.processTick;
-                int delayedTick = tick - 20;
-
-                if (delayedTick > 0)
-                {
-                    if (animation_rack_b)
-                        animation_rack = Math.max(0, animation_rack - 0.046875F);
-                    else
-                        animation_rack = Math.min(0.65625F, animation_rack + 0.046875F);
-                    if (animation_rack <= 0 && animation_rack_b)
-                        animation_rack_b = false;
-                    else if (animation_rack >= 0.65625F && !animation_rack_b)
-                        animation_rack_b = true;
-                }
-                else if (animation_rack < 0.65625F)
-                    animation_rack = Math.min(0.65625F, animation_rack + 0.046875F);
-
-                if (delayedTick / 28 >= 1 && delayedTick % 28 <= 4)
-                {
-                    if (animation_rack2_b)
-                    {
-                        animation_rack2 = Math.max(0, animation_rack2 - 0.0875F);
-                        angle_long_thread = Math.max(0, angle_long_thread - 3.8F);
-                        angle_short_thread = Math.max(0, angle_short_thread - 8.4F);
-                    }
-                    else
-                    {
-                        animation_rack2 = Math.min(0.4375F, animation_rack2 + 0.0875F);
-                        angle_long_thread = Math.min(19.0F, angle_long_thread + 3.8F);
-                        angle_short_thread = Math.min(42.0F, angle_short_thread + 8.4F);
-                    }
-                    if (animation_rack2 <= 0 && animation_rack2_b)
-                        animation_rack2_b = false;
-                    else if (animation_rack2 >= 0.4375F && !animation_rack2_b)
-                        animation_rack2_b = true;
-                }
-
-                if (tick <= 15)
-                    animation_pirn = 3.0F * tick;
-                else
-                    animation_pirn = 45.0F;
-
-                if (tick > 15 && tick <= 20)
-                {
-                    animation_pirn_x = 0.02965F * (tick - 15);
-                    animation_pirn_y = 0.046875F * (tick - 15);
-                }
-                else
-                {
-                    animation_pirn_x = 0.14825F;
-                    animation_pirn_y = 0.234375F;
-                }
-
-                if (delayedTick % 56 > 10 && delayedTick % 56 <= 18)
-                {
-                    if (animation_pirn_b)
-                        animation_pirn_z = Math.max(0, animation_pirn_z - 0.703125F);
-                    else
-                        animation_pirn_z = Math.min(2.8125F, animation_pirn_z + 0.703125F);
-                    if (animation_pirn_z <= 0 && animation_pirn_b)
-                        animation_pirn_b = false;
-                    else if (animation_pirn_z >= 2.8125F && !animation_pirn_b)
-                        animation_pirn_b = true;
-
-                    if (animation_rack_side_b)
-                        animation_rack_side = Math.max(0, animation_rack_side - 0.0625F);
-                    else
-                        animation_rack_side = Math.min(0.25F, animation_rack_side + 0.0625F);
-                    if (animation_rack_side <= 0 && animation_rack_side_b)
-                        animation_rack_side_b = false;
-                    else if (animation_rack_side >= 0.25F && !animation_rack_side_b)
-                        animation_rack_side_b = true;
-                }
-
-                if (tick <= 15)
-                {
-                    animation_pirn_x = 0;
-                    animation_pirn_y = 0;
-                    animation_pirn_z = 0;
-                }
-                if (delayedTick % 56 == 18)
-                {
-                    animation_rack_side = 0.25F;
-                    animation_pirn_z = 0;
-                }
-
-                animation_pirn_x2 = tick <= 20 ? 0 : animation_rack * animation_rack * (3.0F - 2.0F * animation_rack) - 0.72625F;
-
-                animation_weave = delayedTick > 0 ? Math.floorDiv(delayedTick + 14, 28) : 0;
+                animation_rack_side = 0.25F;
+                animation_pirn_z = 0;
             }
+
+            animation_pirn_x2 = tick <= 20 ? 0 : animation_rack * animation_rack * (3.0F - 2.0F * animation_rack) - 0.72625F;
+
+            animation_weave = delayedTick > 0 ? Math.floorDiv(delayedTick + 14, 28) : 0;
         }
     }
 
