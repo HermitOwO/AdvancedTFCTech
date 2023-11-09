@@ -100,7 +100,7 @@ public class RenderHelper
         putVertex(wr, stack, x1, y1, z1, u0 + dX + s, v0 + dY + s, normalX, normalY, normalZ, light);
         putVertex(wr, stack, x0, y1, z1, u0 + s, v0 + dY + s, normalX, normalY, normalZ, light);
         normalZ = -1;
-        putVertex(wr, stack, x0, y1, z0, u0 + s , v0 + s, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x0, y1, z0, u0 + s, v0 + s, normalX, normalY, normalZ, light);
         putVertex(wr, stack, x1, y1, z0, u0 + dX + s, v0 + s, normalX, normalY, normalZ, light);
         putVertex(wr, stack, x1, y0, z0, u0 + dX + s, v0 + dY + s, normalX, normalY, normalZ, light);
         putVertex(wr, stack, x0, y0, z0, u0 + s, v0 + dY + s, normalX, normalY, normalZ, light);

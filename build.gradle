@@ -16,7 +16,7 @@ plugins {
 apply plugin: 'org.spongepowered.mixin'
 
 group = 'com.hermitowo'
-version = '1.9'
+version = '1.10'
 
 java {
     archivesBaseName = 'AdvancedTFCTechUnofficial'

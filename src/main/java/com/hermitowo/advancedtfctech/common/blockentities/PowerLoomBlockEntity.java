@@ -450,14 +450,24 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
                             }
                             if (master.inventory.get(i).getCount() < master.inventory.get(i).getMaxStackSize())
                             {
-                                int remaining = master.inventory.get(i).getMaxStackSize() - master.inventory.get(i).getCount();
-                                int size = Math.min(heldItem.getCount(), remaining);
-                                ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
-                                stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
-                                if (stack.isEmpty())
+                                ItemStack remainder = ItemHandlerHelper.insertItemStacked(insertionHandler, heldItem, true);
+                                if (remainder.isEmpty())
                                 {
+                                    int size = heldItem.getCount() - remainder.getCount();
+                                    ItemHandlerHelper.insertItemStacked(insertionHandler, heldItem, false);
                                     heldItem.shrink(size);
                                     return true;
+                                }
+                                else
+                                {
+                                    int size = remainder.getCount();
+                                    ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
+                                    stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
+                                    if (stack.isEmpty())
+                                    {
+                                        heldItem.shrink(size);
+                                        return true;
+                                    }
                                 }
                             }
                         }
@@ -559,19 +569,38 @@ public class PowerLoomBlockEntity extends PoweredMultiblockBlockEntity<PowerLoom
         registerCapability(new IEInventoryHandler(8, this, 0, true, false))
     );
 
+    private final MultiblockCapability<IItemHandler> outputHandler = MultiblockCapability.make(
+        this, be -> be.outputHandler, PowerLoomBlockEntity::master,
+        registerCapability(new IEInventoryHandler(1, this, 12, false, true))
+    );
+
     private final MultiblockCapability<IItemHandler> weaveInputHandler = MultiblockCapability.make(
         this, be -> be.weaveInputHandler, PowerLoomBlockEntity::master,
-        registerCapability(new IEInventoryHandler(3, this, 8, true, false))
+        registerCapability(new IEInventoryHandler(3, this, 8, true, false)
+        {
+            @Override
+            public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
+            {
+                assert level != null;
+                PowerLoomRecipe recipe = PowerLoomRecipe.findRecipeForRendering(level, inventory.get(11));
+                if (recipe != null)
+                    if (inventory.get(11).getCount() >= recipe.secondaryInput.getCount())
+                        return super.insertItem(slot, stack, simulate);
+                return stack;
+            }
+        })
     );
 
     private final MultiblockCapability<IItemHandler> secondaryInputHandler = MultiblockCapability.make(
         this, be -> be.secondaryInputHandler, PowerLoomBlockEntity::master,
-        registerCapability(new IEInventoryHandler(1, this, 11, true, false))
-    );
-
-    private final MultiblockCapability<IItemHandler> outputHandler = MultiblockCapability.make(
-        this, be -> be.outputHandler, PowerLoomBlockEntity::master,
-        registerCapability(new IEInventoryHandler(1, this, 12, false, true))
+        registerCapability(new IEInventoryHandler(1, this, 11, true, false)
+        {
+            @Override
+            public int getSlotLimit(int slot)
+            {
+                return 16;
+            }
+        })
     );
 
     @Nonnull
