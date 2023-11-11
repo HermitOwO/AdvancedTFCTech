@@ -2,12 +2,12 @@ package com.hermitowo.advancedtfctech.common.recipes;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
+import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
-import com.hermitowo.advancedtfctech.common.recipes.cache.CachedRecipeList;
+import com.hermitowo.advancedtfctech.common.multiblocks.logic.ATTMultiblockLogic;
 import com.hermitowo.advancedtfctech.config.ATTConfig;
 import javax.annotation.Nullable;
 import net.minecraft.core.NonNullList;
@@ -31,14 +31,13 @@ public class PowerLoomRecipe extends ATTMultiblockRecipe
 
     public PowerLoomRecipe(ResourceLocation id, Lazy<ItemStack> output, IngredientWithSize[] inputs, IngredientWithSize secondaryInput, ResourceLocation inProgressTexture, int time, int energy)
     {
-        super(ItemStack.EMPTY, ATTRecipeTypes.POWER_LOOM, id);
+        super(LAZY_EMPTY, ATTRecipeTypes.POWER_LOOM, id);
         this.output = output;
         this.inputs = inputs;
         this.secondaryInput = secondaryInput;
         this.inProgressTexture = inProgressTexture;
 
         timeAndEnergy(time, energy);
-        modifyTimeAndEnergy(ATTConfig.SERVER.powerLoom_timeModifier::get, ATTConfig.SERVER.powerLoom_energyModifier::get);
 
         setInputListWithSizes(Lists.newArrayList(this.inputs));
         this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, this.output.get()));
@@ -48,6 +47,12 @@ public class PowerLoomRecipe extends ATTMultiblockRecipe
     {
         Preconditions.checkNotNull(output);
         secondaryOutputs.add(output);
+    }
+
+    @Override
+    public NonNullList<Lazy<ItemStack>> getSecondaryOutputs()
+    {
+        return secondaryOutputs;
     }
 
     public static PowerLoomRecipe findRecipe(Level level, ItemStack pirn, ItemStack weave)
@@ -111,14 +116,6 @@ public class PowerLoomRecipe extends ATTMultiblockRecipe
         return this.secondaryInput != null && this.secondaryInput.testIgnoringSize(stack);
     }
 
-    public static boolean isValidSecondaryInput(Level level, ItemStack stack)
-    {
-        for (PowerLoomRecipe recipe : RECIPES.getRecipes(level))
-            if (recipe != null && recipe.isValidSecondaryInput(stack))
-                return true;
-        return false;
-    }
-
     @Override
     public int getMultipleProcessTicks()
     {
@@ -136,7 +133,7 @@ public class PowerLoomRecipe extends ATTMultiblockRecipe
         @Override
         public ItemStack getIcon()
         {
-            return new ItemStack(ATTBlocks.Multiblocks.POWER_LOOM.get());
+            return ATTMultiblockLogic.POWER_LOOM.iconStack();
         }
 
         @Override
@@ -160,7 +157,7 @@ public class PowerLoomRecipe extends ATTMultiblockRecipe
             int time = GsonHelper.getAsInt(json, "time");
             int energy = GsonHelper.getAsInt(json, "energy");
 
-            PowerLoomRecipe recipe = new PowerLoomRecipe(recipeId, output, ingredients, secondaryInput, inProgressTexture, time, energy);
+            PowerLoomRecipe recipe = ATTConfig.SERVER.powerLoomConfig.apply(new PowerLoomRecipe(recipeId, output, ingredients, secondaryInput, inProgressTexture, time, energy));
 
             JsonArray array = json.getAsJsonArray("secondaries");
             for (int i = 0; i < array.size(); i++)

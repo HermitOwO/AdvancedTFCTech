@@ -2,11 +2,12 @@ package com.hermitowo.advancedtfctech.common.recipes;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IESerializableRecipe;
+import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.gson.JsonObject;
 import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
-import com.hermitowo.advancedtfctech.common.recipes.cache.CachedRecipeList;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -29,18 +30,11 @@ public class FleshingMachineRecipe extends IESerializableRecipe
 
     public FleshingMachineRecipe(ResourceLocation id, ItemStackProvider output, Ingredient input, int time, int energy)
     {
-        super(Lazy.of(() -> ItemStack.EMPTY), ATTRecipeTypes.FLESHING_MACHINE.get(), id);
+        super(Lazy.of(() -> ItemStack.EMPTY), ATTRecipeTypes.FLESHING_MACHINE, id);
         this.output = output;
         this.input = input;
         this.time = time;
         this.energy = energy;
-    }
-
-    @Nonnull
-    @Override
-    public ItemStack getResultItem()
-    {
-        return this.output.getEmptyStack();
     }
 
     public static FleshingMachineRecipe findRecipe(Level level, ItemStack stack, @Nullable FleshingMachineRecipe hint)
@@ -83,6 +77,13 @@ public class FleshingMachineRecipe extends IESerializableRecipe
         return this.energy;
     }
 
+    @Nonnull
+    @Override
+    public ItemStack getResultItem(RegistryAccess access)
+    {
+        return this.output.getEmptyStack();
+    }
+
     @Override
     protected IERecipeSerializer<?> getIESerializer()
     {
@@ -94,7 +95,7 @@ public class FleshingMachineRecipe extends IESerializableRecipe
         @Override
         public ItemStack getIcon()
         {
-            return new ItemStack(ATTBlocks.Blocks.FLESHING_MACHINE.get());
+            return new ItemStack(ATTBlocks.FLESHING_MACHINE.get());
         }
 
         @Override

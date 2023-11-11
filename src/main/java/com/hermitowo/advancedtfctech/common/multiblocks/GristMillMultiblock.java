@@ -2,20 +2,19 @@ package com.hermitowo.advancedtfctech.common.multiblocks;
 
 import java.util.function.Consumer;
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
-import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
+import com.hermitowo.advancedtfctech.AdvancedTFCTech;
+import com.hermitowo.advancedtfctech.client.ATTClientMultiblockProperties;
+import com.hermitowo.advancedtfctech.common.multiblocks.logic.ATTMultiblockLogic;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 
-import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
-
-public class GristMillMultiblock extends ATTTemplateMultiblock
+public class GristMillMultiblock extends IETemplateMultiblock
 {
-    public static final GristMillMultiblock INSTANCE = new GristMillMultiblock();
-
     public GristMillMultiblock()
     {
-        super(new ResourceLocation(MOD_ID, "multiblocks/grist_mill"),
-            new BlockPos(1, 0, 1), new BlockPos(2, 1, 1), new BlockPos(4, 3, 3), ATTBlocks.Multiblocks.GRIST_MILL);
+        super(AdvancedTFCTech.rl("multiblocks/grist_mill"),
+            new BlockPos(1, 0, 1), new BlockPos(2, 1, 1), new BlockPos(4, 3, 3),
+            ATTMultiblockLogic.GRIST_MILL);
     }
 
     @Override
@@ -27,6 +26,6 @@ public class GristMillMultiblock extends ATTTemplateMultiblock
     @Override
     public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer)
     {
-        consumer.accept(new ATTClientMultiblockProperties(this, 1.0, 0.75, 2.0));
+        consumer.accept(new ATTClientMultiblockProperties(this));
     }
 }

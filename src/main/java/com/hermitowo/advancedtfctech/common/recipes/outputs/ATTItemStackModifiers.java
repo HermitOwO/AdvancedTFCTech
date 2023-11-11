@@ -1,11 +1,9 @@
 package com.hermitowo.advancedtfctech.common.recipes.outputs;
 
-import net.minecraft.resources.ResourceLocation;
+import com.hermitowo.advancedtfctech.AdvancedTFCTech;
 
 import net.dries007.tfc.common.recipes.outputs.ItemStackModifier;
 import net.dries007.tfc.common.recipes.outputs.ItemStackModifiers;
-
-import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
 
 public class ATTItemStackModifiers
 {
@@ -18,6 +16,6 @@ public class ATTItemStackModifiers
 
     private static void register(String name, ItemStackModifier.Serializer<?> serializer)
     {
-        ItemStackModifiers.register(new ResourceLocation(MOD_ID, name), serializer);
+        ItemStackModifiers.register(AdvancedTFCTech.rl(name), serializer);
     }
 }

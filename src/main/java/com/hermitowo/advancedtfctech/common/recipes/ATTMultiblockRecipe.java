@@ -1,12 +1,12 @@
 package com.hermitowo.advancedtfctech.common.recipes;
 
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
+import blusunrize.immersiveengineering.api.crafting.IERecipeTypes;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraftforge.common.util.Lazy;
 
 import net.dries007.tfc.common.recipes.outputs.ItemStackProvider;
@@ -16,9 +16,9 @@ public abstract class ATTMultiblockRecipe extends MultiblockRecipe
     Lazy<Integer> totalProcessTime;
     Lazy<Integer> totalProcessEnergy;
 
-    protected ATTMultiblockRecipe(ItemStack outputDummy, Supplier<? extends RecipeType<?>> type, ResourceLocation id)
+    protected <T extends Recipe<?>> ATTMultiblockRecipe(Lazy<ItemStack> outputDummy, IERecipeTypes.TypeWithClass<T> type, ResourceLocation id)
     {
-        super(Lazy.of(() -> outputDummy), type.get(), id);
+        super(outputDummy, type, id);
     }
 
     protected void timeAndEnergy(int time, int energy)
@@ -46,6 +46,11 @@ public abstract class ATTMultiblockRecipe extends MultiblockRecipe
     public int getTotalProcessEnergy()
     {
         return this.totalProcessEnergy.get();
+    }
+
+    public NonNullList<Lazy<ItemStack>> getSecondaryOutputs()
+    {
+        return NonNullList.create();
     }
 
     protected Lazy<NonNullList<ItemStackProvider>> providerList = Lazy.of(NonNullList::create);

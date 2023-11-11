@@ -3,10 +3,10 @@ package com.hermitowo.advancedtfctech.common.recipes;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
+import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
-import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
-import com.hermitowo.advancedtfctech.common.recipes.cache.CachedRecipeList;
+import com.hermitowo.advancedtfctech.common.multiblocks.logic.ATTMultiblockLogic;
 import com.hermitowo.advancedtfctech.config.ATTConfig;
 import javax.annotation.Nullable;
 import net.minecraft.core.NonNullList;
@@ -21,7 +21,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import net.dries007.tfc.common.recipes.outputs.ItemStackProvider;
 
-public class BeamhouseRecipe extends ATTMultiblockRecipe
+public class BeamhouseRecipe extends ATTMultiblockRecipe implements IItemStackProviderMultiblockRecipe
 {
     public static final CachedRecipeList<BeamhouseRecipe> RECIPES = new CachedRecipeList<>(ATTRecipeTypes.BEAMHOUSE);
 
@@ -31,13 +31,12 @@ public class BeamhouseRecipe extends ATTMultiblockRecipe
 
     public BeamhouseRecipe(ResourceLocation id, ItemStackProvider output, IngredientWithSize input, FluidTagInput fluidInput, int time, int energy)
     {
-        super(ItemStack.EMPTY, ATTRecipeTypes.BEAMHOUSE, id);
+        super(LAZY_EMPTY, ATTRecipeTypes.BEAMHOUSE, id);
         this.output = output;
         this.input = input;
         this.fluidInput = fluidInput;
 
         timeAndEnergy(time, energy);
-        modifyTimeAndEnergy(ATTConfig.SERVER.beamhouse_timeModifier::get, ATTConfig.SERVER.beamhouse_energyModifier::get);
 
         setInputListWithSizes(Lists.newArrayList(this.input));
         this.fluidInputList = Lists.newArrayList(this.fluidInput);
@@ -75,7 +74,7 @@ public class BeamhouseRecipe extends ATTMultiblockRecipe
 
     public boolean isValidFluidInput(FluidStack fluid)
     {
-        return this.fluidInput!= null && this.fluidInput.test(fluid);
+        return this.fluidInput != null && this.fluidInput.test(fluid);
     }
 
     @Override
@@ -90,6 +89,7 @@ public class BeamhouseRecipe extends ATTMultiblockRecipe
         return ATTRecipeSerializers.BEAMHOUSE_SERIALIZER.get();
     }
 
+    @Override
     public NonNullList<ItemStack> generateActualOutput(ItemStack input)
     {
         NonNullList<ItemStack> actualOutput = NonNullList.withSize(outputList.get().size(), ItemStack.EMPTY);
@@ -106,7 +106,7 @@ public class BeamhouseRecipe extends ATTMultiblockRecipe
         @Override
         public ItemStack getIcon()
         {
-            return new ItemStack(ATTBlocks.Multiblocks.BEAMHOUSE.get());
+            return ATTMultiblockLogic.BEAMHOUSE.iconStack();
         }
 
         @Override
@@ -118,7 +118,7 @@ public class BeamhouseRecipe extends ATTMultiblockRecipe
             int time = GsonHelper.getAsInt(json, "time");
             int energy = GsonHelper.getAsInt(json, "energy");
 
-            return new BeamhouseRecipe(recipeId, output, input, fluidInput, time, energy);
+            return ATTConfig.SERVER.beamhouseConfig.apply(new BeamhouseRecipe(recipeId, output, input, fluidInput, time, energy));
         }
 
         @Nullable

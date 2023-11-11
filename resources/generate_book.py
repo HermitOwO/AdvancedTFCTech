@@ -43,10 +43,9 @@ def main():
 
 
 def make_book(rm: ResourceManager, i18n: I18n, local_instance: bool = False):
-    rm.domain = 'advancedtfctech'
     book = Book(rm, 'field_guide', {}, i18n, local_instance)
 
-    book.category('main', 'Advanced TFC Tech', 'Machines for large-scale production.', 'advancedtfctech:pirn', is_sorted=True, entries=(
+    book.category('advancedtfctech', 'Advanced TFC Tech', 'Machines for large-scale production.', 'advancedtfctech:pirn', is_sorted=True, entries=(
         entry('power_loom', 'Power Loom', 'advancedtfctech:power_loom', pages=(
             non_text_first_page(),
             multiblock('Power Loom', 'To form the structure, $(item)right click$() the $(thing)Light Engineering Block$() above the Block of Steel with an Engineer\'s Hammer.', True, pattern=(
@@ -113,13 +112,13 @@ def make_book(rm: ResourceManager, i18n: I18n, local_instance: bool = False):
                 '0': 'immersiveengineering:steel_scaffolding_standard'
             }).link('advancedtfctech:beamhouse'),
             text('The $(thing)Beamhouse$() handles liming, washing and tanning of hides in the leather production process.$(br2)For fluid input, either put a filled bucket inside the GUI or $(item)rightclick$() the fluid input port with the filled bucket. Unwanted fluid can be removed by $(item)rightclick$() the same port with an empty bucket.$(br2)By default, it consumes 20IF/t.'),
-            item_spotlight('tfc:large_prepared_hide{machine_made:1b}', title='Machine-Made Hides', text_contents='Raw hides will obtain the $(thing)"Machine-Made"$() tag after getting processed by the $(thing)Beamhouse$(). The tag will be inherited if the subsequent washing, fleshing (scraping) and tanning process are handled by the $(thing)Beamhouse$() and the $(l:advancedtfctech:main/fleshing_machine)Fleshing Machine$().').anchor('machine_made'),
+            item_spotlight('tfc:large_prepared_hide{machine_made:1b}', title='Machine-Made Hides', text_contents='Raw hides will obtain the $(thing)"Machine-Made"$() tag after getting processed by the $(thing)Beamhouse$(). The tag will be inherited if the subsequent washing, fleshing (scraping) and tanning process are handled by the $(thing)Beamhouse$() and the $(l:tfc:advancedtfctech/fleshing_machine)Fleshing Machine$().').anchor('machine_made'),
             text('Going through all these processes, the amount of leather obtained will be $(thing)double$() the normal amount.$(br2)Note that if any step of the process is not handled by machines, the $(thing)"Machine-Made"$() tag will be lost and the bonus of double output cannot be retained.')
         )),
         entry('fleshing_machine', 'Fleshing Machine', 'advancedtfctech:fleshing_machine', pages=(
             text('The $(thing)Fleshing Machine$() removes excess fat and flesh from hides using a rotating cylinder with sharp blades that scrap the hide as it passes through the machine.').link('advancedtfctech:fleshing_machine', 'advancedtfctech:fleshing_blades'),
             crafting('advancedtfctech:crafting/fleshing_machine'),
-            text('In order to operate the $(thing)Fleshing Machine$(), $(thing)Fleshing Blades$() need to be put on the cylinder inside the machine by $(item)rightclicking$() the machine with $(thing)Fleshing Blades$().$(br2)Output will be tagged with $(l:advancedtfctech:main/beamhouse#machine_made)"Machine-Made"$() if the input has the same tag.$(br2)By default, it consumes 20IF/t.'),
+            text('In order to operate the $(thing)Fleshing Machine$(), $(thing)Fleshing Blades$() need to be put on the cylinder inside the machine by $(item)rightclicking$() the machine with $(thing)Fleshing Blades$().$(br2)Output will be tagged with $(l:tfc:advancedtfctech/beamhouse#machine_made)"Machine-Made"$() if the input has the same tag.$(br2)By default, it consumes 20IF/t.'),
             anvil_recipe('advancedtfctech:anvil/fleshing_blades', text_content='')
         ))
     ))

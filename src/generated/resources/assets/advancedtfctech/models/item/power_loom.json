@@ -14,6 +14,64 @@
         0.185
       ]
     },
+    "fixed": {
+      "scale": [
+        0.185,
+        0.185,
+        0.185
+      ],
+      "translation": [
+        0,
+        -8,
+        0
+      ]
+    },
+    "ground": {
+      "scale": [
+        0.185,
+        0.185,
+        0.185
+      ],
+      "translation": [
+        0,
+        1,
+        0
+      ]
+    },
+    "gui": {
+      "rotation": [
+        30,
+        45,
+        0
+      ],
+      "scale": [
+        0.185,
+        0.185,
+        0.185
+      ],
+      "translation": [
+        -1,
+        -2,
+        -1
+      ]
+    },
+    "head": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "scale": [
+        0.185,
+        0.185,
+        0.185
+      ],
+      "translation": [
+        0,
+        7.6,
+        0
+      ]
+    },
     "thirdperson_lefthand": {
       "scale": [
         0.185,
@@ -27,70 +85,12 @@
         0.185,
         0.185
       ]
-    },
-    "head": {
-      "rotation": [
-        0,
-        180,
-        0
-      ],
-      "translation": [
-        0,
-        7.6,
-        0
-      ],
-      "scale": [
-        0.185,
-        0.185,
-        0.185
-      ]
-    },
-    "gui": {
-      "rotation": [
-        30,
-        45,
-        0
-      ],
-      "translation": [
-        -1,
-        -2,
-        -1
-      ],
-      "scale": [
-        0.185,
-        0.185,
-        0.185
-      ]
-    },
-    "ground": {
-      "translation": [
-        0,
-        1,
-        0
-      ],
-      "scale": [
-        0.185,
-        0.185,
-        0.185
-      ]
-    },
-    "fixed": {
-      "translation": [
-        0,
-        -8,
-        0
-      ],
-      "scale": [
-        0.185,
-        0.185,
-        0.185
-      ]
     }
   },
-  "textures": {
-    "texture": "advancedtfctech:multiblock/power_loom"
-  },
+  "flip_v": true,
   "loader": "forge:obj",
-  "model": "advancedtfctech:models/multiblock/power_loom.obj",
-  "flip-v": true
+  "model": "advancedtfctech:models/block/multiblock/power_loom.obj",
+  "textures": {
+    "texture": "advancedtfctech:block/multiblock/power_loom"
+  }
 }

@@ -1,9 +1,9 @@
 package com.hermitowo.advancedtfctech.compat.jei;
 
 import java.util.Arrays;
+import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
 import com.hermitowo.advancedtfctech.common.items.ATTItems;
 import com.hermitowo.advancedtfctech.common.recipes.FleshingMachineRecipe;
-import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
@@ -13,6 +13,7 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 
 import net.dries007.tfc.compat.jei.category.BaseRecipeCategory;
@@ -23,7 +24,7 @@ public class FleshingMachineRecipeCategory extends BaseRecipeCategory<FleshingMa
 
     public FleshingMachineRecipeCategory(RecipeType<FleshingMachineRecipe> type, IGuiHelper helper)
     {
-        super(type, helper, helper.createBlankDrawable(120, 38), new ItemStack(ATTBlocks.Blocks.FLESHING_MACHINE.get()));
+        super(type, helper, helper.createBlankDrawable(120, 38), new ItemStack(ATTBlocks.FLESHING_MACHINE.get()));
         this.slot = helper.getSlotDrawable();
     }
 
@@ -44,11 +45,12 @@ public class FleshingMachineRecipeCategory extends BaseRecipeCategory<FleshingMa
     }
 
     @Override
-    public void draw(FleshingMachineRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack poseStack, double mouseX, double mouseY)
+    public void draw(FleshingMachineRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY)
     {
-        poseStack.pushPose();
-        poseStack.scale(1.81F, 1.81F, 1);
-        this.getIcon().draw(poseStack, 18, 1);
-        poseStack.popPose();
+        PoseStack stack = graphics.pose();
+        stack.pushPose();
+        stack.scale(1.81F, 1.81F, 1);
+        this.getIcon().draw(graphics, 18, 1);
+        stack.popPose();
     }
 }

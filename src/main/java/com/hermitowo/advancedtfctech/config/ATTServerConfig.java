@@ -1,23 +1,25 @@
 package com.hermitowo.advancedtfctech.config;
 
 import java.util.function.Function;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
+import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import blusunrize.immersiveengineering.common.config.IEServerConfig;
+import com.hermitowo.advancedtfctech.common.recipes.BeamhouseRecipe;
+import com.hermitowo.advancedtfctech.common.recipes.GristMillRecipe;
+import com.hermitowo.advancedtfctech.common.recipes.PowerLoomRecipe;
+import com.hermitowo.advancedtfctech.common.recipes.ThresherRecipe;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;
+import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
+import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 
 import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
 
 public class ATTServerConfig
 {
-    public final DoubleValue thresher_energyModifier;
-    public final DoubleValue thresher_timeModifier;
-    public final DoubleValue gristMill_energyModifier;
-    public final DoubleValue gristMill_timeModifier;
-    public final DoubleValue powerLoom_energyModifier;
-    public final DoubleValue powerLoom_timeModifier;
-    public final DoubleValue beamhouse_energyModifier;
-    public final DoubleValue beamhouse_timeModifier;
+    public final IEServerConfig.Machines.MachineRecipeConfig<ThresherRecipe> thresherConfig;
+    public final IEServerConfig.Machines.MachineRecipeConfig<GristMillRecipe> gristMillConfig;
+    public final IEServerConfig.Machines.MachineRecipeConfig<PowerLoomRecipe> powerLoomConfig;
+    public final IEServerConfig.Machines.MachineRecipeConfig<BeamhouseRecipe> beamhouseConfig;
     public final IntValue fleshingMachine_bladesDamage;
     public final BooleanValue enablePowerLoomDebug;
     public final BooleanValue enableFleshingMachineDebug;
@@ -29,14 +31,10 @@ public class ATTServerConfig
 
         innerBuilder.push("general");
 
-        thresher_energyModifier = builder.apply("thresher_energyModifier").comment("A modifier to apply to the energy costs of every Thresher recipe.").defineInRange("thresher_energyModifier", 1.0, 0, Double.MAX_VALUE);
-        thresher_timeModifier = builder.apply("thresher_timeModifier").comment("A modifier to apply to the time of every Thresher recipe.").defineInRange("thresher_timeModifier", 1.0, 1.0, Double.MAX_VALUE);
-        gristMill_energyModifier = builder.apply("gristMill_energyModifier").comment("A modifier to apply to the energy costs of every Grist Mill recipe.").defineInRange("gristMill_energyModifier", 1.0, 0, Double.MAX_VALUE);
-        gristMill_timeModifier = builder.apply("gristMill_timeModifier").comment("A modifier to apply to the time of every Grist Mill recipe.").defineInRange("gristMill_timeModifier", 1.0, 1.0, Double.MAX_VALUE);
-        powerLoom_energyModifier = builder.apply("powerLoom_energyModifier").comment("A modifier to apply to the energy costs of every Power Loom recipe.").defineInRange("powerLoom_energyModifier", 1.0, 0, Double.MAX_VALUE);
-        powerLoom_timeModifier = builder.apply("powerLoom_timeModifier").comment("A modifier to apply to the time of every Power Loom recipe.").defineInRange("powerLoom_timeModifier", 1.0, 1.0, Double.MAX_VALUE);
-        beamhouse_energyModifier = builder.apply("beamhouse_energyModifier").comment("A modifier to apply to the energy costs of every Beamhouse recipe.").defineInRange("beamhouse_energyModifier", 1.0, 0, Double.MAX_VALUE);
-        beamhouse_timeModifier = builder.apply("beamhouse_timeModifier").comment("A modifier to apply to the time of every Beamhouse recipe.").defineInRange("beamhouse_timeModifier", 1.0, 1.0, Double.MAX_VALUE);
+        thresherConfig = addMachineEnergyTimeModifiers(innerBuilder, "thresher");
+        gristMillConfig = addMachineEnergyTimeModifiers(innerBuilder, "grist mill");
+        powerLoomConfig = addMachineEnergyTimeModifiers(innerBuilder, "power loom");
+        beamhouseConfig = addMachineEnergyTimeModifiers(innerBuilder, "beamhouse");
         fleshingMachine_bladesDamage = builder.apply("fleshingMachine_bladesDamage").comment("The maximum amount of damage Fleshing Blades can take. While the fleshing machine is working, the blades sustain 1 damage per tick, so this is effectively the lifetime in ticks.").defineInRange("fleshingMachine_bladesDamage", 20000, 1, Integer.MAX_VALUE);
 
         innerBuilder.pop().push("debug");
@@ -45,5 +43,18 @@ public class ATTServerConfig
         enableFleshingMachineDebug = builder.apply("enableFleshingMachineDebug").comment("If true, a GUI can be opened up by rightclicking the Fleshing Machine.").define("enableFleshingMachineDebug", false);
 
         innerBuilder.pop();
+    }
+
+    private <T extends MultiblockRecipe> IEServerConfig.Machines.MachineRecipeConfig<T> addMachineEnergyTimeModifiers(Builder builder, String machine)
+    {
+        builder.push(machine.replace(' ', '_'));
+        DoubleValue energy = builder
+            .comment("A modifier to apply to the energy costs of every " + machine + " recipe")
+            .defineInRange("energyModifier", 1, 1e-3, 1e3);
+        DoubleValue time = builder
+            .comment("A modifier to apply to the time of every " + machine + " recipe")
+            .defineInRange("timeModifier", 1, 1e-3, 1e3);
+        builder.pop();
+        return new IEServerConfig.Machines.MachineRecipeConfig<>(energy, time);
     }
 }

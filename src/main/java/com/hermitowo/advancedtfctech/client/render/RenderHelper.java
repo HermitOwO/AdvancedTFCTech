@@ -1,20 +1,19 @@
 package com.hermitowo.advancedtfctech.client.render;
 
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
 import blusunrize.immersiveengineering.client.render.tile.BERenderUtils;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.core.Direction;
 
 public class RenderHelper
 {
     // Pixel-based
     public static void renderTexturedBox(VertexConsumer wr, PoseStack stack, float x0, float y0, float z0, float x1, float y1, float z1, TextureAtlasSprite texture, float minU, float minV, int light)
     {
-        float pixel = (texture.getU1() - texture.getU0()) / texture.getWidth();
+        float pixel = (texture.getU1() - texture.getU0()) / texture.contents().width();
         float u0 = texture.getU0() + minU * pixel;
         float v0 = texture.getV0() + minV * pixel;
 
@@ -74,7 +73,7 @@ public class RenderHelper
 
     public static void renderTexturedPirn(VertexConsumer wr, PoseStack stack, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, TextureAtlasSprite texture, int light)
     {
-        float pixel = (texture.getU1() - texture.getU0()) / texture.getWidth();
+        float pixel = (texture.getU1() - texture.getU0()) / texture.contents().width();
         float u0 = texture.getU0();
         float v0 = texture.getV0();
 
@@ -100,7 +99,7 @@ public class RenderHelper
         putVertex(wr, stack, x1, y1, z1, u0 + dX + s, v0 + dY + s, normalX, normalY, normalZ, light);
         putVertex(wr, stack, x0, y1, z1, u0 + s, v0 + dY + s, normalX, normalY, normalZ, light);
         normalZ = -1;
-        putVertex(wr, stack, x0, y1, z0, u0 + s , v0 + s, normalX, normalY, normalZ, light);
+        putVertex(wr, stack, x0, y1, z0, u0 + s, v0 + s, normalX, normalY, normalZ, light);
         putVertex(wr, stack, x1, y1, z0, u0 + dX + s, v0 + s, normalX, normalY, normalZ, light);
         putVertex(wr, stack, x1, y0, z0, u0 + dX + s, v0 + dY + s, normalX, normalY, normalZ, light);
         putVertex(wr, stack, x0, y0, z0, u0 + s, v0 + dY + s, normalX, normalY, normalZ, light);
@@ -130,13 +129,10 @@ public class RenderHelper
         putVertex(wr, stack, x1, y0, z0, u0, v0 + dY + s, normalX, normalY, normalZ, light);
     }
 
-    public static <T extends IEBlockInterfaces.IMirrorAble & IEBlockInterfaces.IDirectionalBE> MultiBufferSource mirror(
-        T tile,
-        PoseStack mat,
-        MultiBufferSource builderIn)
+    public static MultiBufferSource mirror(MultiblockOrientation orientation, PoseStack mat, MultiBufferSource builderIn)
     {
         mat.translate(0.5, 0.5, 0.5);
-        builderIn = BERenderUtils.mirror(tile, mat, builderIn);
+        builderIn = BERenderUtils.mirror(orientation, mat, builderIn);
         mat.translate(-0.5, -0.5, -0.5);
         return builderIn;
     }

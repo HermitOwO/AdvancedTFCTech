@@ -1,16 +1,14 @@
 package com.hermitowo.advancedtfctech.client;
 
-import net.minecraft.resources.ResourceLocation;
+import com.hermitowo.advancedtfctech.AdvancedTFCTech;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
-
 public class ATTSounds
 {
-    public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, MOD_ID);
+    public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, AdvancedTFCTech.MOD_ID);
 
     public static final RegistryObject<SoundEvent> THRESHER = create("thresher");
     public static final RegistryObject<SoundEvent> GRIST_MILL = create("grist_mill");
@@ -20,6 +18,6 @@ public class ATTSounds
 
     private static RegistryObject<SoundEvent> create(String name)
     {
-        return SOUNDS.register(name, () -> new SoundEvent(new ResourceLocation(MOD_ID, name)));
+        return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(AdvancedTFCTech.rl(name)));
     }
 }

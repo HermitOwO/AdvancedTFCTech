@@ -2,12 +2,12 @@ package com.hermitowo.advancedtfctech.common.recipes;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
+import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
-import com.hermitowo.advancedtfctech.common.recipes.cache.CachedRecipeList;
+import com.hermitowo.advancedtfctech.common.multiblocks.logic.ATTMultiblockLogic;
 import com.hermitowo.advancedtfctech.config.ATTConfig;
 import javax.annotation.Nullable;
 import net.minecraft.core.NonNullList;
@@ -21,7 +21,7 @@ import net.minecraftforge.common.util.Lazy;
 
 import net.dries007.tfc.common.recipes.outputs.ItemStackProvider;
 
-public class ThresherRecipe extends ATTMultiblockRecipe
+public class ThresherRecipe extends ATTMultiblockRecipe implements IItemStackProviderMultiblockRecipe
 {
     public static final CachedRecipeList<ThresherRecipe> RECIPES = new CachedRecipeList<>(ATTRecipeTypes.THRESHER);
 
@@ -31,12 +31,11 @@ public class ThresherRecipe extends ATTMultiblockRecipe
 
     public ThresherRecipe(ResourceLocation id, ItemStackProvider output, IngredientWithSize input, int time, int energy)
     {
-        super(ItemStack.EMPTY, ATTRecipeTypes.THRESHER, id);
+        super(LAZY_EMPTY, ATTRecipeTypes.THRESHER, id);
         this.output = output;
         this.input = input;
 
         timeAndEnergy(time, energy);
-        modifyTimeAndEnergy(ATTConfig.SERVER.thresher_timeModifier::get, ATTConfig.SERVER.thresher_energyModifier::get);
 
         setInputListWithSizes(Lists.newArrayList(this.input));
         this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, this.output.stack().get()));
@@ -49,25 +48,18 @@ public class ThresherRecipe extends ATTMultiblockRecipe
         secondaryOutputs.add(output);
     }
 
+    @Override
+    public NonNullList<Lazy<ItemStack>> getSecondaryOutputs()
+    {
+        return secondaryOutputs;
+    }
+
     public static ThresherRecipe findRecipe(Level level, ItemStack stack)
     {
         for (ThresherRecipe recipe : RECIPES.getRecipes(level))
             if (recipe.input != null && recipe.input.test(stack))
                 return recipe;
         return null;
-    }
-
-    public boolean isValidInput(ItemStack stack)
-    {
-        return this.input != null && this.input.test(stack);
-    }
-
-    public static boolean isValidRecipeInput(Level level, ItemStack stack)
-    {
-        for (ThresherRecipe recipe : RECIPES.getRecipes(level))
-            if (recipe != null && recipe.isValidInput(stack))
-                return true;
-        return false;
     }
 
     @Override
@@ -82,6 +74,7 @@ public class ThresherRecipe extends ATTMultiblockRecipe
         return ATTRecipeSerializers.THRESHER_SERIALIZER.get();
     }
 
+    @Override
     public NonNullList<ItemStack> generateActualOutput(ItemStack input)
     {
         NonNullList<ItemStack> actualOutput = NonNullList.withSize(outputList.get().size(), ItemStack.EMPTY);
@@ -98,7 +91,7 @@ public class ThresherRecipe extends ATTMultiblockRecipe
         @Override
         public ItemStack getIcon()
         {
-            return new ItemStack(ATTBlocks.Multiblocks.THRESHER.get());
+            return ATTMultiblockLogic.THRESHER.iconStack();
         }
 
         @Override
@@ -131,7 +124,7 @@ public class ThresherRecipe extends ATTMultiblockRecipe
             int time = buffer.readInt();
             int energy = buffer.readInt();
 
-            ThresherRecipe recipe = new ThresherRecipe(recipeId, output, input, time, energy);
+            ThresherRecipe recipe = ATTConfig.SERVER.thresherConfig.apply(new ThresherRecipe(recipeId, output, input, time, energy));
 
             int secondaryCount = buffer.readInt();
             for (int i = 0; i < secondaryCount; i++)

@@ -3,7 +3,6 @@ package com.hermitowo.advancedtfctech.util;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
 import javax.annotation.Nonnull;
-import net.minecraft.core.NonNullList;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -12,6 +11,7 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -75,18 +75,18 @@ public class FluidHelper
         return success;
     }
 
-    public static boolean drainFluidContainer(NonNullList<ItemStack> inventory, FluidTank tank, int inputSlot, int outputSlot)
+    public static boolean drainFluidContainer(IItemHandlerModifiable inventory, FluidTank tank, int inputSlot, int outputSlot)
     {
         int amountPrev = tank.getFluidAmount();
-        ItemStack outputStack = inventory.get(outputSlot);
-        ItemStack emptyContainer = Utils.drainFluidContainer(tank, inventory.get(inputSlot), outputStack);
+        ItemStack outputStack = inventory.getStackInSlot(outputSlot);
+        ItemStack emptyContainer = Utils.drainFluidContainer(tank, inventory.getStackInSlot(inputSlot), outputStack);
         if (amountPrev != tank.getFluidAmount())
         {
             if (ItemHandlerHelper.canItemStacksStack(outputStack, emptyContainer))
                 outputStack.grow(emptyContainer.getCount());
             else if (outputStack.isEmpty())
-                inventory.set(outputSlot, emptyContainer.copy());
-            inventory.get(inputSlot).shrink(outputSlot);
+                inventory.setStackInSlot(outputSlot, emptyContainer.copy());
+            inventory.getStackInSlot(inputSlot).shrink(outputSlot);
             return true;
         }
         else

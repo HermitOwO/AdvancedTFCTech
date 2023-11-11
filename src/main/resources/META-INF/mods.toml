@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[40,)"
+loaderVersion = "[47,)"
 issueTrackerURL = "https://github.com/HermitOwO/AdvancedTFCTech/issues"
 license = "MIT"
 
@@ -17,27 +17,27 @@ Unofficial port of Advanced TFC Tech by PyralIron.
 [[dependencies.advancedtfctech]]
 modId = "forge"
 mandatory = true
-versionRange = "[40,)"
+versionRange = "[47.0.0,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.advancedtfctech]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.18.2,1.19)"
+versionRange = "[1.20,1.21)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.advancedtfctech]]
 modId = "tfc"
 mandatory = true
-versionRange = "[2.2.0,)"
+versionRange = "[3.0.0-beta,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.advancedtfctech]]
 modId = "immersiveengineering"
 mandatory = true
-versionRange = "[1.18.2-8.3.1-157,)"
+versionRange = "[1.20.1-10.0.0-169,)"
 ordering = "NONE"
 side = "BOTH"

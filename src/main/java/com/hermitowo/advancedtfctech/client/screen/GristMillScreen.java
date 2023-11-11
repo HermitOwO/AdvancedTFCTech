@@ -2,36 +2,30 @@ package com.hermitowo.advancedtfctech.client.screen;
 
 import java.util.List;
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
+import blusunrize.immersiveengineering.client.gui.info.EnergyInfoArea;
 import blusunrize.immersiveengineering.client.gui.info.InfoArea;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
-import com.hermitowo.advancedtfctech.client.screen.elements.EnergyDisplay;
-import com.hermitowo.advancedtfctech.common.blockentities.GristMillBlockEntity;
+import com.hermitowo.advancedtfctech.AdvancedTFCTech;
 import com.hermitowo.advancedtfctech.common.container.GristMillContainer;
-import com.mojang.blaze3d.vertex.PoseStack;
 import javax.annotation.Nonnull;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
-
 public class GristMillScreen extends IEContainerScreen<GristMillContainer>
 {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(MOD_ID, "textures/gui/thresher.png");
-    private final GristMillBlockEntity tile;
+    private static final ResourceLocation TEXTURE = AdvancedTFCTech.rl("textures/gui/thresher.png");
 
     public GristMillScreen(GristMillContainer container, Inventory playerInventory, Component title)
     {
         super(container, playerInventory, title, TEXTURE);
-        this.tile = container.tile;
 
         this.imageWidth = 176;
         this.imageHeight = 207;
     }
 
     @Override
-    protected void renderLabels(PoseStack transform, int mouseX, int mouseY)
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY)
     {
         // Render no labels
     }
@@ -40,18 +34,16 @@ public class GristMillScreen extends IEContainerScreen<GristMillContainer>
     @Override
     protected List<InfoArea> makeInfoAreas()
     {
-        return List.of(new EnergyDisplay(leftPos + 157, topPos + 40, 7, 46, tile.energyStorage));
+        return List.of(new EnergyInfoArea(leftPos + 157, topPos + 40, menu.energy));
     }
 
     @Override
-    protected void drawContainerBackgroundPre(@Nonnull PoseStack transform, float f, int mx, int my)
+    protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float f, int mx, int my)
     {
-        for (MultiblockProcess<?> process : tile.processQueue)
-            if (process instanceof MultiblockProcessInMachine<?>)
-            {
-                float mod = process.processTick / (float) process.getMaxTicks(tile.getLevel());
-                int h = (int) Math.max(1, mod * 16);
-                this.blit(transform, leftPos + 77, topPos + 54, 198, 100, 22, h);
-            }
+        for (GristMillContainer.ProcessSlot process : menu.processes.get())
+        {
+            int h = process.processStep();
+            graphics.blit(background, leftPos + 77, topPos + 54, 198, 100, 22, h);
+        }
     }
 }

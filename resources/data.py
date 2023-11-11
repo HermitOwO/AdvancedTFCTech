@@ -1,6 +1,6 @@
 from enum import Enum, auto
 
-from mcresources import ResourceManager, utils, loot_tables
+from mcresources import ResourceManager, utils
 
 from constants import *
 

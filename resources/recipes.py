@@ -109,7 +109,7 @@ def generate(rm: ResourceManager):
                       secondaries=[{'output': ingredient_with_size('advancedtfctech:pirn')}],
                       inputs=ingredient_with_size_list(('32 firmalife:pineapple_yarn', 'advancedtfctech:pineapple_winded_pirn')),
                       secondary_input=ingredient_with_size('16 firmalife:pineapple_yarn'),
-                      in_progress_texture='advancedtfctech:multiblock/power_loom/pineapple',
+                      in_progress_texture='advancedtfctech:block/multiblock/power_loom/pineapple',
                       time=250,
                       energy=20000,
                       conditional_modid='firmalife')

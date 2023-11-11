@@ -1,42 +1,42 @@
 {
   "variants": {
-    "facing=north,mirrored=false": {
-      "model": "advancedtfctech:multiblock/power_loom_split",
-      "uvlock": true
-    },
-    "facing=south,mirrored=false": {
-      "model": "advancedtfctech:multiblock/power_loom_split",
-      "y": 180,
-      "uvlock": true
-    },
-    "facing=west,mirrored=false": {
-      "model": "advancedtfctech:multiblock/power_loom_split",
-      "y": 270,
-      "uvlock": true
-    },
     "facing=east,mirrored=false": {
-      "model": "advancedtfctech:multiblock/power_loom_split",
-      "y": 90,
+      "model": "advancedtfctech:block/multiblock/power_loom_split",
+      "uvlock": true,
+      "y": 90
+    },
+    "facing=east,mirrored=true": {
+      "model": "advancedtfctech:block/multiblock/power_loom_mirrored_split",
+      "uvlock": true,
+      "y": 90
+    },
+    "facing=north,mirrored=false": {
+      "model": "advancedtfctech:block/multiblock/power_loom_split",
       "uvlock": true
     },
     "facing=north,mirrored=true": {
-      "model": "advancedtfctech:multiblock/power_loom_mirrored_split",
+      "model": "advancedtfctech:block/multiblock/power_loom_mirrored_split",
       "uvlock": true
+    },
+    "facing=south,mirrored=false": {
+      "model": "advancedtfctech:block/multiblock/power_loom_split",
+      "uvlock": true,
+      "y": 180
     },
     "facing=south,mirrored=true": {
-      "model": "advancedtfctech:multiblock/power_loom_mirrored_split",
-      "y": 180,
-      "uvlock": true
+      "model": "advancedtfctech:block/multiblock/power_loom_mirrored_split",
+      "uvlock": true,
+      "y": 180
+    },
+    "facing=west,mirrored=false": {
+      "model": "advancedtfctech:block/multiblock/power_loom_split",
+      "uvlock": true,
+      "y": 270
     },
     "facing=west,mirrored=true": {
-      "model": "advancedtfctech:multiblock/power_loom_mirrored_split",
-      "y": 270,
-      "uvlock": true
-    },
-    "facing=east,mirrored=true": {
-      "model": "advancedtfctech:multiblock/power_loom_mirrored_split",
-      "y": 90,
-      "uvlock": true
+      "model": "advancedtfctech:block/multiblock/power_loom_mirrored_split",
+      "uvlock": true,
+      "y": 270
     }
   }
 }

@@ -29,7 +29,7 @@
     },
     "count": 16
   },
-  "in_progress_texture": "advancedtfctech:multiblock/power_loom/pineapple",
+  "in_progress_texture": "advancedtfctech:block/multiblock/power_loom/pineapple",
   "time": 250,
   "energy": 20000,
   "conditions": [

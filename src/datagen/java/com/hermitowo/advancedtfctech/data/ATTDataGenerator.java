@@ -1,32 +1,30 @@
 package com.hermitowo.advancedtfctech.data;
 
-import blusunrize.immersiveengineering.common.blocks.multiblocks.StaticTemplateManager;
-import blusunrize.immersiveengineering.data.blockstates.MultiblockStates;
+import com.hermitowo.advancedtfctech.AdvancedTFCTech;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 
-import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
-
-@EventBusSubscriber(modid = MOD_ID, bus = Bus.MOD)
+@EventBusSubscriber(modid = AdvancedTFCTech.MOD_ID, bus = Bus.MOD)
 public class ATTDataGenerator
 {
     @SubscribeEvent
     public static void generate(GatherDataEvent event)
     {
-        DataGenerator gen = event.getGenerator();
         ExistingFileHelper exFileHelper = event.getExistingFileHelper();
-        StaticTemplateManager.EXISTING_HELPER = exFileHelper;
+        DataGenerator gen = event.getGenerator();
+        final PackOutput output = gen.getPackOutput();
 
-        if (event.includeClient())
+        if (event.includeServer())
         {
-            MultiblockStates multiblocks = new MultiblockStates(gen, exFileHelper);
-            gen.addProvider(new ATTBlockStates(gen, exFileHelper));
-            gen.addProvider(new ATTItemModels(gen, exFileHelper));
-            gen.addProvider(new DynamicModels(multiblocks, gen, exFileHelper));
+            ATTBlockStates multiblocks = new ATTBlockStates(output, exFileHelper);
+            gen.addProvider(true, multiblocks);
+            gen.addProvider(true, new ATTItemModels(output, exFileHelper));
+            gen.addProvider(true, new DynamicModels(multiblocks, output, exFileHelper));
         }
     }
 }

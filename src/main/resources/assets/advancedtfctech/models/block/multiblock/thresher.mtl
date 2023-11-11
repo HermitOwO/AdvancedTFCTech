@@ -1,0 +1,5 @@
+# Blender 3.6.0 MTL File: 'thresher.blend'
+# www.blender.org
+
+newmtl thresher
+map_Kd advancedtfctech:block/multiblock/thresher

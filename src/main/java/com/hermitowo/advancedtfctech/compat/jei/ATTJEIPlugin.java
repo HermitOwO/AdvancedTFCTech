@@ -2,16 +2,18 @@ package com.hermitowo.advancedtfctech.compat.jei;
 
 import java.util.List;
 import java.util.function.Supplier;
-import com.hermitowo.advancedtfctech.common.recipes.ATTRecipeTypes;
-import com.hermitowo.advancedtfctech.common.recipes.BeamhouseRecipe;
-import com.hermitowo.advancedtfctech.common.recipes.GristMillRecipe;
-import com.hermitowo.advancedtfctech.common.recipes.PowerLoomRecipe;
-import com.hermitowo.advancedtfctech.common.recipes.FleshingMachineRecipe;
-import com.hermitowo.advancedtfctech.common.recipes.ThresherRecipe;
+import com.hermitowo.advancedtfctech.AdvancedTFCTech;
 import com.hermitowo.advancedtfctech.client.screen.BeamhouseScreen;
 import com.hermitowo.advancedtfctech.client.screen.GristMillScreen;
 import com.hermitowo.advancedtfctech.client.screen.ThresherScreen;
 import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
+import com.hermitowo.advancedtfctech.common.multiblocks.logic.ATTMultiblockLogic;
+import com.hermitowo.advancedtfctech.common.recipes.ATTRecipeTypes;
+import com.hermitowo.advancedtfctech.common.recipes.BeamhouseRecipe;
+import com.hermitowo.advancedtfctech.common.recipes.FleshingMachineRecipe;
+import com.hermitowo.advancedtfctech.common.recipes.GristMillRecipe;
+import com.hermitowo.advancedtfctech.common.recipes.PowerLoomRecipe;
+import com.hermitowo.advancedtfctech.common.recipes.ThresherRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -28,8 +30,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.Block;
 
-import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
-
 @SuppressWarnings("unused")
 @JeiPlugin
 public class ATTJEIPlugin implements IModPlugin
@@ -37,7 +37,7 @@ public class ATTJEIPlugin implements IModPlugin
     @Override
     public ResourceLocation getPluginUid()
     {
-        return new ResourceLocation(MOD_ID, "jei");
+        return AdvancedTFCTech.rl("jei");
     }
 
     private static <C extends Container, T extends Recipe<C>> List<T> getRecipes(net.minecraft.world.item.crafting.RecipeType<T> type)
@@ -55,7 +55,7 @@ public class ATTJEIPlugin implements IModPlugin
 
     private static <T> RecipeType<T> type(String name, Class<T> tClass)
     {
-        return RecipeType.create(MOD_ID, name, tClass);
+        return RecipeType.create(AdvancedTFCTech.MOD_ID, name, tClass);
     }
 
     @Override
@@ -83,11 +83,11 @@ public class ATTJEIPlugin implements IModPlugin
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration r)
     {
-        cat(r, ATTBlocks.Multiblocks.THRESHER, THRESHER);
-        cat(r, ATTBlocks.Multiblocks.GRIST_MILL, GRIST_MILL);
-        cat(r, ATTBlocks.Multiblocks.POWER_LOOM, POWER_LOOM);
-        cat(r, ATTBlocks.Multiblocks.BEAMHOUSE, BEAMHOUSE);
-        cat(r, ATTBlocks.Blocks.FLESHING_MACHINE, FLESHING_MACHINE);
+        cat(r, ATTMultiblockLogic.THRESHER.block(), THRESHER);
+        cat(r, ATTMultiblockLogic.GRIST_MILL.block(), GRIST_MILL);
+        cat(r, ATTMultiblockLogic.POWER_LOOM.block(), POWER_LOOM);
+        cat(r, ATTMultiblockLogic.BEAMHOUSE.block(), BEAMHOUSE);
+        cat(r, ATTBlocks.FLESHING_MACHINE, FLESHING_MACHINE);
     }
 
     private static void cat(IRecipeCatalystRegistration r, Supplier<? extends Block> supplier, RecipeType<?> type)

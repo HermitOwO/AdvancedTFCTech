@@ -3,6 +3,7 @@ package com.hermitowo.advancedtfctech.common.blockentities;
 import java.util.Collections;
 import java.util.function.Supplier;
 import blusunrize.immersiveengineering.ImmersiveEngineering;
+import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.client.IModelOffsetProvider;
 import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
@@ -20,7 +21,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 import com.hermitowo.advancedtfctech.client.ATTSounds;
-import com.hermitowo.advancedtfctech.common.blocks.metal.FleshingMachineBlock;
+import com.hermitowo.advancedtfctech.common.blocks.FleshingMachineBlock;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerProvider;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerTypes;
 import com.hermitowo.advancedtfctech.common.items.ATTItems;
@@ -50,10 +51,9 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -65,19 +65,22 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
     public static final int INPUT_SLOT = 0;
     public static final int BLADE_SLOT = 1;
 
-    public float animation_bladeRotation = 0;
-    public float animation_rodRotation = 0;
+    public float bladeAngle = 0;
+    public float rodAngle = 0;
+
+    public static final int NUM_SLOTS = 2;
+    public static final int ENERGY_CAPACITY = 16000;
 
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
 
-    public MutableEnergyStorage energyStorage = new MutableEnergyStorage(16000);
+    public MutableEnergyStorage energyStorage = new MutableEnergyStorage(ENERGY_CAPACITY);
     private final MultiblockCapability<IEnergyStorage> energyCap = MultiblockCapability.make(
         this, be -> be.energyCap, FleshingMachineBlockEntity::master, registerEnergyInput(energyStorage)
     );
 
     private final CapabilityReference<IItemHandler> output = CapabilityReference.forBlockEntityAt(this,
         () -> new DirectionalBlockPos(getBlockPos().relative(getFacing(), -1), getFacing().getOpposite()),
-        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+        ForgeCapabilities.ITEM_HANDLER);
 
     public final Supplier<FleshingMachineRecipe> cachedRecipe = CachedRecipe.cached(
         FleshingMachineRecipe::findRecipe, () -> level, () -> inventory.get(INPUT_SLOT)
@@ -115,13 +118,13 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
     {
         if (getIsActive())
         {
-            animation_bladeRotation += 36F;
-            animation_bladeRotation %= 360F;
+            bladeAngle += 36F;
+            bladeAngle %= 360F;
 
-            animation_rodRotation += 9F;
-            animation_rodRotation %= 360F;
+            rodAngle += 9F;
+            rodAngle %= 360F;
 
-            ImmersiveEngineering.proxy.handleTileSound(ATTSounds.FLESHING_MACHINE.get(), this, !inventory.get(BLADE_SLOT).isEmpty(), .2f, 1);
+            ImmersiveEngineering.proxy.handleTileSound(ATTSounds.FLESHING_MACHINE, this, !inventory.get(BLADE_SLOT).isEmpty(), .2f, 1);
         }
     }
 
@@ -160,7 +163,7 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
                     {
                         energyStorage.extractEnergy(consumption, false);
                         process--;
-                        if (blade.hurt(1, Utils.RAND, null))
+                        if (blade.hurt(1, ApiUtils.RANDOM_SOURCE, null))
                             inventory.set(BLADE_SLOT, ItemStack.EMPTY);
                     }
                 }
@@ -231,8 +234,8 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
     {
         if (facing == Direction.EAST)
         {
-           spawnParticles(stack, facing, 0.45, 0.708);
-           spawnParticles(stack, facing, 0.45, 1.167);
+            spawnParticles(stack, facing, 0.45, 0.708);
+            spawnParticles(stack, facing, 0.45, 1.167);
         }
         else if (facing == Direction.SOUTH)
         {
@@ -338,7 +341,7 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
 
     private final MultiblockCapability<IItemHandler> invHandler = MultiblockCapability.make(
         this, be -> be.invHandler, FleshingMachineBlockEntity::master,
-        registerCapability(new IEInventoryHandler(2, this, 0, new boolean[]{true, true}, new boolean[]{true, false})
+        registerCapability(new IEInventoryHandler(2, this, 0, new boolean[] {true, true}, new boolean[] {true, false})
         {
             @Nonnull
             @Override
@@ -354,9 +357,9 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing)
     {
-        if (capability == CapabilityEnergy.ENERGY && (facing == null || facing == getFacing().getClockWise()))
+        if (capability == ForgeCapabilities.ENERGY && (facing == null || facing == getFacing().getClockWise()))
             return energyCap.getAndCast();
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        if (capability == ForgeCapabilities.ITEM_HANDLER)
             return invHandler.getAndCast();
         return super.getCapability(capability, facing);
     }
@@ -405,7 +408,7 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
 
     @Nonnull
     @Override
-    public BEContainerATT<? super FleshingMachineBlockEntity, ?> getContainerTypeATT()
+    public ATTContainerTypes.ATTArgContainer<? super FleshingMachineBlockEntity, ?> getContainerTypeATT()
     {
         return ATTContainerTypes.FLESHING_MACHINE;
     }

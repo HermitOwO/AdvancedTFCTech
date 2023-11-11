@@ -1,5 +1,6 @@
 {
+  "automatic_culling": false,
+  "flip_v": true,
   "loader": "forge:obj",
-  "model": "advancedtfctech:models/multiblock/beamhouse_barrel.obj",
-  "flip-v": true
+  "model": "advancedtfctech:models/block/multiblock/beamhouse_barrel.obj"
 }

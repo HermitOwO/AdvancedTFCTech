@@ -1,0 +1,15 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "sources": [
+    {
+      "type": "directory",
+      "source": "block/multiblock/power_loom",
+      "prefix": "block/multiblock/power_loom/"
+    },
+    {
+      "type": "directory",
+      "source": "block/metal_device/fleshing_machine",
+      "prefix": "block/metal_device/fleshing_machine/"
+    }
+  ]
+}

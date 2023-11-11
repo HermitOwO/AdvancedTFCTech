@@ -7,7 +7,6 @@ from i18n import I18n
 
 import re
 
-
 NON_TEXT_FIRST_PAGE = 'NON_TEXT_FIRST_PAGE'
 PAGE_BREAK = 'PAGE_BREAK'
 EMPTY_LAST_PAGE = 'EMPTY_LAST_PAGE'
@@ -27,10 +26,9 @@ class Page(NamedTuple):
     anchor_id: str | None  # Anchor for referencing from other pages
     link_ids: List[str]  # Items that are linked to this page
     translation_keys: Tuple[str, ...]  # Keys into 'data' that need to be passed through the Translation
-    advancedtfctech: bool
 
     def anchor(self, anchor_id: str) -> 'Page':
-        return Page(self.type, self.data, self.custom, anchor_id, self.link_ids, self.translation_keys, self.advancedtfctech)
+        return Page(self.type, self.data, self.custom, anchor_id, self.link_ids, self.translation_keys)
 
     def link(self, *link_ids: str) -> 'Page':
         for link_id in link_ids:
@@ -62,25 +60,12 @@ class Book:
         self.i18n = i18n
         self.local_instance = local_instance
 
-        if self.i18n.lang == 'en_us':  # Only generate the book.json if we're in the root language
-            rm.data(('patchouli_books', self.root_name, 'book'), {
-                'extend': 'tfc:field_guide',
-                'name': 'advancedtfctech field_guide extension',
-                'landing_text': 'advancedtfctech field_guide extension'
-                #'subtitle': '${version}',
-                # Even though we don't use the book item, we still need patchy to make a book item for us, as it controls the title
-                # If neither we nor patchy make a book item, this will show up as 'Air'. So we make one to allow the title to work properly.
-                #'dont_generate_book': False,
-                #'show_progress': False,
-                #'macros': macros
-            })
-
     def template(self, template_id: str, *components: Component):
         self.rm.data(('patchouli_books', self.root_name, 'en_us', 'templates', template_id), {
             'components': [{
                 'type': c.type, 'x': c.x, 'y': c.y, **c.data
             } for c in components]
-        })
+        }, root_domain='assets')
 
     def category(self, category_id: str, name: str, description: str, icon: str, parent: str | None = None, is_sorted: bool = False, entries: Tuple[Entry, ...] = ()):
         """
@@ -100,7 +85,7 @@ class Book:
             'icon': icon,
             'parent': parent,
             'sortnum': self.category_count
-        })
+        }, root_domain='assets')
         self.category_count += 1
 
         category_res: ResourceLocation = utils.resource_location(self.rm.domain, category_id)
@@ -158,7 +143,7 @@ class Book:
                 'category': self.category_prefix(category_res.path),
                 'icon': e.icon,
                 'pages': [{
-                    'type': self.prefix(p.type, p.advancedtfctech) if p.custom else p.type,
+                    'type': self.prefix(p.type) if p.custom else p.type,
                     'anchor': p.anchor_id,
                     **p.data
                 } for p in real_pages],
@@ -166,15 +151,13 @@ class Book:
                 'read_by_default': True,
                 'sortnum': i if is_sorted else None,
                 'extra_recipe_mappings': extra_recipe_mappings
-            })
+            }, root_domain='assets')
 
     def category_prefix(self, path: str) -> str:
-        return ('patchouli' if self.local_instance else 'advancedtfctech') + ':' + path
+        return ('patchouli' if self.local_instance else 'tfc') + ':' + path
 
-    def prefix(self, path: str, advancedtfctech: bool) -> str:
+    def prefix(self, path: str) -> str:
         """ In a local instance, domains are all under patchouli, otherwise under tfc """
-        if advancedtfctech:
-            return ('patchouli' if self.local_instance else 'advancedtfctech') + ':' + path
         return ('patchouli' if self.local_instance else 'tfc') + ':' + path
 
 
@@ -300,27 +283,32 @@ def multimultiblock(text_content: str, *pages) -> Page:
     return page('multimultiblock', {'text': text_content, 'multiblocks': [p.data['multiblock'] if 'multiblock' in p.data else p.data['multiblock_id'] for p in pages]}, custom=True, translation_keys=('text',))
 
 
-def leather_knapping(recipe: str, text_content: str) -> Page: return recipe_page('leather_knapping_recipe', recipe, text_content)
-def clay_knapping(recipe: str, text_content: str) -> Page: return recipe_page('clay_knapping_recipe', recipe, text_content)
-def fire_clay_knapping(recipe: str, text_content: str) -> Page: return recipe_page('fire_clay_knapping_recipe', recipe, text_content)
-def heat_recipe(recipe: str, text_content: str) -> Page: return recipe_page('heat_recipe', recipe, text_content)
-def quern_recipe(recipe: str, text_content: str) -> Page: return recipe_page('quern_recipe', recipe, text_content)
-def anvil_recipe(recipe: str, text_content: str) -> Page: return recipe_page('anvil_recipe', recipe, text_content)
-def welding_recipe(recipe: str, text_content: str) -> Page: return recipe_page('welding_recipe', recipe, text_content)
-def sealed_barrel_recipe(recipe: str, text_content: str) -> Page: return recipe_page('sealed_barrel_recipe', recipe, text_content)
-def instant_barrel_recipe(recipe: str, text_content: str) -> Page: return recipe_page('instant_barrel_recipe', recipe, text_content)
-def loom_recipe(recipe: str, text_content: str) -> Page: return recipe_page('loom_recipe', recipe, text_content)
+def heat_recipe(recipe: str, text_content: str) -> Page:
+    return recipe_page('heat_recipe', recipe, text_content)
 
 
-#def rock_knapping_typical(recipe_with_category_format: str, text_content: str) -> Page:
-#    return page('rock_knapping_recipe', {'recipes': [recipe_with_category_format % c for c in ROCK_CATEGORIES], 'text': text_content}, custom=True, translation_keys=('text',))
+def quern_recipe(recipe: str, text_content: str) -> Page:
+    return recipe_page('quern_recipe', recipe, text_content)
 
 
-#def alloy_recipe(title: str, alloy_name: str, text_content: str) -> Page:
-#    # Components can be copied from alloy_recipe() declarations in
-#    alloy_components = ALLOYS[alloy_name]
-#    recipe = ''.join(['$(li)%d - %d %% : $(thing)%s$()' % (round(100 * lo), round(100 * hi), lang(alloy)) for (alloy, lo, hi) in alloy_components])
-#    return item_spotlight('tfc:metal/ingot/%s' % alloy_name, title, False, '$(br)$(bold)Requirements:$()$(br)' + recipe + '$(br2)' + text_content)
+def anvil_recipe(recipe: str, text_content: str) -> Page:
+    return recipe_page('anvil_recipe', recipe, text_content)
+
+
+def welding_recipe(recipe: str, text_content: str) -> Page:
+    return recipe_page('welding_recipe', recipe, text_content)
+
+
+def sealed_barrel_recipe(recipe: str, text_content: str) -> Page:
+    return recipe_page('sealed_barrel_recipe', recipe, text_content)
+
+
+def instant_barrel_recipe(recipe: str, text_content: str) -> Page:
+    return recipe_page('instant_barrel_recipe', recipe, text_content)
+
+
+def loom_recipe(recipe: str, text_content: str) -> Page:
+    return recipe_page('loom_recipe', recipe, text_content)
 
 
 def fertilizer(item: str, text_contents: str, n: float = 0, p: float = 0, k: float = 0) -> Page:
@@ -350,8 +338,8 @@ def recipe_page(recipe_type: str, recipe: str, text_content: str) -> Page:
     return page(recipe_type, {'recipe': recipe, 'text': text_content}, custom=True, translation_keys=('text',))
 
 
-def page(page_type: str, page_data: JsonObject, custom: bool = False, translation_keys: Tuple[str, ...] = (), advancedtfctech: bool = False) -> Page:
-    return Page(page_type, page_data, custom, None, [], translation_keys, advancedtfctech)
+def page(page_type: str, page_data: JsonObject, custom: bool = False, translation_keys: Tuple[str, ...] = ()) -> Page:
+    return Page(page_type, page_data, custom, None, [], translation_keys)
 
 
 # Components
@@ -366,7 +354,3 @@ def header_component(x: int, y: int) -> Component:
 
 def seperator_component(x: int, y: int) -> Component:
     return Component('patchouli:separator', x, y, {})
-
-
-#def custom_component(x: int, y: int, class_name: str, data: JsonObject) -> Component:
-#    return Component('patchouli:custom', x, y, {'class': 'net.dries007.tfc.compat.patchouli.component.' + class_name, **data})

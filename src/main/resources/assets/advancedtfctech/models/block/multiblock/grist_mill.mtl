@@ -1,0 +1,5 @@
+# Blender 3.6.0 MTL File: 'grist_mill_base.blend'
+# www.blender.org
+
+newmtl grist_mill
+map_Kd advancedtfctech:block/multiblock/grist_mill

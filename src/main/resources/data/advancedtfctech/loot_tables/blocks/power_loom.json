@@ -21,7 +21,7 @@
       "rolls": 1,
       "entries": [
         {
-          "type": "immersiveengineering:multiblock_original_block"
+          "type": "immersiveengineering:multiblock"
         }
       ],
       "conditions": [

@@ -2,12 +2,10 @@ package com.hermitowo.advancedtfctech.common.items;
 
 import java.util.List;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import com.hermitowo.advancedtfctech.common.ATTTabs;
 import com.hermitowo.advancedtfctech.config.ATTConfig;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -19,14 +17,14 @@ public class FleshingBladesItem extends Item
 {
     public FleshingBladesItem()
     {
-        super(new Properties().tab(ATTTabs.MAIN));
+        super(new Properties());
     }
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> list, TooltipFlag flag)
     {
         float integrity = getRelativeBarWidth(stack) * 100F;
-        list.add(new TranslatableComponent("desc.advancedtfctech.bladeIntegrity", String.format("%.2f", integrity)));
+        list.add(Component.translatable("desc.advancedtfctech.bladeIntegrity", String.format("%.2f", integrity)));
     }
 
     @Override

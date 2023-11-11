@@ -1,8 +1,8 @@
 package com.hermitowo.advancedtfctech.compat.jei;
 
+import com.hermitowo.advancedtfctech.AdvancedTFCTech;
+import com.hermitowo.advancedtfctech.common.multiblocks.logic.ATTMultiblockLogic;
 import com.hermitowo.advancedtfctech.common.recipes.ThresherRecipe;
-import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -12,24 +12,22 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 
 import net.dries007.tfc.common.recipes.ingredients.ItemStackIngredient;
 import net.dries007.tfc.compat.jei.category.BaseRecipeCategory;
 
-import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
-
 public class ThresherRecipeCategory extends BaseRecipeCategory<ThresherRecipe>
 {
-    private static final ResourceLocation ICONS = new ResourceLocation(MOD_ID, "textures/gui/jei/jei.png");
+    private static final ResourceLocation ICONS = AdvancedTFCTech.rl("textures/gui/jei/jei.png");
     private final IDrawableStatic slot;
     private final IDrawableStatic gears;
     private final IDrawableAnimated gearsAnimated;
 
     public ThresherRecipeCategory(RecipeType<ThresherRecipe> type, IGuiHelper helper)
     {
-        super(type, helper, helper.createBlankDrawable(120, 38), new ItemStack(ATTBlocks.Multiblocks.THRESHER.get()));
+        super(type, helper, helper.createBlankDrawable(120, 38), ATTMultiblockLogic.THRESHER.iconStack());
         gears = helper.createDrawable(ICONS, 0, 134, 22, 16);
         IDrawableStatic arrowAnimated = helper.createDrawable(ICONS, 22, 134, 22, 16);
         this.gearsAnimated = helper.createAnimatedDrawable(arrowAnimated, 80, IDrawableAnimated.StartDirection.LEFT, false);
@@ -53,9 +51,9 @@ public class ThresherRecipeCategory extends BaseRecipeCategory<ThresherRecipe>
     }
 
     @Override
-    public void draw(ThresherRecipe recipe, IRecipeSlotsView recipeSlots, PoseStack stack, double mouseX, double mouseY)
+    public void draw(ThresherRecipe recipe, IRecipeSlotsView recipeSlots, GuiGraphics graphics, double mouseX, double mouseY)
     {
-        gears.draw(stack, 49, 11);
-        gearsAnimated.draw(stack, 49, 11);
+        gears.draw(graphics, 49, 11);
+        gearsAnimated.draw(graphics, 49, 11);
     }
 }

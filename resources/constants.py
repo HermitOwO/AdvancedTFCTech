@@ -17,9 +17,9 @@ class Weave(NamedTuple):
 
 
 LOOM: Dict[str, Weave] = {
-    'burlap_cloth': Weave('tfc:jute_fiber', 'fiber_winded_pirn', 48, 8, 'advancedtfctech:multiblock/power_loom/burlap', 500, 40000),
-    'silk_cloth': Weave('minecraft:string', 'silk_winded_pirn', 32, 4, 'advancedtfctech:multiblock/power_loom/wool', 250, 20000),
-    'wool_cloth': Weave('tfc:wool_yarn', 'wool_winded_pirn', 32, 4, 'advancedtfctech:multiblock/power_loom/wool', 250, 20000)
+    'burlap_cloth': Weave('tfc:jute_fiber', 'fiber_winded_pirn', 48, 8, 'advancedtfctech:block/multiblock/power_loom/burlap', 500, 40000),
+    'silk_cloth': Weave('minecraft:string', 'silk_winded_pirn', 32, 4, 'advancedtfctech:block/multiblock/power_loom/wool', 250, 20000),
+    'wool_cloth': Weave('tfc:wool_yarn', 'wool_winded_pirn', 32, 4, 'advancedtfctech:block/multiblock/power_loom/wool', 250, 20000)
 }
 
 DEFAULT_LANG = {
@@ -29,7 +29,7 @@ DEFAULT_LANG = {
     'item.advancedtfctech.wool_winded_pirn': 'Wool-Winded Pirn',
     'item.advancedtfctech.pineapple_winded_pirn': 'Pineapple-Winded Pirn',
 
-    'itemGroup.advancedtfctech': 'Advanced TFC Tech',
+    'advancedtfctech.creative_tab.main': 'Advanced TFC Tech',
 
     'tfc.jei.thresher': 'Thresher',
     'tfc.jei.grist_mill': 'Grist Mill',

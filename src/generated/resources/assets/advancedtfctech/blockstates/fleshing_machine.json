@@ -1,23 +1,23 @@
 {
   "variants": {
+    "facing=east": {
+      "model": "advancedtfctech:block/metal_device/fleshing_machine_split",
+      "uvlock": true,
+      "y": 90
+    },
     "facing=north": {
-      "model": "advancedtfctech:metal_device/fleshing_machine_split",
+      "model": "advancedtfctech:block/metal_device/fleshing_machine_split",
       "uvlock": true
     },
     "facing=south": {
-      "model": "advancedtfctech:metal_device/fleshing_machine_split",
-      "y": 180,
-      "uvlock": true
+      "model": "advancedtfctech:block/metal_device/fleshing_machine_split",
+      "uvlock": true,
+      "y": 180
     },
     "facing=west": {
-      "model": "advancedtfctech:metal_device/fleshing_machine_split",
-      "y": 270,
-      "uvlock": true
-    },
-    "facing=east": {
-      "model": "advancedtfctech:metal_device/fleshing_machine_split",
-      "y": 90,
-      "uvlock": true
+      "model": "advancedtfctech:block/metal_device/fleshing_machine_split",
+      "uvlock": true,
+      "y": 270
     }
   }
 }

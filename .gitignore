@@ -24,6 +24,7 @@ libs
 resources/__pycache__
 src/generated/resources/.cache
 src/test
+blender/*.blend1
 
 # Files from Forge MDK
 forge*changelog.txt

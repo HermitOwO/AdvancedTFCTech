@@ -29,12 +29,12 @@ public class ATTClientForgeEvents
         {
             if (!ModList.get().isLoaded("firmalife"))
                 if (Helpers.isItem(stack, ATTItems.PINEAPPLE_WINDED_PIRN.get()))
-                    text.add(Helpers.translatable("advancedtfctech.tooltip.firmalife_not_loaded"));
+                    text.add(Component.translatable("advancedtfctech.tooltip.firmalife_not_loaded"));
 
             CompoundTag tag = stack.getTag();
             if (tag != null)
                 if (tag.getBoolean("machine_made"))
-                    text.add(Helpers.translatable("advancedtfctech.tooltip.machine_made"));
+                    text.add(Component.translatable("advancedtfctech.tooltip.machine_made"));
         }
     }
 }

@@ -1,9 +1,9 @@
 package com.hermitowo.advancedtfctech.compat.jei;
 
 import java.util.Arrays;
+import com.hermitowo.advancedtfctech.AdvancedTFCTech;
+import com.hermitowo.advancedtfctech.common.multiblocks.logic.ATTMultiblockLogic;
 import com.hermitowo.advancedtfctech.common.recipes.PowerLoomRecipe;
-import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -14,24 +14,22 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 
 import net.dries007.tfc.compat.jei.category.BaseRecipeCategory;
 
-import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
-
 public class PowerLoomRecipeCategory extends BaseRecipeCategory<PowerLoomRecipe>
 {
-    private static final ResourceLocation ICONS = new ResourceLocation(MOD_ID, "textures/gui/jei/jei.png");
+    private static final ResourceLocation ICONS = AdvancedTFCTech.rl("textures/gui/jei/jei.png");
     private final IDrawableStatic slot;
     private final IDrawableStatic arrows;
     private final IDrawableAnimated arrowsAnimated;
 
     public PowerLoomRecipeCategory(RecipeType<PowerLoomRecipe> type, IGuiHelper helper)
     {
-        super(type, helper, helper.createBlankDrawable(150, 38), new ItemStack(ATTBlocks.Multiblocks.POWER_LOOM.get()));
+        super(type, helper, helper.createBlankDrawable(150, 38), ATTMultiblockLogic.POWER_LOOM.iconStack());
         arrows = helper.createDrawable(ICONS, 0, 118, 22, 16);
         IDrawableStatic arrowAnimated = helper.createDrawable(ICONS, 22, 118, 22, 16);
         this.arrowsAnimated = helper.createAnimatedDrawable(arrowAnimated, 80, IDrawableAnimated.StartDirection.LEFT, false);
@@ -59,13 +57,13 @@ public class PowerLoomRecipeCategory extends BaseRecipeCategory<PowerLoomRecipe>
         output.setBackground(slot, -1, -1);
         secondaryOutput.setBackground(slot, -1, -1);
 
-        secondaryInput.addTooltipCallback((slots, tooltip) -> tooltip.add(new TranslatableComponent("advancedtfctech.jei.not_consumed").withStyle(ChatFormatting.ITALIC)));
+        secondaryInput.addTooltipCallback((slots, tooltip) -> tooltip.add(Component.translatable("advancedtfctech.jei.not_consumed").withStyle(ChatFormatting.ITALIC)));
     }
 
     @Override
-    public void draw(PowerLoomRecipe recipe, IRecipeSlotsView recipeSlots, PoseStack stack, double mouseX, double mouseY)
+    public void draw(PowerLoomRecipe recipe, IRecipeSlotsView recipeSlots, GuiGraphics graphics, double mouseX, double mouseY)
     {
-        arrows.draw(stack, 74, 11);
-        arrowsAnimated.draw(stack, 74, 11);
+        arrows.draw(graphics, 74, 11);
+        arrowsAnimated.draw(graphics, 74, 11);
     }
 }

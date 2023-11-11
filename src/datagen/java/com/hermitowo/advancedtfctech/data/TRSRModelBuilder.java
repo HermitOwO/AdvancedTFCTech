@@ -20,7 +20,7 @@ public class TRSRModelBuilder extends ModelBuilder<TRSRModelBuilder>
         super(outputLocation, existingFileHelper);
     }
 
-    public void transforms(ResourceLocation source)
+    public TRSRModelBuilder transforms(ResourceLocation source)
     {
         Resource transformFile;
         try
@@ -28,8 +28,9 @@ public class TRSRModelBuilder extends ModelBuilder<TRSRModelBuilder>
             transformFile = existingFileHelper.getResource(
                 source, PackType.CLIENT_RESOURCES, ".json", "transformations"
             );
-            String jsonString = CharStreams.toString(new InputStreamReader(transformFile.getInputStream()));
+            String jsonString = CharStreams.toString(new InputStreamReader(transformFile.open()));
             transforms.addFromJson(jsonString);
+            return this;
         }
         catch (IOException e)
         {
@@ -43,7 +44,7 @@ public class TRSRModelBuilder extends ModelBuilder<TRSRModelBuilder>
         JsonObject ret = super.toJson();
         JsonObject transformJson = transforms.toJson();
         if (!transformJson.entrySet().isEmpty())
-            ret.add("transform", transformJson);
+            ret.add("display", transformJson);
         return ret;
     }
 }
