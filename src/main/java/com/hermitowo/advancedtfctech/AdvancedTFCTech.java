@@ -1,6 +1,5 @@
 package com.hermitowo.advancedtfctech;
 
-import blusunrize.immersiveengineering.api.ManualHelper;
 import com.hermitowo.advancedtfctech.client.ATTClientEvents;
 import com.hermitowo.advancedtfctech.client.ATTClientForgeEvents;
 import com.hermitowo.advancedtfctech.client.ATTSounds;
@@ -21,7 +20,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
@@ -42,7 +40,6 @@ public class AdvancedTFCTech
         final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
         bus.addListener(this::setup);
-        bus.addListener(this::loadComplete);
 
         ATTItems.ITEMS.register(bus);
         ATTBlocks.BLOCKS.register(bus);
@@ -68,17 +65,5 @@ public class AdvancedTFCTech
     private void setup(FMLCommonSetupEvent event)
     {
         ATTItemStackModifiers.registerItemStackModifierTypes();
-    }
-
-    private void loadComplete(FMLLoadCompleteEvent event)
-    {
-        event.enqueueWork(() -> ManualHelper.addConfigGetter(str -> switch (str)
-        {
-            case "thresher_operationcost" -> (int) (80 * ATTConfig.SERVER.thresherConfig.energyModifier().get());
-            case "gristmill_operationcost" -> (int) (80 * ATTConfig.SERVER.gristMillConfig.energyModifier().get());
-            case "powerloom_operationcost" -> (int) (80 * ATTConfig.SERVER.powerLoomConfig.energyModifier().get());
-            case "beamhouse_operationcost" -> (int) (20 * ATTConfig.SERVER.beamhouseConfig.energyModifier().get());
-            default -> -1;
-        }));
     }
 }

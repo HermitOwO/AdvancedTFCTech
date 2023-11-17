@@ -10,14 +10,12 @@ displayName = "Advanced TFC Tech Unofficial"
 displayURL = "https://www.curseforge.com/minecraft/mc-mods/advanced-tfc-tech-unofficial"
 credits = "Special thanks to PyralIron for creating the original mod and tao6626 for recreating multiblock models."
 authors = "HermitOwO"
-description = '''
-Unofficial port of Advanced TFC Tech by PyralIron.
-'''
+description = '''Unofficial port of Advanced TFC Tech.'''
 
 [[dependencies.advancedtfctech]]
 modId = "forge"
 mandatory = true
-versionRange = "[47.0.0,)"
+versionRange = "[47.2.6,)"
 ordering = "NONE"
 side = "BOTH"
 
@@ -31,7 +29,7 @@ side = "BOTH"
 [[dependencies.advancedtfctech]]
 modId = "tfc"
 mandatory = true
-versionRange = "[3.0.0-beta,)"
+versionRange = "[3.0.3-beta,)"
 ordering = "NONE"
 side = "BOTH"
 

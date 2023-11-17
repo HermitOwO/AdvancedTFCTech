@@ -14,9 +14,6 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
-
-import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
 
 @SuppressWarnings("unused")
 public class PowerLoomParts extends Model

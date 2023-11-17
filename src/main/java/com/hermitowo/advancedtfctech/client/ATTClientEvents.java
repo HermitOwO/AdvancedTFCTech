@@ -2,6 +2,7 @@ package com.hermitowo.advancedtfctech.client;
 
 import java.util.function.Supplier;
 import blusunrize.immersiveengineering.api.IEApi;
+import blusunrize.immersiveengineering.api.ManualHelper;
 import com.hermitowo.advancedtfctech.client.model.DynamicModel;
 import com.hermitowo.advancedtfctech.client.model.PowerLoomParts;
 import com.hermitowo.advancedtfctech.client.render.BeamhouseRenderer;
@@ -16,6 +17,7 @@ import com.hermitowo.advancedtfctech.client.screen.ThresherScreen;
 import com.hermitowo.advancedtfctech.common.blockentities.ATTBlockEntities;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerTypes;
 import com.hermitowo.advancedtfctech.common.multiblocks.logic.ATTMultiblockLogic;
+import com.hermitowo.advancedtfctech.config.ATTConfig;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -46,6 +48,20 @@ public class ATTClientEvents
             MenuScreens.register(ATTContainerTypes.POWER_LOOM.getType(), PowerLoomScreen::new);
             MenuScreens.register(ATTContainerTypes.BEAMHOUSE.getType(), BeamhouseScreen::new);
             MenuScreens.register(ATTContainerTypes.FLESHING_MACHINE.getType(), FleshingMachineScreen::new);
+
+            setupManual();
+        });
+    }
+
+    public static void setupManual()
+    {
+        ManualHelper.addConfigGetter(str -> switch (str)
+        {
+            case "thresher_operationcost" -> (int) (80 * ATTConfig.SERVER.thresherConfig.energyModifier().get());
+            case "gristmill_operationcost" -> (int) (80 * ATTConfig.SERVER.gristMillConfig.energyModifier().get());
+            case "powerloom_operationcost" -> (int) (80 * ATTConfig.SERVER.powerLoomConfig.energyModifier().get());
+            case "beamhouse_operationcost" -> (int) (20 * ATTConfig.SERVER.beamhouseConfig.energyModifier().get());
+            default -> -1;
         });
     }
 

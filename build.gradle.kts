@@ -1,16 +1,17 @@
 plugins {
     id("java")
     id("idea")
-    id("net.neoforged.gradle") version "[6.0.13,6.2)"
+//    id("net.neoforged.gradle") version "[6.0.13,6.2)"
+    id("net.minecraftforge.gradle") version "[6.0,6.2)"
     id("org.parchmentmc.librarian.forgegradle") version "1.+"
     id("org.spongepowered.mixin") version "0.7.+"
 }
 
 val minecraftVersion: String = "1.20.1"
-val forgeVersion: String = "47.1.54"
+val forgeVersion: String = "47.2.6"
 val parchmentVersion: String = "2023.09.03-1.20.1"
 val mixinVersion: String = "0.8.5"
-val tfcVersion: String = "4843577"
+val tfcVersion: String = "4875028"
 val jeiVersion: String = "15.2.0.27"
 val patchouliVersion: String = "1.20.1-81-FORGE"
 val jadeVersion: String = "4614153"
@@ -64,7 +65,8 @@ repositories {
 }
 
 dependencies {
-    minecraft("net.neoforged", "forge", version = "$minecraftVersion-$forgeVersion")
+//    minecraft("net.neoforged", "forge", version = "$minecraftVersion-$forgeVersion")
+    minecraft("net.minecraftforge", "forge", version = "$minecraftVersion-$forgeVersion")
     implementation(fg.deobf("curse.maven:tfc-302973:$tfcVersion"))
 
     // JEI
@@ -90,7 +92,6 @@ dependencies {
     if (System.getProperty("idea.sync.active") != "true") {
         annotationProcessor("org.spongepowered:mixin:$mixinVersion:processor")
     }
-
 }
 
 minecraft {
@@ -145,4 +146,12 @@ minecraft {
 
 mixin {
     add(sourceSets.main.get(), "advancedtfctech.refmap.json")
+}
+
+tasks {
+    jar {
+        manifest {
+            attributes["Implementation-Version"] = project.version
+        }
+    }
 }

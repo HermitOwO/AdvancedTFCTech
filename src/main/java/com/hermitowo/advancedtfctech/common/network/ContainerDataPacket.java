@@ -1,7 +1,6 @@
 package com.hermitowo.advancedtfctech.common.network;
 
 import java.util.List;
-import blusunrize.immersiveengineering.common.gui.IEContainerMenu;
 import blusunrize.immersiveengineering.common.network.PacketUtils;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerMenu;
 import com.hermitowo.advancedtfctech.common.container.sync.ATTGenericDataSerializers;

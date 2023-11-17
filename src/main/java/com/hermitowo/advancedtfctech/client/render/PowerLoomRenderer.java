@@ -51,6 +51,7 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<MultiblockBlockEnti
         Direction facing = orientation.front();
 
         boolean active = state.shouldRenderAsActive();
+        boolean hasProcess = !state.getProcessQueue().isEmpty();
         float angle = state.rodAngle + (active ? 1.75F * partialTicks : 0);
         buffer = RenderHelper.mirror(orientation, poseStack, buffer);
         VertexConsumer vertexConsumer = material.buffer(buffer, RenderType::entitySolid);
@@ -144,7 +145,7 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<MultiblockBlockEnti
             amountPirns += state.inventory.getStackInSlot(i).getCount();
         }
         ItemStack pirn = pirnList.stream().filter(s -> !s.isEmpty()).findAny().orElse(ItemStack.EMPTY);
-        amountPirns = active ? amountPirns - 1 : amountPirns;
+        amountPirns = hasProcess ? amountPirns - 1 : amountPirns;
 
         Map<String, String> pirnTextures = new HashMap<>();
         pirnTextures.put("advancedtfctech:fiber_winded_pirn", "advancedtfctech:block/multiblock/power_loom/fiber_winded_pirn");
@@ -173,7 +174,7 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<MultiblockBlockEnti
             poseStack.mulPose(Axis.ZP.rotationDegrees(state.pirnAngle + 45.0F));
 
             poseStack.mulPose(Axis.ZN.rotationDegrees(45.0F * i));
-            if (active)
+            if (hasProcess)
                 poseStack.mulPose(Axis.ZN.rotationDegrees(45.0F));
 
             RenderHelper.renderTexturedPirn(consumer, poseStack, -1, -5, 0, 1, -3, 9, pirnTexture, combinedLight);
@@ -181,7 +182,7 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<MultiblockBlockEnti
             poseStack.popPose();
         }
 
-        if (active)
+        if (hasProcess)
         {
             poseStack.pushPose();
 

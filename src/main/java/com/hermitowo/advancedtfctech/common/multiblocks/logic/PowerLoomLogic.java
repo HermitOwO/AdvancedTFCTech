@@ -179,98 +179,101 @@ public class PowerLoomLogic implements IMultiblockLogic<PowerLoomLogic.State>, I
 
         for (MultiblockProcess<PowerLoomRecipe, ?> process : state.processor.getQueue())
         {
-            int tick = process.processTick;
-            int delayedTick = tick - 20;
-
-            if (delayedTick > 0)
+            if (state.active)
             {
-                if (state.rackBool)
-                    state.rackDispl = Math.max(0, state.rackDispl - 0.046875F);
-                else
+                int tick = process.processTick;
+                int delayedTick = tick - 20;
+
+                if (delayedTick > 0)
+                {
+                    if (state.rackBool)
+                        state.rackDispl = Math.max(0, state.rackDispl - 0.046875F);
+                    else
+                        state.rackDispl = Math.min(0.65625F, state.rackDispl + 0.046875F);
+                    if (state.rackDispl <= 0 && state.rackBool)
+                        state.rackBool = false;
+                    else if (state.rackDispl >= 0.65625F && !state.rackBool)
+                        state.rackBool = true;
+                }
+                else if (state.rackDispl < 0.65625F)
                     state.rackDispl = Math.min(0.65625F, state.rackDispl + 0.046875F);
-                if (state.rackDispl <= 0 && state.rackBool)
-                    state.rackBool = false;
-                else if (state.rackDispl >= 0.65625F && !state.rackBool)
-                    state.rackBool = true;
-            }
-            else if (state.rackDispl < 0.65625F)
-                state.rackDispl = Math.min(0.65625F, state.rackDispl + 0.046875F);
 
-            if (delayedTick / 28 >= 1 && delayedTick % 28 <= 4)
-            {
-                if (state.rack2Bool)
+                if (delayedTick / 28 >= 1 && delayedTick % 28 <= 4)
                 {
-                    state.rack2Displ = Math.max(0, state.rack2Displ - 0.0875F);
-                    state.longThreadAngle = Math.max(0, state.longThreadAngle - 3.8F);
-                    state.shortThreadAngle = Math.max(0, state.shortThreadAngle - 8.4F);
+                    if (state.rack2Bool)
+                    {
+                        state.rack2Displ = Math.max(0, state.rack2Displ - 0.0875F);
+                        state.longThreadAngle = Math.max(0, state.longThreadAngle - 3.8F);
+                        state.shortThreadAngle = Math.max(0, state.shortThreadAngle - 8.4F);
+                    }
+                    else
+                    {
+                        state.rack2Displ = Math.min(0.4375F, state.rack2Displ + 0.0875F);
+                        state.longThreadAngle = Math.min(19.0F, state.longThreadAngle + 3.8F);
+                        state.shortThreadAngle = Math.min(42.0F, state.shortThreadAngle + 8.4F);
+                    }
+                    if (state.rack2Displ <= 0 && state.rack2Bool)
+                        state.rack2Bool = false;
+                    else if (state.rack2Displ >= 0.4375F && !state.rack2Bool)
+                        state.rack2Bool = true;
+                }
+
+                if (tick <= 15)
+                    state.pirnAngle = 3.0F * tick;
+                else
+                    state.pirnAngle = 45.0F;
+
+                if (tick > 15 && tick <= 20)
+                {
+                    state.pirnDisplX = 0.02965F * (tick - 15);
+                    state.pirnDisplY = 0.046875F * (tick - 15);
                 }
                 else
                 {
-                    state.rack2Displ = Math.min(0.4375F, state.rack2Displ + 0.0875F);
-                    state.longThreadAngle = Math.min(19.0F, state.longThreadAngle + 3.8F);
-                    state.shortThreadAngle = Math.min(42.0F, state.shortThreadAngle + 8.4F);
+                    state.pirnDisplX = 0.14825F;
+                    state.pirnDisplY = 0.234375F;
                 }
-                if (state.rack2Displ <= 0 && state.rack2Bool)
-                    state.rack2Bool = false;
-                else if (state.rack2Displ >= 0.4375F && !state.rack2Bool)
-                    state.rack2Bool = true;
+
+                if (delayedTick % 56 > 10 && delayedTick % 56 <= 18)
+                {
+                    if (state.pirnBool)
+                        state.pirnDisplZ = Math.max(0, state.pirnDisplZ - 0.703125F);
+                    else
+                        state.pirnDisplZ = Math.min(2.8125F, state.pirnDisplZ + 0.703125F);
+                    if (state.pirnDisplZ <= 0 && state.pirnBool)
+                        state.pirnBool = false;
+                    else if (state.pirnDisplZ >= 2.8125F && !state.pirnBool)
+                        state.pirnBool = true;
+
+                    if (state.rackSideBool)
+                        state.rackSideDispl = Math.max(0, state.rackSideDispl - 0.0625F);
+                    else
+                        state.rackSideDispl = Math.min(0.25F, state.rackSideDispl + 0.0625F);
+                    if (state.rackSideDispl <= 0 && state.rackSideBool)
+                        state.rackSideBool = false;
+                    else if (state.rackSideDispl >= 0.25F && !state.rackSideBool)
+                        state.rackSideBool = true;
+                }
+
+                if (tick <= 15)
+                {
+                    state.pirnDisplX = 0;
+                    state.pirnDisplY = 0;
+                    state.pirnDisplZ = 0;
+                }
+                if (delayedTick % 56 == 18)
+                {
+                    state.rackSideDispl = 0.25F;
+                    state.pirnDisplZ = 0;
+                }
+
+                state.pirnDisplX2 = tick <= 20 ? 0 : state.rackDispl * state.rackDispl * (3.0F - 2.0F * state.rackDispl) - 0.72625F;
+
+                state.weaveTextureDispl = delayedTick > 0 ? Math.floorDiv(delayedTick + 14, 28) : 0;
+
+                ++process.processTick;
+                context.requestMasterBESync();
             }
-
-            if (tick <= 15)
-                state.pirnAngle = 3.0F * tick;
-            else
-                state.pirnAngle = 45.0F;
-
-            if (tick > 15 && tick <= 20)
-            {
-                state.pirnDisplX = 0.02965F * (tick - 15);
-                state.pirnDisplY = 0.046875F * (tick - 15);
-            }
-            else
-            {
-                state.pirnDisplX = 0.14825F;
-                state.pirnDisplY = 0.234375F;
-            }
-
-            if (delayedTick % 56 > 10 && delayedTick % 56 <= 18)
-            {
-                if (state.pirnBool)
-                    state.pirnDisplZ = Math.max(0, state.pirnDisplZ - 0.703125F);
-                else
-                    state.pirnDisplZ = Math.min(2.8125F, state.pirnDisplZ + 0.703125F);
-                if (state.pirnDisplZ <= 0 && state.pirnBool)
-                    state.pirnBool = false;
-                else if (state.pirnDisplZ >= 2.8125F && !state.pirnBool)
-                    state.pirnBool = true;
-
-                if (state.rackSideBool)
-                    state.rackSideDispl = Math.max(0, state.rackSideDispl - 0.0625F);
-                else
-                    state.rackSideDispl = Math.min(0.25F, state.rackSideDispl + 0.0625F);
-                if (state.rackSideDispl <= 0 && state.rackSideBool)
-                    state.rackSideBool = false;
-                else if (state.rackSideDispl >= 0.25F && !state.rackSideBool)
-                    state.rackSideBool = true;
-            }
-
-            if (tick <= 15)
-            {
-                state.pirnDisplX = 0;
-                state.pirnDisplY = 0;
-                state.pirnDisplZ = 0;
-            }
-            if (delayedTick % 56 == 18)
-            {
-                state.rackSideDispl = 0.25F;
-                state.pirnDisplZ = 0;
-            }
-
-            state.pirnDisplX2 = tick <= 20 ? 0 : state.rackDispl * state.rackDispl * (3.0F - 2.0F * state.rackDispl) - 0.72625F;
-
-            state.weaveTextureDispl = delayedTick > 0 ? Math.floorDiv(delayedTick + 14, 28) : 0;
-
-            ++process.processTick;
-            context.requestMasterBESync();
         }
     }
 
@@ -290,8 +293,6 @@ public class PowerLoomLogic implements IMultiblockLogic<PowerLoomLogic.State>, I
         {
             if (PIRN_IN_POS.equals(position.posInMultiblock()))
                 return state.pirnInputHandler.cast(ctx);
-//            if (SECONDARY_WEAVE_IO_POS.equals(position.posInMultiblock()))
-//                return state.secondaryWeaveInputHandler.cast(ctx);
             if (WEAVE_IN_POS.contains(position.posInMultiblock()))
                 return state.weaveInputHandler.cast(ctx);
             if (OUT_CAP.contains(position))
@@ -476,40 +477,6 @@ public class PowerLoomLogic implements IMultiblockLogic<PowerLoomLogic.State>, I
                     }
                 }
             }
-//            IItemHandler insertionHandler = state.secondaryWeaveInputHandler.getValue();
-//            if (insertionHandler != null)
-//            {
-//                PowerLoomRecipe recipe = PowerLoomRecipe.findRecipeForRendering(ctx.getLevel().getRawLevel(), heldItem);
-//                if (recipe != null)
-//                {
-//                    ItemStack secondarySlot = state.inventory.getStackInSlot(SECONDARY_WEAVE_IN_SLOT);
-//                    if (secondarySlot.isEmpty())
-//                    {
-//                        int size = Math.min(heldItem.getCount(), recipe.secondaryInput.getCount());
-//                        ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
-//                        stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
-//                        if (stack.isEmpty())
-//                        {
-//                            heldItem.shrink(size);
-//                            ctx.markDirtyAndSync();
-//                            return InteractionResult.SUCCESS;
-//                        }
-//                    }
-//                    if (secondarySlot.is(heldItem.getItem()) && secondarySlot.getCount() < recipe.secondaryInput.getCount())
-//                    {
-//                        int remaining = recipe.secondaryInput.getCount() - secondarySlot.getCount();
-//                        int size = Math.min(heldItem.getCount(), remaining);
-//                        ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
-//                        stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
-//                        if (stack.isEmpty())
-//                        {
-//                            heldItem.shrink(size);
-//                            ctx.markDirtyAndSync();
-//                            return InteractionResult.SUCCESS;
-//                        }
-//                    }
-//                }
-//            }
         }
         else if (bX == 0 && bY == 0 && (bZ == 1 || bZ == 2 || bZ == 3))
         {
@@ -586,9 +553,6 @@ public class PowerLoomLogic implements IMultiblockLogic<PowerLoomLogic.State>, I
             this.processor = new MultiblockProcessor<>(
                 1, 0, 1, markDirty, PowerLoomRecipe.RECIPES::getById
             );
-//            this.pirnInput = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, PIRN_IN_POS, null);
-//            this.weaveInput = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, new MultiblockFace(2, 0, 2, null));
-//            this.secondaryWeaveInput = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, SECONDARY_WEAVE_IO_POS, null);
             this.output = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, MAIN_OUT_POS);
             this.secondaryOutput = new DroppingMultiblockOutput(SECONDARY_OUT_POS, ctx);
             this.energyCap = new StoredCapability<>(this.energy);
@@ -598,9 +562,6 @@ public class PowerLoomLogic implements IMultiblockLogic<PowerLoomLogic.State>, I
             this.weaveInputHandler = new StoredCapability<>(new WrappingItemHandler(
                 inventory, true, false, new WrappingItemHandler.IntRange(FIRST_WEAVE_IN_SLOT, FIRST_WEAVE_IN_SLOT + WEAVE_IN_SLOT_COUNT)
             ));
-//            this.secondaryWeaveInputHandler = new StoredCapability<>(new WrappingItemHandler(
-//                inventory, true, false, new WrappingItemHandler.IntRange(SECONDARY_WEAVE_IN_SLOT, 1)
-//            ));
             this.outputHandler = new StoredCapability<>(new WrappingItemHandler(
                 inventory, false, true, new WrappingItemHandler.IntRange(OUT_SLOT, 1)
             ));
