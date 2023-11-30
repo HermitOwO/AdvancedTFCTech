@@ -10,6 +10,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -22,11 +23,7 @@ public class ATTCreativeTabs
 
     private static RegistryObject<CreativeModeTab> register(String name, Supplier<ItemStack> icon, CreativeModeTab.DisplayItemsGenerator displayItems)
     {
-        return CREATIVE_TABS.register(name, () -> CreativeModeTab.builder()
-            .icon(icon)
-            .title(Component.translatable("advancedtfctech.creative_tab." + name))
-            .displayItems(displayItems)
-            .build());
+        return CREATIVE_TABS.register(name, () -> CreativeModeTab.builder().icon(icon).title(Component.translatable("advancedtfctech.creative_tab." + name)).displayItems(displayItems).build());
     }
 
     private static void fillTab(CreativeModeTab.ItemDisplayParameters parameters, CreativeModeTab.Output out)
@@ -36,8 +33,14 @@ public class ATTCreativeTabs
             final Item item = itemRef.get();
             if (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof MultiblockPartBlock<?>)
                 return;
-            else
-                out.accept(item);
+            else if (item == ATTItems.PINEAPPLE_WINDED_PIRN.get())
+            {
+                if (ModList.get().isLoaded("firmalife"))
+                {
+                    out.accept(item);
+                }
+            }
+            else out.accept(item);
         }
     }
 }

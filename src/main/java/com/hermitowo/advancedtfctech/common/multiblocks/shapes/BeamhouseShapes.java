@@ -110,7 +110,7 @@ public class BeamhouseShapes implements Function<BlockPos, VoxelShape>
             else
                 return box(0, 0, 0, 0, 0, 0);
         }
-        
+
         return Shapes.block();
     }
 
