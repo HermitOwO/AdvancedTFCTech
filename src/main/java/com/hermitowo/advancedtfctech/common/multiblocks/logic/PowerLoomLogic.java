@@ -29,7 +29,6 @@ import blusunrize.immersiveengineering.common.util.DroppingMultiblockOutput;
 import blusunrize.immersiveengineering.common.util.inventory.SlotwiseItemHandler;
 import blusunrize.immersiveengineering.common.util.inventory.WrappingItemHandler;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerTypes;
-import com.hermitowo.advancedtfctech.common.container.PowerLoomInventory;
 import com.hermitowo.advancedtfctech.common.items.ATTItems;
 import com.hermitowo.advancedtfctech.common.multiblocks.process.ATTMultiblockProcess;
 import com.hermitowo.advancedtfctech.common.multiblocks.process.ATTProcessContext;
@@ -37,6 +36,7 @@ import com.hermitowo.advancedtfctech.common.multiblocks.shapes.PowerLoomSelectio
 import com.hermitowo.advancedtfctech.common.multiblocks.shapes.PowerLoomShapes;
 import com.hermitowo.advancedtfctech.common.recipes.PowerLoomRecipe;
 import com.hermitowo.advancedtfctech.config.ATTConfig;
+import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -55,6 +55,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
 public class PowerLoomLogic implements IMultiblockLogic<PowerLoomLogic.State>, IServerTickableComponent<PowerLoomLogic.State>, IClientTickableComponent<PowerLoomLogic.State>
@@ -650,6 +651,52 @@ public class PowerLoomLogic implements IMultiblockLogic<PowerLoomLogic.State>, I
         public List<MultiblockProcess<PowerLoomRecipe, ATTProcessContext<PowerLoomRecipe>>> getProcessQueue()
         {
             return processor.getQueue();
+        }
+    }
+
+    public static class PowerLoomInventory extends ItemStackHandler
+    {
+        private final List<SlotwiseItemHandler.IOConstraint> slotConstraints;
+        private final Runnable onChanged;
+
+        public PowerLoomInventory(List<SlotwiseItemHandler.IOConstraint> slotConstraints, Runnable onChanged)
+        {
+            super(slotConstraints.size());
+            this.slotConstraints = slotConstraints;
+            this.onChanged = onChanged;
+        }
+
+        @Override
+        protected void onContentsChanged(int slot)
+        {
+            super.onContentsChanged(slot);
+            onChanged.run();
+        }
+
+        @Override
+        @Nonnull
+        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
+        {
+            if (slot >= this.slotConstraints.size() || !this.slotConstraints.get(slot).allowInsert().test(stack))
+                return stack;
+            return super.insertItem(slot, stack, simulate);
+        }
+
+        @Override
+        @Nonnull
+        public ItemStack extractItem(int slot, int amount, boolean simulate)
+        {
+            if (slot >= this.slotConstraints.size() || !this.slotConstraints.get(slot).allowExtract())
+                return ItemStack.EMPTY;
+            return super.extractItem(slot, amount, simulate);
+        }
+
+        @Override
+        public int getSlotLimit(int slot)
+        {
+            if (slot >= FIRST_PIRN_IN_SLOT && slot < PIRN_IN_SLOT_COUNT)
+                return 1;
+            return 64;
         }
     }
 }
