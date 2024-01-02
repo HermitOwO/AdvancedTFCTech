@@ -15,7 +15,7 @@ description = '''Unofficial port of Advanced TFC Tech.'''
 [[dependencies.advancedtfctech]]
 modId = "forge"
 mandatory = true
-versionRange = "[47.2.6,)"
+versionRange = "[47.1.81,47.2.0),[47.2.6,)"
 ordering = "NONE"
 side = "BOTH"
 
