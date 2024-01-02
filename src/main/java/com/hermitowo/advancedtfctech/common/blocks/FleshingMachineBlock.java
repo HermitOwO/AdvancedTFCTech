@@ -8,8 +8,6 @@ import blusunrize.immersiveengineering.common.register.IEBlocks;
 import com.google.common.collect.ImmutableList;
 import com.hermitowo.advancedtfctech.common.blockentities.ATTBlockEntities;
 import com.hermitowo.advancedtfctech.common.blockentities.FleshingMachineBlockEntity;
-import javax.annotation.ParametersAreNonnullByDefault;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -25,10 +23,9 @@ import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
 public class FleshingMachineBlock extends IEEntityBlock<FleshingMachineBlockEntity>
 {
     public static final Property<Direction> FACING = IEProperties.FACING_HORIZONTAL;
@@ -120,6 +117,12 @@ public class FleshingMachineBlock extends IEEntityBlock<FleshingMachineBlockEnti
         if (mirror)
             world.setBlockAndUpdate(pos, state.setValue(DUMMY, true));
         world.setBlockAndUpdate(dummyPos, state.setValue(DUMMY, !mirror));
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context)
+    {
+        return Shapes.block();
     }
 
     @Override

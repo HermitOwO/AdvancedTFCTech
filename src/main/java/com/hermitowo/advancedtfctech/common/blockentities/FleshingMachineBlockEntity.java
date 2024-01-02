@@ -481,9 +481,6 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
     @Override
     public BlockPos getModelOffset(BlockState state, @Nullable Vec3i size)
     {
-        if (isDummy())
-            return DUMMY_POS;
-        else
-            return MASTER_POS;
+        return isDummy() ? DUMMY_POS : MASTER_POS;
     }
 }
