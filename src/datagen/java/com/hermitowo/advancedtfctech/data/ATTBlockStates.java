@@ -44,7 +44,7 @@ public class ATTBlockStates extends ATTExtendedBlockStateProvider
     protected void registerStatesAndModels()
     {
         createMultiblock(innerObj("block/multiblock/thresher.obj"), ATTMultiblocks.THRESHER);
-        createMultiblock(innerObj("block/multiblock/grist_mill.obj"), ATTMultiblocks.GRIST_MILL);
+        createMultiblock(innerObj("block/multiblock/grist_mill.obj"), innerObj("block/multiblock/grist_mill_mirrored.obj"), ATTMultiblocks.GRIST_MILL);
         createMultiblock(innerObj("block/multiblock/power_loom.obj"), ATTMultiblocks.POWER_LOOM);
         createMultiblock(innerObj("block/multiblock/beamhouse.obj"), innerObj("block/multiblock/beamhouse_mirrored.obj"), ATTMultiblocks.BEAMHOUSE);
         createMultiblock(ATTBlocks.FLESHING_MACHINE,
