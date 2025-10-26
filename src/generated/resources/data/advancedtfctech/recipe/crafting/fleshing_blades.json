@@ -1,0 +1,17 @@
+{
+  "type": "tfc:anvil",
+  "apply_bonus": true,
+  "ingredient": {
+    "tag": "c:sheets/wrought_iron"
+  },
+  "result": {
+    "count": 1,
+    "id": "advancedtfctech:fleshing_blades"
+  },
+  "rules": [
+    "upset_third_last",
+    "shrink_second_last",
+    "hit_last"
+  ],
+  "tier": 3
+}

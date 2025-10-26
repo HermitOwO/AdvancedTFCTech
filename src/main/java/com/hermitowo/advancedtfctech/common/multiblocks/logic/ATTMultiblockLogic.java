@@ -9,6 +9,7 @@ import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerTypes;
 import com.hermitowo.advancedtfctech.common.items.ATTItems;
 import com.hermitowo.advancedtfctech.common.multiblocks.ATTMultiblocks;
+import net.neoforged.bus.api.IEventBus;
 
 public class ATTMultiblockLogic
 {
@@ -39,5 +40,10 @@ public class ATTMultiblockLogic
         return new ATTMultiblockBuilder<>(logic, name)
             .defaultBEs(ATTBlockEntities.BLOCK_ENTITIES)
             .defaultBlock(ATTBlocks.BLOCKS, ATTItems.ITEMS, IEBlocks.METAL_PROPERTIES_NO_OCCLUSION.get());
+    }
+
+    public static void init(IEventBus bus)
+    {
+        ATTMultiblockBuilder.handleModBusRegistrations(bus);
     }
 }

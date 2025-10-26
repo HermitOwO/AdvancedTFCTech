@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "x": {
+      "tag": "immersiveengineering:treated_wood"
+    },
+    "y": {
+      "tag": "c:rods/treated_wood"
+    }
+  },
+  "pattern": [
+    "x",
+    "y",
+    "x"
+  ],
+  "result": {
+    "count": 1,
+    "id": "advancedtfctech:pirn"
+  }
+}

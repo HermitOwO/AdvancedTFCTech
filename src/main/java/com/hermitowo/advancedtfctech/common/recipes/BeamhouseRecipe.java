@@ -1,55 +1,56 @@
 package com.hermitowo.advancedtfctech.common.recipes;
 
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
+import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import blusunrize.immersiveengineering.api.utils.SetRestrictedField;
+import blusunrize.immersiveengineering.api.utils.codec.IEDualCodecs;
 import com.google.common.collect.Lists;
-import com.google.gson.JsonObject;
 import com.hermitowo.advancedtfctech.common.multiblocks.logic.ATTMultiblockLogic;
-import com.hermitowo.advancedtfctech.config.ATTConfig;
-import javax.annotation.Nullable;
+import com.hermitowo.advancedtfctech.util.ATTDualCodecs;
+import com.hermitowo.advancedtfctech.util.ModifiableSupplier;
+import malte0811.dualcodecs.DualCodecs;
+import malte0811.dualcodecs.DualCompositeMapCodecs;
+import malte0811.dualcodecs.DualMapCodec;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 
 import net.dries007.tfc.common.recipes.outputs.ItemStackProvider;
 
 public class BeamhouseRecipe extends ATTMultiblockRecipe implements IItemStackProviderMultiblockRecipe
 {
     public static final CachedRecipeList<BeamhouseRecipe> RECIPES = new CachedRecipeList<>(ATTRecipeTypes.BEAMHOUSE);
+    public static final ModifiableSupplier<RecipeMultiplier> MULTIPLIERS = ModifiableSupplier.of();
 
     public final IngredientWithSize input;
-    public final FluidTagInput fluidInput;
+    public final SizedFluidIngredient fluidInput;
     public final ItemStackProvider output;
 
-    public BeamhouseRecipe(ResourceLocation id, ItemStackProvider output, IngredientWithSize input, FluidTagInput fluidInput, int time, int energy)
+    public BeamhouseRecipe(ItemStackProvider output, IngredientWithSize input, SizedFluidIngredient fluidInput, int time, int energy)
     {
-        super(LAZY_EMPTY, ATTRecipeTypes.BEAMHOUSE, id);
+        super(TagOutput.EMPTY, ATTRecipeTypes.BEAMHOUSE, time, energy, MULTIPLIERS);
         this.output = output;
         this.input = input;
         this.fluidInput = fluidInput;
 
-        timeAndEnergy(time, energy);
-
         setInputListWithSizes(Lists.newArrayList(this.input));
         this.fluidInputList = Lists.newArrayList(this.fluidInput);
-        this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, this.output.stack().get()));
-        this.providerList = Lazy.of(() -> NonNullList.of(ItemStackProvider.empty(), this.output));
+        this.providerList = Lists.newArrayList(this.output);
     }
 
-    public static BeamhouseRecipe findRecipe(Level level, ItemStack stack, FluidStack fluid)
+    public static RecipeHolder<BeamhouseRecipe> findRecipe(Level level, ItemStack stack, FluidStack fluid)
     {
         if (stack.isEmpty() || fluid.isEmpty())
             return null;
-        for (BeamhouseRecipe recipe : RECIPES.getRecipes(level))
-            if (recipe.matches(stack, fluid))
+        for (RecipeHolder<BeamhouseRecipe> recipe : RECIPES.getRecipes(level))
+            if (recipe.value().matches(stack, fluid))
                 return recipe;
         return null;
     }
@@ -66,8 +67,8 @@ public class BeamhouseRecipe extends ATTMultiblockRecipe implements IItemStackPr
 
     public static boolean isValidRecipeInput(Level level, ItemStack stack)
     {
-        for (BeamhouseRecipe recipe : RECIPES.getRecipes(level))
-            if (recipe != null && recipe.isValidInput(stack))
+        for (RecipeHolder<BeamhouseRecipe> recipe : RECIPES.getRecipes(level))
+            if (recipe.value().isValidInput(stack))
                 return true;
         return false;
     }
@@ -92,10 +93,10 @@ public class BeamhouseRecipe extends ATTMultiblockRecipe implements IItemStackPr
     @Override
     public NonNullList<ItemStack> generateActualOutput(ItemStack input)
     {
-        NonNullList<ItemStack> actualOutput = NonNullList.withSize(outputList.get().size(), ItemStack.EMPTY);
-        for (int i = 0; i < outputList.get().size(); ++i)
+        NonNullList<ItemStack> actualOutput = NonNullList.withSize(providerList.size(), ItemStack.EMPTY);
+        for (int i = 0; i < providerList.size(); ++i)
         {
-            ItemStackProvider provider = providerList.get().get(i);
+            ItemStackProvider provider = providerList.get(i);
             actualOutput.set(i, provider.getStack(input));
         }
         return actualOutput;
@@ -103,45 +104,25 @@ public class BeamhouseRecipe extends ATTMultiblockRecipe implements IItemStackPr
 
     public static class Serializer extends IERecipeSerializer<BeamhouseRecipe>
     {
+        public static final DualMapCodec<RegistryFriendlyByteBuf, BeamhouseRecipe> CODECS = DualCompositeMapCodecs.composite(
+            ATTDualCodecs.ITEM_STACK_PROVIDER.fieldOf("result"), r -> r.output,
+            IngredientWithSize.CODECS.fieldOf("input"), r -> r.input,
+            IEDualCodecs.SIZED_FLUID_INGREDIENT.fieldOf("fluid"), r -> r.fluidInput,
+            DualCodecs.INT.fieldOf("time"), MultiblockRecipe::getBaseTime,
+            DualCodecs.INT.fieldOf("energy"), MultiblockRecipe::getBaseEnergy,
+            BeamhouseRecipe::new
+        );
+
+        @Override
+        protected DualMapCodec<RegistryFriendlyByteBuf, BeamhouseRecipe> codecs()
+        {
+            return CODECS;
+        }
+
         @Override
         public ItemStack getIcon()
         {
             return ATTMultiblockLogic.BEAMHOUSE.iconStack();
-        }
-
-        @Override
-        public BeamhouseRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context)
-        {
-            ItemStackProvider output = ItemStackProvider.fromJson(GsonHelper.getAsJsonObject(json, "result"));
-            IngredientWithSize input = IngredientWithSize.deserialize(GsonHelper.getAsJsonObject(json, "input"));
-            FluidTagInput fluidInput = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "fluid"));
-            int time = GsonHelper.getAsInt(json, "time");
-            int energy = GsonHelper.getAsInt(json, "energy");
-
-            return ATTConfig.SERVER.beamhouseConfig.apply(new BeamhouseRecipe(recipeId, output, input, fluidInput, time, energy));
-        }
-
-        @Nullable
-        @Override
-        public BeamhouseRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer)
-        {
-            ItemStackProvider output = ItemStackProvider.fromNetwork(buffer);
-            IngredientWithSize input = IngredientWithSize.read(buffer);
-            FluidTagInput fluidInput = FluidTagInput.read(buffer);
-            int time = buffer.readInt();
-            int energy = buffer.readInt();
-
-            return new BeamhouseRecipe(recipeId, output, input, fluidInput, time, energy);
-        }
-
-        @Override
-        public void toNetwork(FriendlyByteBuf buffer, BeamhouseRecipe recipe)
-        {
-            recipe.output.toNetwork(buffer);
-            recipe.input.write(buffer);
-            recipe.fluidInput.write(buffer);
-            buffer.writeInt(recipe.getTotalProcessTime());
-            buffer.writeInt(recipe.getTotalProcessEnergy());
         }
     }
 }

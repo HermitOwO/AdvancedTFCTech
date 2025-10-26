@@ -8,9 +8,8 @@ import com.hermitowo.advancedtfctech.common.recipes.BeamhouseRecipe;
 import javax.annotation.Nonnull;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.Nullable;
 
 import static com.hermitowo.advancedtfctech.common.multiblocks.logic.BeamhouseLogic.*;
@@ -63,7 +62,7 @@ public class BeamhouseInputHandler implements IItemHandler
                 onChanged.run();
                 return ItemStack.EMPTY;
             }
-            else if (ItemHandlerHelper.canItemStacksStack(stack, here) && here.getCount() < here.getMaxStackSize())
+            else if (ItemStack.isSameItemSameComponents(stack, here) && here.getCount() < here.getMaxStackSize())
                 possibleSlots.add(i);
         }
         possibleSlots.sort(Comparator.comparingInt(a -> wrapped.getStackInSlot(a).getCount()));

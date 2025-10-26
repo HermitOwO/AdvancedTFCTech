@@ -1,157 +1,249 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
 plugins {
-    id("java")
-    id("idea")
-//    id("net.neoforged.gradle") version "[6.0.13,6.2)"
-    id("net.minecraftforge.gradle") version "[6.0,6.2)"
-    id("org.parchmentmc.librarian.forgegradle") version "1.+"
-    id("org.spongepowered.mixin") version "0.7.+"
+    id("net.neoforged.moddev") version "2.0.107"
 }
 
-val minecraftVersion: String = "1.20.1"
-val forgeVersion: String = "47.2.6"
-val parchmentVersion: String = "2023.09.03-1.20.1"
-val mixinVersion: String = "0.8.5"
-val tfcVersion: String = "5276689"
-val jeiVersion: String = "15.2.0.27"
-val patchouliVersion: String = "1.20.1-81-FORGE"
-val jadeVersion: String = "4614153"
-val topVersion: String = "4629624"
-val ieVersion: String = "1.20.1-10.1.0-171"
+
+// Toolchain versions
+val minecraftVersion: String = "1.21.1"
+val neoForgeVersion: String = "21.1.197"
+val parchmentVersion: String = "2024.11.17"
+val parchmentMinecraftVersion: String = "1.21.1"
+
+// Dependency versions
+val emiVersion: String = "1.1.22+1.21.1"
+val jeiVersion: String = "19.25.0.321"
+val patchouliVersion: String = "1.21.1-92-NEOFORGE"
+val tfcVersion: String = "4.0.0-beta"
+val ieVersion: String = "1.21.1-12.4.2-194"
+val dualCodecsVersion: String = "0.1.2"
 
 val modId: String = "advancedtfctech"
+val modVersion: String = "3.0"
+val modJavaVersion: String = "21"
+val modIsInCI: Boolean = !modVersion.contains("-indev")
+val modDataOutput: String = "src/generated/resources"
+
+
+val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {
+    val modReplacementProperties = mapOf(
+        "modId" to modId,
+        "modVersion" to modVersion,
+        "minecraftVersionRange" to "[$minecraftVersion]",
+        "neoForgeVersionRange" to "[$neoForgeVersion,)",
+        "tfcVersionRange" to "[$tfcVersion,)",
+        "ieVersionRange" to "[$ieVersion,)"
+    )
+    inputs.properties(modReplacementProperties)
+    expand(modReplacementProperties)
+    from("src/main/templates")
+    into(layout.buildDirectory.dir("generated/sources/modMetadata"))
+}
+
+neoForge {
+    version = neoForgeVersion // this is here because declaring a neoForge version enables 'additionalRuntimeClasspath'
+}
+
 
 base {
-    archivesName.set("AdvancedTFCTech-$minecraftVersion")
+    archivesName.set("AdvancedTFCTech-NeoForge-$minecraftVersion")
     group = "com.hermitowo.advancedtfctech"
-    version = "2.3"
+    version = modVersion
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-}
-
-idea {
-    module {
-        excludeDirs.add(file("run"))
-    }
-}
-
-sourceSets {
-    main {
-        resources.srcDir("src/generated/resources")
-    }
-    create("datagen") {
-        compileClasspath += main.get().compileClasspath
-        runtimeClasspath += main.get().runtimeClasspath
-        compileClasspath += main.get().output
-        runtimeClasspath += main.get().output
-    }
+    toolchain.languageVersion.set(JavaLanguageVersion.of(modJavaVersion))
 }
 
 repositories {
     mavenCentral()
     mavenLocal()
-    maven(url = "https://dvs1.progwml6.com/files/maven/") // JEI
-    maven(url = "https://modmaven.k-4u.nl") // Mirror for JEI
-    maven(url = "https://maven.blamejared.com") // Patchouli & IE
-    maven(url = "https://www.cursemaven.com") {
-        content {
-            includeGroup("curse.maven")
+    exclusiveContent {
+        forRepository { maven("https://maven.terraformersmc.com/") }
+        filter { includeGroup("dev.emi") }
+    }
+    exclusiveContent {
+        forRepository { maven("https://maven.blamejared.com/") }
+        filter { includeGroup("mezz.jei") }
+    }
+    exclusiveContent {
+        forRepository { maven("https://maven.k-4u.nl/") }
+        filter { includeGroup("mcjty.theoneprobe") }
+    }
+    exclusiveContent {
+        forRepository { maven("https://maven.blamejared.com") }
+        filter { includeGroup("vazkii.patchouli") }
+    }
+    exclusiveContent {
+        forRepository { maven("https://www.cursemaven.com") }
+        filter { includeGroup("curse.maven") }
+    }
+    exclusiveContent {
+        forRepository { maven("https://maven.blamejared.com") }
+        filter { includeGroup("blusunrize.immersiveengineering") }
+    }
+    exclusiveContent {
+        forRepository { maven("https://maven.blamejared.com") }
+        filter { includeGroup("malte0811") }
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir(modDataOutput)
+            srcDir(generateModMetadata)
         }
     }
-    flatDir {
-        dirs("libs")
+    create("datagen")
+}
+
+neoForge {
+    addModdingDependenciesTo(sourceSets["datagen"])
+    validateAccessTransformers = true
+
+    parchment {
+        minecraftVersion.set(parchmentMinecraftVersion)
+        mappingsVersion.set(parchmentVersion)
     }
+
+    runs {
+        configureEach {
+            // Only JBR allows enhanced class redefinition, so ignore the option for any other JDKs
+            jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition", "-ea")
+            systemProperty("tfc.enableDebugSelfTests", "true")
+        }
+        register("client") {
+            client()
+            gameDirectory = file("run/client")
+        }
+        register("server") {
+            server()
+            gameDirectory = file("run/server")
+            programArgument("--nogui")
+        }
+        register("data") {
+            data()
+            sourceSet = sourceSets["datagen"]
+            programArguments.addAll("--all", "--mod", modId, "--output", file(modDataOutput).absolutePath, "--existing", file("src/main/resources").absolutePath)
+        }
+    }
+
+    mods {
+        create(modId) {
+            sourceSet(sourceSets.main.get())
+            sourceSet(sourceSets["datagen"])
+        }
+    }
+
+    unitTest {
+        enable()
+        testedMod = mods[modId]
+    }
+
+    ideSyncTask(generateModMetadata)
 }
 
 dependencies {
-//    minecraft("net.neoforged", "forge", version = "$minecraftVersion-$forgeVersion")
-    minecraft("net.minecraftforge", "forge", version = "$minecraftVersion-$forgeVersion")
-    implementation(fg.deobf("curse.maven:tfc-302973:$tfcVersion"))
+    // EMI
+    compileOnly("dev.emi:emi-neoforge:${emiVersion}:api")
+    //runtimeOnly("dev.emi:emi-neoforge:${emiVersion}")
 
     // JEI
-    compileOnly(fg.deobf("mezz.jei:jei-$minecraftVersion-forge-api:$jeiVersion"))
-    compileOnly(fg.deobf("mezz.jei:jei-$minecraftVersion-common-api:$jeiVersion"))
-    runtimeOnly(fg.deobf("mezz.jei:jei-$minecraftVersion-forge:$jeiVersion"))
+    compileOnly("mezz.jei:jei-${minecraftVersion}-common-api:${jeiVersion}")
+    compileOnly("mezz.jei:jei-${minecraftVersion}-neoforge-api:${jeiVersion}")
+    runtimeOnly("mezz.jei:jei-${minecraftVersion}-neoforge:${jeiVersion}")
 
     // Patchouli
-    compileOnly(fg.deobf("vazkii.patchouli:Patchouli:$patchouliVersion"))
-    runtimeOnly(fg.deobf("vazkii.patchouli:Patchouli:$patchouliVersion"))
+    // We need to compile against the full JAR, not just the API, because we do some egregious hacks.
+    implementation("vazkii.patchouli:Patchouli:$patchouliVersion")
+    "datagenImplementation"("vazkii.patchouli:Patchouli:$patchouliVersion")
+
+    // TFC 4.0.8-beta
+    implementation(group = "curse.maven", name = "terrafirmacraft-302973", version = "7101304")
+    "datagenImplementation"(group = "curse.maven", name = "terrafirmacraft-302973", version = "7101304")
+
+    // IE
+    implementation("blusunrize.immersiveengineering:ImmersiveEngineering:$ieVersion")
+    "datagenImplementation"("blusunrize.immersiveengineering:ImmersiveEngineering:$ieVersion")
+    "datagenImplementation"("blusunrize.immersiveengineering:ImmersiveEngineering:$ieVersion:datagen")
 
     // Jade / The One Probe
-    compileOnly(fg.deobf("curse.maven:jade-324717:$jadeVersion"))
-    compileOnly(fg.deobf("curse.maven:top-245211:$topVersion"))
+    implementation(group = "curse.maven", name = "jade-324717", version = "6853386")
+    compileOnly(group = "mcjty.theoneprobe", name = "theoneprobe", version = "1.21_neo-12.0.4-6")
 
-    // Only use Jade at runtime
-    runtimeOnly(fg.deobf("curse.maven:jade-324717:$jadeVersion"))
+    // ModernFix - useful at runtime for significant memory savings in TFC in dev (see i.e. wall block shape caches)
+    runtimeOnly(group = "curse.maven", name = "modernfix-790626", version = "6766126")
 
-    // Immersive Engineering
-    implementation(fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:$ieVersion"))
-    implementation(fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:$ieVersion:datagen"))
+    // Data
+    "datagenImplementation"(sourceSets["main"].output)
 
-    if (System.getProperty("idea.sync.active") != "true") {
-        annotationProcessor("org.spongepowered:mixin:$mixinVersion:processor")
+    jarJar(implementation("malte0811:DualCodecs") {
+        version {
+            strictly("[${dualCodecsVersion}, 1)")
+            prefer(dualCodecsVersion)
+        }
+    })
+}
+
+abstract class MinifyJsonTask : DefaultTask() {
+
+    @get:InputDirectory
+    abstract val dir: DirectoryProperty
+
+    @TaskAction
+    fun minify() {
+        val jsonSlurper = JsonSlurper()
+        var jsonMinified = 0
+        var jsonBytesBefore = 0L
+        var jsonBytesAfter = 0L
+        val start = System.currentTimeMillis()
+
+        dir.get().asFileTree.matching {
+            include("**/*.json")
+        }.forEach { file ->
+            jsonMinified++
+            jsonBytesBefore += file.length()
+            try {
+                val parsed = jsonSlurper.parse(file)
+                val minified = JsonOutput.toJson(parsed)
+                    .replace("\"__comment__\":\"This file was automatically created by mcresources\",", "")
+                file.writeText(minified)
+            } catch (e: Exception) {
+                logger.error("JSON Error in ${file.path}", e)
+                throw e
+            }
+            jsonBytesAfter += file.length()
+        }
+
+        logger.lifecycle(
+            "Minified $jsonMinified JSON files. Reduced ${jsonBytesBefore / 1024} kB → ${(jsonBytesAfter / 1024)} kB. Took ${System.currentTimeMillis() - start} ms"
+        )
     }
 }
 
-minecraft {
-    mappings("parchment", parchmentVersion)
-    accessTransformer(file("src/main/resources/META-INF/accesstransformer.cfg"))
+if (modIsInCI) {
+    tasks.register<MinifyJsonTask>("minifyJson") {
+        // `processResources` writes into build/resources/<sourceSet>
+        dir.set(layout.buildDirectory.dir("resources/main"))
+    }
 
-    runs {
-        all {
-            args("-mixin.config=$modId.mixins.json")
-
-            property("forge.logging.console.level", "debug")
-
-            property("mixin.env.remapRefMap", "true")
-            property("mixin.env.refMapRemappingFile", "$projectDir/build/createSrgToMcp/output.srg")
-
-            jvmArgs("-Xmx4G", "-Xms4G")
-
-            jvmArg("-XX:+AllowEnhancedClassRedefinition")
-        }
-
-        register("client") {
-            workingDirectory(project.file("run/client"))
-
-            mods.create(modId) {
-                source(sourceSets.main.get())
-            }
-        }
-
-        register("server") {
-            workingDirectory(project.file("run/server"))
-
-            arg("--nogui")
-
-            mods.create(modId) {
-                source(sourceSets.main.get())
-            }
-        }
-
-        register("data") {
-            workingDirectory(project.file("run/data"))
-
-            ideaModule("${project.name}.datagen")
-
-            args("--mod", "advancedtfctech", "--all", "--output", file("src/generated/resources/"), "--existing", file("src/main/resources/"))
-
-            mods.create(modId) {
-                sources(sourceSets.main.get(), sourceSets["datagen"])
-            }
-        }
+    tasks.named<ProcessResources>("processResources") {
+        finalizedBy("minifyJson") // run AFTER processResources
     }
 }
 
-mixin {
-    add(sourceSets.main.get(), "advancedtfctech.refmap.json")
-}
 
 tasks {
     jar {
         manifest {
             attributes["Implementation-Version"] = project.version
         }
+    }
+
+    named("neoForgeIdeSync") {
+        dependsOn(generateModMetadata)
     }
 }

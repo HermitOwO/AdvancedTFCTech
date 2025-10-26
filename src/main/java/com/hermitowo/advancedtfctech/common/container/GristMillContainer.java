@@ -11,16 +11,19 @@ import com.hermitowo.advancedtfctech.common.container.sync.ATTGenericDataSeriali
 import com.hermitowo.advancedtfctech.common.multiblocks.logic.GristMillLogic;
 import com.hermitowo.advancedtfctech.common.multiblocks.process.ATTMultiblockProcess;
 import com.hermitowo.advancedtfctech.common.recipes.GristMillRecipe;
+import io.netty.buffer.ByteBuf;
 import javax.annotation.Nonnull;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.SlotItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 
 public class GristMillContainer extends ATTContainerMenu
 {
@@ -86,6 +89,11 @@ public class GristMillContainer extends ATTContainerMenu
 
     public record ProcessSlot(int processStep)
     {
+        public static final StreamCodec<ByteBuf, ProcessSlot> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT, ProcessSlot::processStep,
+            ProcessSlot::new
+        );
+
         public static ProcessSlot fromCtx(ATTMultiblockProcess.ProcessWithItemStackProvider<GristMillRecipe> process, Level level)
         {
             float mod = process.processTick / (float) process.getMaxTicks(level);

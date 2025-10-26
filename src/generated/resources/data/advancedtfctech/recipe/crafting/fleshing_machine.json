@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "tfc:brass_mechanisms"
+    },
+    "c": {
+      "item": "immersiveengineering:coil_lv"
+    },
+    "e": {
+      "item": "immersiveengineering:component_electronic"
+    },
+    "i": {
+      "tag": "c:sheetmetals/iron"
+    },
+    "m": {
+      "item": "immersiveengineering:component_iron"
+    }
+  },
+  "pattern": [
+    "iei",
+    "bmb",
+    "ici"
+  ],
+  "result": {
+    "count": 1,
+    "id": "advancedtfctech:fleshing_machine"
+  }
+}

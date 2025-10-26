@@ -3,7 +3,6 @@ package com.hermitowo.advancedtfctech.common.multiblocks.process;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
@@ -12,17 +11,18 @@ import blusunrize.immersiveengineering.common.blocks.multiblocks.process.Multibl
 import com.hermitowo.advancedtfctech.common.recipes.ATTMultiblockRecipe;
 import com.hermitowo.advancedtfctech.common.recipes.IItemStackProviderMultiblockRecipe;
 import javax.annotation.Nullable;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.IFluidTank;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 /**
  * {@link blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine} + part of
@@ -42,7 +42,7 @@ public class ATTMultiblockProcess<R extends MultiblockRecipe> extends Multiblock
         this.inputSlots = inputSlots;
     }
 
-    public ATTMultiblockProcess(R recipe, int... inputSlots)
+    public ATTMultiblockProcess(RecipeHolder<R> recipe, int... inputSlots)
     {
         super(recipe);
         this.inputSlots = inputSlots;
@@ -90,7 +90,7 @@ public class ATTMultiblockProcess<R extends MultiblockRecipe> extends Multiblock
         return recipe == null ? List.of() : recipe.getItemInputs();
     }
 
-    protected List<FluidTagInput> getRecipeFluidInputs(ATTProcessContext<R> context, Level level)
+    protected List<SizedFluidIngredient> getRecipeFluidInputs(ATTProcessContext<R> context, Level level)
     {
         R recipe = getLevelData(level).recipe();
         return recipe == null ? List.of() : recipe.getFluidInputs();
@@ -106,7 +106,7 @@ public class ATTMultiblockProcess<R extends MultiblockRecipe> extends Multiblock
             ItemStack s = inv.getStackInSlot(iOutputSlot);
             if (s.isEmpty())
                 return true;
-            final boolean match = ItemHandlerHelper.canItemStacksStack(s, output);
+            final boolean match = ItemStack.isSameItemSameComponents(s, output);
             if (match && s.getCount() + output.getCount() <= inv.getSlotLimit(iOutputSlot))
                 return true;
         }
@@ -142,9 +142,8 @@ public class ATTMultiblockProcess<R extends MultiblockRecipe> extends Multiblock
     {
         R recipe = getRecipe(level.getRawLevel());
         if (recipe instanceof ATTMultiblockRecipe attRecipe)
-            if (!attRecipe.getSecondaryOutputs().isEmpty())
-                for (Lazy<ItemStack> secondaryOutput : attRecipe.getSecondaryOutputs())
-                    context.doProcessOutput(secondaryOutput.get(), level);
+            if (!attRecipe.getSecondaryOutput().isEmpty())
+                context.doProcessOutput(attRecipe.getSecondaryOutput(), level);
         int[] outputSlots = context.getOutputSlots();
         for (int iOutputSlot : outputSlots)
         {
@@ -155,7 +154,7 @@ public class ATTMultiblockProcess<R extends MultiblockRecipe> extends Multiblock
                 inv.setStackInSlot(iOutputSlot, output.copy());
                 break;
             }
-            else if (ItemHandlerHelper.canItemStacksStack(s, output) && s.getCount() + output.getCount() <= inv.getSlotLimit(iOutputSlot))
+            else if (ItemStack.isSameItemSameComponents(s, output) && s.getCount() + output.getCount() <= inv.getSlotLimit(iOutputSlot))
             {
                 s.grow(output.getCount());
                 break;
@@ -217,14 +216,14 @@ public class ATTMultiblockProcess<R extends MultiblockRecipe> extends Multiblock
                 }
         }
         IFluidTank[] tanks = context.getInternalTanks();
-        List<FluidTagInput> fluidInputList = this.getRecipeFluidInputs(context, level.getRawLevel());
+        List<SizedFluidIngredient> fluidInputList = this.getRecipeFluidInputs(context, level.getRawLevel());
         if (tanks != null && this.inputTanks != null && fluidInputList != null)
         {
-            for (FluidTagInput ingr : new ArrayList<>(fluidInputList))
+            for (SizedFluidIngredient ingr : new ArrayList<>(fluidInputList))
             {
-                int ingrSize = ingr.getAmount();
+                int ingrSize = ingr.amount();
                 for (int tank : this.inputTanks)
-                    if (tanks[tank] != null && ingr.testIgnoringAmount(tanks[tank].getFluid()))
+                    if (tanks[tank] != null && ingr.ingredient().test(tanks[tank].getFluid()))
                     {
                         int taken = Math.min(tanks[tank].getFluidAmount(), ingrSize);
                         tanks[tank].drain(taken, IFluidHandler.FluidAction.EXECUTE);
@@ -236,7 +235,7 @@ public class ATTMultiblockProcess<R extends MultiblockRecipe> extends Multiblock
     }
 
     @Override
-    public void writeExtraDataToNBT(CompoundTag nbt)
+    public void writeExtraDataToNBT(CompoundTag nbt, HolderLookup.Provider provider)
     {
         if (inputSlots != null)
             nbt.putIntArray("process_inputSlots", inputSlots);
@@ -248,7 +247,7 @@ public class ATTMultiblockProcess<R extends MultiblockRecipe> extends Multiblock
 
     public static class ProcessWithItemStackProvider<R extends ATTMultiblockRecipe & IItemStackProviderMultiblockRecipe> extends ATTMultiblockProcess<R>
     {
-        public ProcessWithItemStackProvider(R recipe, int... inputSlots)
+        public ProcessWithItemStackProvider(RecipeHolder<R> recipe, int... inputSlots)
         {
             super(recipe, inputSlots);
         }

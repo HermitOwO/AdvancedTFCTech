@@ -1,9 +1,9 @@
 from mcresources import ResourceManager, utils, advancements
 from mcresources.advancements import AdvancementCategory
 from mcresources.type_definitions import Json
+from mcresources.utils import is_sequence, resource_location, parse_item_stack
 
 from constants import *
-
 
 
 def generate(rm: ResourceManager):
@@ -18,9 +18,8 @@ def generate(rm: ResourceManager):
     story.advancement('craft_winded_pirn', icon('advancedtfctech:silk_winded_pirn'), 'Stop Winding', 'Craft all Winded Pirns', 'mb_power_loom', multiple(*[inventory_changed('advancedtfctech:%s' % pirn, name = pirn) for pirn in WINDED_PIRNS]), requirements = [[pirn] for pirn in WINDED_PIRNS], frame='goal')
 
 
-
 def icon(name: str) -> Json:
-    return {'item': name}
+    return {'id': name}
 
 def root_trigger() -> Json:
     return {'in_game_condition': {'trigger': 'minecraft:tick'}}
@@ -28,18 +27,40 @@ def root_trigger() -> Json:
 def inventory_changed(item: str | Json, name: str = 'item_obtained') -> Json:
     if isinstance(item, str) and name == 'item_obtained':
         name = item.split(':')[1]
-    return {name: advancements.inventory_changed(item)}
+    return {name: inventory_changed2(item)}
 
-def multiblock_formed(multiblock: str | Json, name: str = 'multiblock_formed_condition') -> Json:
+def inventory_changed2(*item_predicates: Json) -> Json:
+    return {
+        'trigger': 'minecraft:inventory_changed',
+        'conditions': {
+            'items': [item_predicate(ip) for ip in item_predicates]
+        }
+    }
+
+def multiblock_formed(multiblock: str | Json, name: str = 'form_multiblock') -> Json:
     return {
         name: {
             'trigger': 'immersiveengineering:multiblock_formed',
             'conditions': {
                 'multiblock': 'advancedtfctech:multiblocks/' + multiblock,
-                'items': utils.item_predicate('immersiveengineering:hammer')
+                'hammer': item_predicate('immersiveengineering:hammer')
             }
         }
     }
+
+def item_predicate(data_in: Json) -> Json:
+    if isinstance(data_in, dict):
+        return data_in
+    elif is_sequence(data_in):  # List of item IDs
+        return {'items': [resource_location(e).join() for e in data_in]}
+    elif isinstance(data_in, str):  # Single item or tag
+        item, tag, count, _ = parse_item_stack(data_in, False)
+        d: Json = {'items': '#' + item} if tag else {'items': item}
+        if count:
+            d['count'] = count
+        return d
+    else:
+        raise ValueError('Unknown object %s at item_predicate' % str(data_in))
 
 def multiple(*conditions: Json) -> Json:
     merged = {}

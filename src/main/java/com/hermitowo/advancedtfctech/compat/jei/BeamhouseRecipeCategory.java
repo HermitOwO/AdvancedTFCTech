@@ -4,14 +4,14 @@ import java.util.Arrays;
 import com.hermitowo.advancedtfctech.AdvancedTFCTech;
 import com.hermitowo.advancedtfctech.common.multiblocks.logic.ATTMultiblockLogic;
 import com.hermitowo.advancedtfctech.common.recipes.BeamhouseRecipe;
-import com.hermitowo.advancedtfctech.common.recipes.outputs.DoubleIfHasTagModifier;
-import mezz.jei.api.forge.ForgeTypes;
+import com.hermitowo.advancedtfctech.common.recipes.outputs.DoubleIfMachineMadeModifier;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
@@ -31,7 +31,7 @@ public class BeamhouseRecipeCategory extends BaseRecipeCategory<BeamhouseRecipe>
 
     public BeamhouseRecipeCategory(RecipeType<BeamhouseRecipe> type, IGuiHelper helper)
     {
-        super(type, helper, helper.createBlankDrawable(98, 26), ATTMultiblockLogic.BEAMHOUSE.iconStack());
+        super(type, helper, 98, 26, ATTMultiblockLogic.BEAMHOUSE.iconStack());
         arrows = helper.createDrawable(ICONS, 0, 118, 22, 16);
         IDrawableStatic arrowAnimated = helper.createDrawable(ICONS, 22, 118, 22, 16);
         this.arrowsAnimated = helper.createAnimatedDrawable(arrowAnimated, 80, IDrawableAnimated.StartDirection.LEFT, false);
@@ -45,7 +45,7 @@ public class BeamhouseRecipeCategory extends BaseRecipeCategory<BeamhouseRecipe>
         IRecipeSlotBuilder input = builder.addSlot(RecipeIngredientRole.INPUT, 26, 5);
         IRecipeSlotBuilder output = builder.addSlot(RecipeIngredientRole.OUTPUT, 76, 5);
 
-        fluidInput.addIngredients(ForgeTypes.FLUID_STACK, recipe.fluidInput.getMatchingFluidStacks());
+        fluidInput.addIngredients(NeoForgeTypes.FLUID_STACK, Arrays.asList(recipe.fluidInput.getFluids()));
         input.addItemStacks(recipe.input.getMatchingStackList());
         output.addItemStacks(collapse(recipe.input.getMatchingStackList(), recipe.output));
 
@@ -55,8 +55,8 @@ public class BeamhouseRecipeCategory extends BaseRecipeCategory<BeamhouseRecipe>
 
         fluidInput.setFluidRenderer(1, false, 16, 16);
 
-        if (Arrays.stream(recipe.output.modifiers()).anyMatch(modifier -> modifier.getClass().equals(DoubleIfHasTagModifier.class)))
-            output.addTooltipCallback((slots, tooltip) -> tooltip.add(Component.translatable("advancedtfctech.jei.double_if_has_tag").withStyle(ChatFormatting.ITALIC)));
+        if (recipe.output.modifiers().stream().anyMatch(modifier -> modifier.getClass().equals(DoubleIfMachineMadeModifier.class)))
+            output.addRichTooltipCallback((slots, tooltip) -> tooltip.add(Component.translatable("advancedtfctech.jei.double_if_has_tag").withStyle(ChatFormatting.ITALIC)));
     }
 
     @Override

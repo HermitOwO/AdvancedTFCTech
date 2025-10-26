@@ -3,12 +3,11 @@ package com.hermitowo.advancedtfctech.common.blockentities;
 import java.util.Collections;
 import java.util.function.Supplier;
 import blusunrize.immersiveengineering.ImmersiveEngineering;
-import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.client.IModelOffsetProvider;
 import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
-import blusunrize.immersiveengineering.api.utils.DirectionalBlockPos;
+import blusunrize.immersiveengineering.api.utils.ItemUtils;
+import blusunrize.immersiveengineering.common.blocks.BlockCapabilityRegistration;
 import blusunrize.immersiveengineering.common.blocks.IEBaseBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.PlacementLimitation;
@@ -16,6 +15,7 @@ import blusunrize.immersiveengineering.common.blocks.ticking.IEClientTickableBE;
 import blusunrize.immersiveengineering.common.blocks.ticking.IEServerTickableBE;
 import blusunrize.immersiveengineering.common.util.CachedRecipe;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
+import blusunrize.immersiveengineering.common.util.IEBlockCapabilityCaches;
 import blusunrize.immersiveengineering.common.util.MultiblockCapability;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
@@ -32,6 +32,7 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ItemParticleOption;
@@ -40,6 +41,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -50,12 +52,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IEServerTickableBE, IEClientTickableBE, ATTContainerProvider<FleshingMachineBlockEntity>, IIEInventory, IEBlockInterfaces.IActiveState, IEBlockInterfaces.IProcessBE, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IStateBasedDirectional, IEBlockInterfaces.IHasDummyBlocks, IEBlockInterfaces.ISoundBE, IModelOffsetProvider
 {
@@ -75,12 +75,15 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
 
     public MutableEnergyStorage energyStorage = new MutableEnergyStorage(ENERGY_CAPACITY);
     private final MultiblockCapability<IEnergyStorage> energyCap = MultiblockCapability.make(
-        this, be -> be.energyCap, FleshingMachineBlockEntity::master, registerEnergyInput(energyStorage)
+        this, be -> be.energyCap, FleshingMachineBlockEntity::master, energyStorage
     );
 
-    private final CapabilityReference<IItemHandler> output = CapabilityReference.forBlockEntityAt(this,
-        () -> new DirectionalBlockPos(getBlockPos().relative(getFacing(), -1), getFacing().getOpposite()),
-        ForgeCapabilities.ITEM_HANDLER);
+    private final IEBlockCapabilityCaches.IEBlockCapabilityCache<IItemHandler> output = IEBlockCapabilityCaches.create(
+        Capabilities.ItemHandler.BLOCK,
+        () -> worldPosition.relative(getFacing(), -1),
+        this::getFacing,
+        this::getLevel
+    );
 
     public final Supplier<FleshingMachineRecipe> cachedRecipe = CachedRecipe.cached(
         FleshingMachineRecipe::findRecipe, () -> level, () -> inventory.get(INPUT_SLOT)
@@ -95,20 +98,21 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
     }
 
     @Override
-    public void readCustomNBT(CompoundTag nbt, boolean descPacket)
+    public void readCustomNBT(CompoundTag nbt, boolean descPacket, HolderLookup.Provider provider)
     {
         Collections.fill(inventory, ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(nbt, inventory);
-        EnergyHelper.deserializeFrom(energyStorage, nbt);
+        ContainerHelper.loadAllItems(nbt, inventory, provider);
+        EnergyHelper.deserializeFrom(energyStorage, nbt, provider);
         process = nbt.getInt("process");
         processMax = nbt.getInt("processMax");
+        renderBB = null;
     }
 
     @Override
-    public void writeCustomNBT(CompoundTag nbt, boolean descPacket)
+    public void writeCustomNBT(CompoundTag nbt, boolean descPacket, HolderLookup.Provider provider)
     {
-        ContainerHelper.saveAllItems(nbt, inventory);
-        EnergyHelper.serializeTo(energyStorage, nbt);
+        ContainerHelper.saveAllItems(nbt, inventory, provider);
+        EnergyHelper.serializeTo(energyStorage, nbt, provider);
         nbt.putInt("process", process);
         nbt.putInt("processMax", processMax);
     }
@@ -124,7 +128,7 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
             rodAngle += 9F;
             rodAngle %= 360F;
 
-            ImmersiveEngineering.proxy.handleTileSound(ATTSounds.FLESHING_MACHINE, this, !inventory.get(BLADE_SLOT).isEmpty(), .2f, 1);
+            ImmersiveEngineering.proxy.handleTileSound(ATTSounds.FLESHING_MACHINE.holder(), this, !inventory.get(BLADE_SLOT).isEmpty(), .2f, 1);
         }
     }
 
@@ -163,8 +167,7 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
                     {
                         energyStorage.extractEnergy(consumption, false);
                         process--;
-                        if (blade.hurt(1, ApiUtils.RANDOM_SOURCE, null))
-                            inventory.set(BLADE_SLOT, ItemStack.EMPTY);
+                        ItemUtils.damageStackableItem(blade, level, 1);
                     }
                 }
             }
@@ -208,12 +211,12 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
         assert level != null;
         if (level.getGameTime() % 8 == 0)
         {
-            IItemHandler outputHandler = output.getNullable();
+            IItemHandler outputHandler = output.getCapability();
             if (outputHandler != null)
             {
                 if (!FleshingMachineRecipe.isValidRecipeInput(level, input))
                 {
-                    ItemStack stack = ItemHandlerHelper.copyStackWithSize(input, 1);
+                    ItemStack stack = input.copyWithCount(1);
                     stack = ItemHandlerHelper.insertItem(outputHandler, stack, false);
                     if (stack.isEmpty())
                     {
@@ -266,7 +269,7 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
     }
 
     @Override
-    public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ)
+    public ItemInteractionResult interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ)
     {
         FleshingMachineBlockEntity master = master();
         if (master != null)
@@ -283,7 +286,7 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
                     stack.setCount(1);
                     master.inventory.set(INPUT_SLOT, stack);
                     heldItem.shrink(1);
-                    return true;
+                    return ItemInteractionResult.SUCCESS;
                 }
                 if (blade.isEmpty() && heldItem.is(ATTItems.FLESHING_BLADES.get().asItem()))
                 {
@@ -291,7 +294,7 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
                     stack.setCount(1);
                     master.inventory.set(BLADE_SLOT, stack);
                     heldItem.shrink(1);
-                    return true;
+                    return ItemInteractionResult.SUCCESS;
                 }
                 if (player.isShiftKeyDown())
                 {
@@ -300,18 +303,18 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
                         ItemHandlerHelper.giveItemToPlayer(player, input.copy());
                         int size = input.getCount();
                         input.shrink(size);
-                        return true;
+                        return ItemInteractionResult.SUCCESS;
                     }
                     else if (!blade.isEmpty())
                     {
                         ItemHandlerHelper.giveItemToPlayer(player, blade.copy());
                         blade.shrink(1);
-                        return true;
+                        return ItemInteractionResult.SUCCESS;
                     }
                 }
             }
         }
-        return false;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override
@@ -341,27 +344,26 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
 
     private final MultiblockCapability<IItemHandler> invHandler = MultiblockCapability.make(
         this, be -> be.invHandler, FleshingMachineBlockEntity::master,
-        registerCapability(new IEInventoryHandler(2, this, 0, new boolean[] {true, true}, new boolean[] {true, false})
+        new IEInventoryHandler(2, this, 0, new boolean[] {true, true}, new boolean[] {true, false})
         {
-            @Nonnull
             @Override
             public ItemStack extractItem(int slot, int amount, boolean simulate)
             {
                 assert level != null;
                 return FleshingMachineRecipe.isValidRecipeInput(level, inventory.get(slot)) ? ItemStack.EMPTY : super.extractItem(slot, amount, simulate);
             }
-        })
+        }
     );
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing)
+    public static void registerCapabilities(BlockCapabilityRegistration.BECapabilityRegistrar<FleshingMachineBlockEntity> registrar)
     {
-        if (capability == ForgeCapabilities.ENERGY && (facing == null || facing == getFacing().getClockWise()))
-            return energyCap.getAndCast();
-        if (capability == ForgeCapabilities.ITEM_HANDLER)
-            return invHandler.getAndCast();
-        return super.getCapability(capability, facing);
+        registrar.register(Capabilities.EnergyStorage.BLOCK, (be, facing) -> {
+            if (facing == null || facing == be.getFacing().getClockWise())
+                return be.energyCap.get();
+            else
+                return null;
+        });
+        registrar.register(Capabilities.ItemHandler.BLOCK, (be, facing) -> be.invHandler.get());
     }
 
     @Nullable
@@ -406,22 +408,13 @@ public class FleshingMachineBlockEntity extends IEBaseBlockEntity implements IES
         return null;
     }
 
-    @Nonnull
     @Override
     public ATTContainerTypes.ATTArgContainer<? super FleshingMachineBlockEntity, ?> getContainerTypeATT()
     {
         return ATTContainerTypes.FLESHING_MACHINE;
     }
 
-    private AABB renderAABB;
-
-    @Override
-    public AABB getRenderBoundingBox()
-    {
-        if (renderAABB == null)
-            renderAABB = new AABB(getBlockPos().getX() - 1, getBlockPos().getY(), getBlockPos().getZ() - 1, getBlockPos().getX() + 2, getBlockPos().getY() + 2, getBlockPos().getZ() + 2);
-        return renderAABB;
-    }
+    public AABB renderBB;
 
     @Override
     public Property<Direction> getFacingProperty()

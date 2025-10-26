@@ -1,5 +1,9 @@
 package com.hermitowo.advancedtfctech.common.multiblocks.logic;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistrationBuilder;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.ComparatorManager;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
@@ -11,6 +15,7 @@ import com.hermitowo.advancedtfctech.AdvancedTFCTech;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerTypes;
 import com.hermitowo.advancedtfctech.common.multiblocks.component.ATTMultiblockGui;
 import net.minecraft.core.BlockPos;
+import net.neoforged.bus.api.IEventBus;
 
 /**
  * {@link blusunrize.immersiveengineering.common.blocks.multiblocks.logic.IEMultiblockBuilder}
@@ -18,6 +23,8 @@ import net.minecraft.core.BlockPos;
 @SuppressWarnings("unused")
 public class ATTMultiblockBuilder<S extends IMultiblockState> extends MultiblockRegistrationBuilder<S, ATTMultiblockBuilder<S>>
 {
+    private static final List<Consumer<IEventBus>> LAZY_MOD_BUS_REGISTRATION = new ArrayList<>();
+
     public ATTMultiblockBuilder(IMultiblockLogic<S> logic, String name)
     {
         super(logic, AdvancedTFCTech.rl(name));
@@ -46,6 +53,11 @@ public class ATTMultiblockBuilder<S extends IMultiblockState> extends Multiblock
         return super.selfWrappingComponent(comparator);
     }
 
+    public MultiblockRegistration<S> build()
+    {
+        return super.build(LAZY_MOD_BUS_REGISTRATION::add);
+    }
+
     @Override
     public <CS, C extends IMultiblockComponent<CS> & IMultiblockComponent.StateWrapper<S, CS>>
     ATTMultiblockBuilder<S> selfWrappingComponent(C extraComponent)
@@ -58,5 +70,10 @@ public class ATTMultiblockBuilder<S extends IMultiblockState> extends Multiblock
     protected ATTMultiblockBuilder<S> self()
     {
         return this;
+    }
+
+    public static void handleModBusRegistrations(IEventBus modBus)
+    {
+        LAZY_MOD_BUS_REGISTRATION.forEach(registration -> registration.accept(modBus));
     }
 }

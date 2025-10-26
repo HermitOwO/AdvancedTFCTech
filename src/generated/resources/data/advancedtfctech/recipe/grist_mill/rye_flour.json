@@ -1,0 +1,27 @@
+{
+  "type": "advancedtfctech:grist_mill",
+  "energy": 6400,
+  "input": {
+    "type": "tfc:and",
+    "children": [
+      {
+        "item": "tfc:food/rye_grain"
+      },
+      {
+        "type": "tfc:not_rotten"
+      }
+    ]
+  },
+  "result": {
+    "modifiers": [
+      {
+        "type": "tfc:copy_food"
+      }
+    ],
+    "stack": {
+      "count": 2,
+      "id": "tfc:food/rye_flour"
+    }
+  },
+  "time": 80
+}

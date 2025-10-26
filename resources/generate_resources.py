@@ -1,14 +1,12 @@
 import argparse
 import sys
 import traceback
-from typing import Sequence
+from typing import Sequence, Dict
 
 from mcresources import ResourceManager, utils
-from mcresources.type_definitions import Json
+from mcresources.type_definitions import Json, ResourceIdentifier
 
 import assets
-import data
-import recipes
 import advancements
 
 
@@ -23,9 +21,29 @@ class ModificationLoggingResourceManager(ResourceManager):
             print('', file=sys.stderr)
 
 
+class TempResourceManager(ResourceManager):
+
+    def __init__(self, domain: str, resource_dir):
+        super().__init__(domain, resource_dir)
+
+    def advancement(self, name_parts: ResourceIdentifier, display: Json = None, parent: str = None, criteria: Dict[str, Dict[str, Json]] = None, requirements: Sequence[Sequence[str]] = None, rewards: Dict[str, Json] = None):
+        res = utils.resource_location(self.domain, name_parts)
+        if requirements is None or requirements == 'or':
+            requirements = [[k for k in criteria.keys()]]
+        elif requirements == 'and':
+            requirements = [[k] for k in criteria.keys()]
+        self.write(('data', res.domain, 'advancement', res.path), {
+            'parent': parent,
+            'criteria': criteria,
+            'display': display,
+            'requirements': requirements,
+            'rewards': rewards
+        })
+
+
 def main():
     parser = argparse.ArgumentParser(description='Generate resources for Advanced TFC Tech')
-    rm = ResourceManager('advancedtfctech', resource_dir='../src/main/resources')
+    rm = TempResourceManager('advancedtfctech', resource_dir='../src/main/resources')
     parser.add_argument('--clean', action='store_true', dest='clean', help='Clean all auto generated resources')
     args = parser.parse_args()
 
@@ -47,8 +65,6 @@ def main():
 
 def generate_all(rm: ResourceManager):
     assets.generate(rm)
-    data.generate(rm)
-    recipes.generate(rm)
     advancements.generate(rm)
 
     rm.flush()

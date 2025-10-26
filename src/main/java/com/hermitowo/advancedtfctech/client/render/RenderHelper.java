@@ -146,12 +146,11 @@ public class RenderHelper
 
     private static void putVertex(VertexConsumer b, PoseStack mat, float x, float y, float z, float u, float v, float nX, float nY, float nZ, int light)
     {
-        b.vertex(mat.last().pose(), x, y, z)
-            .color(1F, 1F, 1F, 1F)
-            .uv(u, v)
-            .overlayCoords(OverlayTexture.NO_OVERLAY)
-            .uv2(light)
-            .normal(mat.last().normal(), nX, nY, nZ)
-            .endVertex();
+        b.addVertex(mat.last().pose(), x, y, z)
+            .setColor(1F, 1F, 1F, 1F)
+            .setUv(u, v)
+            .setOverlay(OverlayTexture.NO_OVERLAY)
+            .setLight(light)
+            .setNormal(mat.last(), nX, nY, nZ);
     }
 }

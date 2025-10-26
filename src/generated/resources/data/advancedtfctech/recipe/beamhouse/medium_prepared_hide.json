@@ -1,0 +1,23 @@
+{
+  "type": "advancedtfctech:beamhouse",
+  "energy": 6000,
+  "fluid": {
+    "amount": 400,
+    "fluid": "minecraft:water"
+  },
+  "input": {
+    "item": "tfc:medium_scraped_hide"
+  },
+  "result": {
+    "modifiers": [
+      {
+        "type": "advancedtfctech:copy_machine_made"
+      }
+    ],
+    "stack": {
+      "count": 1,
+      "id": "tfc:medium_prepared_hide"
+    }
+  },
+  "time": 300
+}

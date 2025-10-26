@@ -1,18 +1,16 @@
 package com.hermitowo.advancedtfctech.util;
 
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
-import blusunrize.immersiveengineering.common.util.Utils;
 import javax.annotation.Nonnull;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.fluids.FluidActionResult;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableObject;
@@ -31,7 +29,7 @@ public class FluidHelper
                 int result = handler.fill(resource, FluidAction.SIMULATE);
                 if (action == FluidAction.EXECUTE)
                 {
-                    lastNonSimulated.setValue(new FluidStack(resource, result));
+                    lastNonSimulated.setValue(resource.copyWithAmount(result));
                     isInsert.setTrue();
                 }
                 return result;
@@ -68,9 +66,9 @@ public class FluidHelper
         if (success)
         {
             if (isInsert.booleanValue())
-                handler.fill(lastNonSimulated.getValue(), FluidAction.EXECUTE);
+                handler.fill(lastNonSimulated.getValue(), IFluidHandler.FluidAction.EXECUTE);
             else if (canExtract)
-                handler.drain(lastNonSimulated.getValue(), FluidAction.EXECUTE);
+                handler.drain(lastNonSimulated.getValue(), IFluidHandler.FluidAction.EXECUTE);
         }
         return success;
     }
@@ -79,10 +77,10 @@ public class FluidHelper
     {
         int amountPrev = tank.getFluidAmount();
         ItemStack outputStack = inventory.getStackInSlot(outputSlot);
-        ItemStack emptyContainer = Utils.drainFluidContainer(tank, inventory.getStackInSlot(inputSlot), outputStack);
+        ItemStack emptyContainer = drainFluidContainer(tank, inventory.getStackInSlot(inputSlot), outputStack);
         if (amountPrev != tank.getFluidAmount())
         {
-            if (ItemHandlerHelper.canItemStacksStack(outputStack, emptyContainer))
+            if (ItemStack.isSameItemSameComponents(outputStack, emptyContainer))
                 outputStack.grow(emptyContainer.getCount());
             else if (outputStack.isEmpty())
                 inventory.setStackInSlot(outputSlot, emptyContainer.copy());
@@ -91,5 +89,26 @@ public class FluidHelper
         }
         else
             return false;
+    }
+
+    public static ItemStack drainFluidContainer(IFluidHandler handler, ItemStack containerIn, ItemStack containerOut)
+    {
+        FluidActionResult result = FluidUtils.tryEmptyContainer(containerIn, handler, Integer.MAX_VALUE, IFluidHandler.FluidAction.SIMULATE);
+        if (result.isSuccess())
+        {
+            ItemStack empty = result.getResult();
+            if ((containerOut.isEmpty() || ItemStack.isSameItemSameComponents(containerOut, empty)))
+            {
+                if (!containerOut.isEmpty() && containerOut.getCount() + empty.getCount() > containerOut.getMaxStackSize())
+                    return ItemStack.EMPTY;
+                result = FluidUtils.tryEmptyContainer(containerIn, handler, Integer.MAX_VALUE, IFluidHandler.FluidAction.EXECUTE);
+                if (result.isSuccess())
+                {
+                    return result.getResult();
+                }
+            }
+        }
+        return ItemStack.EMPTY;
+
     }
 }

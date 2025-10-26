@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pirn": {
+      "conditions": {
+        "items": [
+          {
+            "items": "advancedtfctech:pirn"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "advancedtfctech:crafting/silk_winded_pirn"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_pirn"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "advancedtfctech:crafting/silk_winded_pirn"
+    ]
+  }
+}

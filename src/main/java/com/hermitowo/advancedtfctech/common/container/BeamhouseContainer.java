@@ -11,17 +11,20 @@ import com.hermitowo.advancedtfctech.common.container.sync.ATTGenericDataSeriali
 import com.hermitowo.advancedtfctech.common.multiblocks.logic.BeamhouseLogic;
 import com.hermitowo.advancedtfctech.common.multiblocks.process.ATTMultiblockProcess;
 import com.hermitowo.advancedtfctech.common.recipes.BeamhouseRecipe;
+import io.netty.buffer.ByteBuf;
 import javax.annotation.Nonnull;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.SlotItemHandler;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 
 public class BeamhouseContainer extends ATTContainerMenu
 {
@@ -92,24 +95,31 @@ public class BeamhouseContainer extends ATTContainerMenu
         addGenericData(new ATTGenericContainerData<>(ATTGenericDataSerializers.BEAMHOUSE_PROCESS_SLOTS, processes));
     }
 
-    public record ProcessSlot(int slot, int processStep)
+    public record ProcessSlot(int slot, int processStep, float processFloat)
     {
+        public static final StreamCodec<ByteBuf, ProcessSlot> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT, ProcessSlot::slot,
+            ByteBufCodecs.INT, ProcessSlot::processStep,
+            ByteBufCodecs.FLOAT, ProcessSlot::processFloat,
+            ProcessSlot::new
+        );
+
         public static ProcessSlot fromCtx(ATTMultiblockProcess.ProcessWithItemStackProvider<BeamhouseRecipe> process, Level level)
         {
             float mod = process.processTick / (float) process.getMaxTicks(level);
             int slot = process.getInputSlots()[0];
             int h = (int) Math.max(1, mod * 16);
-            return new ProcessSlot(slot, h);
+            return new ProcessSlot(slot, h, mod);
         }
 
         public static ProcessSlot from(FriendlyByteBuf buffer)
         {
-            return new ProcessSlot(buffer.readByte(), buffer.readByte());
+            return new ProcessSlot(buffer.readByte(), buffer.readByte(), buffer.readFloat());
         }
 
         public static void writeTo(FriendlyByteBuf out, ProcessSlot slot)
         {
-            out.writeByte(slot.slot).writeByte(slot.processStep);
+            out.writeByte(slot.slot).writeByte(slot.processStep).writeFloat(slot.processFloat);
         }
     }
 }

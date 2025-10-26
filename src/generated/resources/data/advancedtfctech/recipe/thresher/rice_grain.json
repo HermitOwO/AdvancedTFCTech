@@ -1,0 +1,31 @@
+{
+  "type": "advancedtfctech:thresher",
+  "energy": 6400,
+  "input": {
+    "type": "tfc:and",
+    "children": [
+      {
+        "item": "tfc:food/rice"
+      },
+      {
+        "type": "tfc:not_rotten"
+      }
+    ]
+  },
+  "result": {
+    "modifiers": [
+      {
+        "type": "tfc:copy_food"
+      }
+    ],
+    "stack": {
+      "count": 2,
+      "id": "tfc:food/rice_grain"
+    }
+  },
+  "secondary_output": {
+    "count": 4,
+    "id": "tfc:straw"
+  },
+  "time": 80
+}

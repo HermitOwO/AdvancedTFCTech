@@ -4,20 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerMenu;
 import com.hermitowo.advancedtfctech.common.container.sync.ATTGenericDataSerializers;
-import com.hermitowo.advancedtfctech.common.network.ATTPacketHandler;
-import com.hermitowo.advancedtfctech.common.network.ContainerDataPacket;
+import com.hermitowo.advancedtfctech.common.network.ATTMessageContainerData;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerContainerEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
 
 public class ATTForgeEvents
 {
     public static void init()
     {
-        final IEventBus bus = MinecraftForge.EVENT_BUS;
+        final IEventBus bus = NeoForge.EVENT_BUS;
 
         bus.addListener(ATTForgeEvents::onContainerOpen);
         bus.addListener(ATTForgeEvents::onContainerClose);
@@ -31,7 +29,7 @@ public class ATTForgeEvents
             List<Pair<Integer, ATTGenericDataSerializers.DataPair<?>>> list = new ArrayList<>();
             for (int i = 0; i < attContainer.genericData.size(); i++)
                 list.add(Pair.of(i, attContainer.genericData.get(i).dataPair()));
-            ATTPacketHandler.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new ContainerDataPacket(list));
+            serverPlayer.connection.send(new ATTMessageContainerData(list));
         }
     }
 

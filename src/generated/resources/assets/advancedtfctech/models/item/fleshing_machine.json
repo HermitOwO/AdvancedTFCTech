@@ -200,6 +200,6 @@
     }
   },
   "flip_v": true,
-  "loader": "forge:obj",
+  "loader": "neoforge:obj",
   "model": "advancedtfctech:models/block/metal_device/fleshing_machine.obj"
 }

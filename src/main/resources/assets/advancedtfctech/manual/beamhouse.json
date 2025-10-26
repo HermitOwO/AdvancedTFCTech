@@ -7,8 +7,10 @@
     "type": "item_display",
     "items": [
       {
-        "item": "tfc:large_prepared_hide",
-        "nbt": "{machine_made:1b}"
+        "id": "tfc:large_prepared_hide",
+        "components": {
+          "advancedtfctech:machine_made": true
+        }
       }
     ]
   }

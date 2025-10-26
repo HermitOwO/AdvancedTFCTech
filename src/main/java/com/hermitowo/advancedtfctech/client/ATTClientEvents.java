@@ -18,23 +18,22 @@ import com.hermitowo.advancedtfctech.common.blockentities.ATTBlockEntities;
 import com.hermitowo.advancedtfctech.common.container.ATTContainerTypes;
 import com.hermitowo.advancedtfctech.common.multiblocks.logic.ATTMultiblockLogic;
 import com.hermitowo.advancedtfctech.config.ATTConfig;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 public class ATTClientEvents
 {
-    public static void init()
+    public static void init(ModContainer mod, IEventBus bus)
     {
-        final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-
         bus.addListener(ATTClientEvents::clientSetup);
+        bus.addListener(ATTClientEvents::registerMenuScreens);
         bus.addListener(ATTClientEvents::registerModelLoaders);
         bus.addListener(ATTClientEvents::registerLayer);
         bus.addListener(ATTClientEvents::registerRenders);
@@ -42,25 +41,26 @@ public class ATTClientEvents
 
     public static void clientSetup(FMLClientSetupEvent event)
     {
-        event.enqueueWork(() -> {
-            MenuScreens.register(ATTContainerTypes.THRESHER.getType(), ThresherScreen::new);
-            MenuScreens.register(ATTContainerTypes.GRIST_MILL.getType(), GristMillScreen::new);
-            MenuScreens.register(ATTContainerTypes.POWER_LOOM.getType(), PowerLoomScreen::new);
-            MenuScreens.register(ATTContainerTypes.BEAMHOUSE.getType(), BeamhouseScreen::new);
-            MenuScreens.register(ATTContainerTypes.FLESHING_MACHINE.getType(), FleshingMachineScreen::new);
+        event.enqueueWork(ATTClientEvents::setupManual);
+    }
 
-            setupManual();
-        });
+    public static void registerMenuScreens(RegisterMenuScreensEvent event)
+    {
+        event.register(ATTContainerTypes.THRESHER.getType(), ThresherScreen::new);
+        event.register(ATTContainerTypes.GRIST_MILL.getType(), GristMillScreen::new);
+        event.register(ATTContainerTypes.POWER_LOOM.getType(), PowerLoomScreen::new);
+        event.register(ATTContainerTypes.BEAMHOUSE.getType(), BeamhouseScreen::new);
+        event.register(ATTContainerTypes.FLESHING_MACHINE.getType(), FleshingMachineScreen::new);
     }
 
     public static void setupManual()
     {
         ManualHelper.addConfigGetter(str -> switch (str)
         {
-            case "thresher_operationcost" -> (int) (80 * ATTConfig.SERVER.thresherConfig.energyModifier().get());
-            case "gristmill_operationcost" -> (int) (80 * ATTConfig.SERVER.gristMillConfig.energyModifier().get());
-            case "powerloom_operationcost" -> (int) (80 * ATTConfig.SERVER.powerLoomConfig.energyModifier().get());
-            case "beamhouse_operationcost" -> (int) (20 * ATTConfig.SERVER.beamhouseConfig.energyModifier().get());
+            case "thresher_operationcost" -> (int) (80 * ATTConfig.SERVER.thresherConfig.energyModifier().getAsDouble());
+            case "gristmill_operationcost" -> (int) (80 * ATTConfig.SERVER.gristMillConfig.energyModifier().getAsDouble());
+            case "powerloom_operationcost" -> (int) (80 * ATTConfig.SERVER.powerLoomConfig.energyModifier().getAsDouble());
+            case "beamhouse_operationcost" -> (int) (20 * ATTConfig.SERVER.beamhouseConfig.energyModifier().getAsDouble());
             default -> -1;
         });
     }

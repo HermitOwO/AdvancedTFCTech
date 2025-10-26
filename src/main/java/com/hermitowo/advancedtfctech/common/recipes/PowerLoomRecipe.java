@@ -1,76 +1,70 @@
 package com.hermitowo.advancedtfctech.common.recipes;
 
+import java.util.List;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
+import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import blusunrize.immersiveengineering.api.crafting.TagOutput;
+import blusunrize.immersiveengineering.api.crafting.TagOutputList;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.hermitowo.advancedtfctech.common.multiblocks.logic.ATTMultiblockLogic;
-import com.hermitowo.advancedtfctech.config.ATTConfig;
-import javax.annotation.Nullable;
-import net.minecraft.core.NonNullList;
-import net.minecraft.network.FriendlyByteBuf;
+import com.hermitowo.advancedtfctech.util.ModifiableSupplier;
+import malte0811.dualcodecs.DualCodecs;
+import malte0811.dualcodecs.DualCompositeMapCodecs;
+import malte0811.dualcodecs.DualMapCodec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.util.Lazy;
 
 public class PowerLoomRecipe extends ATTMultiblockRecipe
 {
     public static final CachedRecipeList<PowerLoomRecipe> RECIPES = new CachedRecipeList<>(ATTRecipeTypes.POWER_LOOM);
+    public static final ModifiableSupplier<RecipeMultiplier> MULTIPLIERS = ModifiableSupplier.of();
 
-    public final IngredientWithSize[] inputs;
+    public final List<IngredientWithSize> inputs;
     public final IngredientWithSize secondaryInput;
-    public final Lazy<ItemStack> output;
-    public final NonNullList<Lazy<ItemStack>> secondaryOutputs = NonNullList.create();
+    public final TagOutput output;
+    public final ItemStack secondaryOutput;
     public final ResourceLocation inProgressTexture;
 
-    public PowerLoomRecipe(ResourceLocation id, Lazy<ItemStack> output, IngredientWithSize[] inputs, IngredientWithSize secondaryInput, ResourceLocation inProgressTexture, int time, int energy)
+    public PowerLoomRecipe(TagOutput output, ItemStack secondaryOutput, List<IngredientWithSize> inputs, IngredientWithSize secondaryInput, ResourceLocation inProgressTexture, int time, int energy)
     {
-        super(LAZY_EMPTY, ATTRecipeTypes.POWER_LOOM, id);
+        super(output, ATTRecipeTypes.POWER_LOOM, time, energy, MULTIPLIERS);
         this.output = output;
+        this.secondaryOutput = secondaryOutput;
         this.inputs = inputs;
         this.secondaryInput = secondaryInput;
         this.inProgressTexture = inProgressTexture;
 
-        timeAndEnergy(time, energy);
-
         setInputListWithSizes(Lists.newArrayList(this.inputs));
-        this.outputList = Lazy.of(() -> NonNullList.of(ItemStack.EMPTY, this.output.get()));
-    }
-
-    public void addToSecondaryOutput(Lazy<ItemStack> output)
-    {
-        Preconditions.checkNotNull(output);
-        secondaryOutputs.add(output);
+        this.outputList = new TagOutputList(output);
     }
 
     @Override
-    public NonNullList<Lazy<ItemStack>> getSecondaryOutputs()
+    public ItemStack getSecondaryOutput()
     {
-        return secondaryOutputs;
+        return secondaryOutput;
     }
 
-    public static PowerLoomRecipe findRecipe(Level level, ItemStack pirn, ItemStack weave)
+    public static RecipeHolder<PowerLoomRecipe> findRecipe(Level level, ItemStack pirn, ItemStack weave)
     {
         if (pirn.isEmpty() || weave.isEmpty())
             return null;
-        for (PowerLoomRecipe recipe : RECIPES.getRecipes(level))
-            if (recipe.matches(pirn, weave))
+        for (RecipeHolder<PowerLoomRecipe> recipe : RECIPES.getRecipes(level))
+            if (recipe.value().matches(pirn, weave))
                 return recipe;
         return null;
     }
 
-    public static PowerLoomRecipe findRecipeForRendering(Level level, ItemStack secondaryInput)
+    public static RecipeHolder<PowerLoomRecipe> findRecipeForRendering(Level level, ItemStack secondaryInput)
     {
         if (secondaryInput.isEmpty())
             return null;
-        for (PowerLoomRecipe recipe : RECIPES.getRecipes(level))
-            if (recipe.isValidSecondaryInput(secondaryInput))
+        for (RecipeHolder<PowerLoomRecipe> recipe : RECIPES.getRecipes(level))
+            if (recipe.value().isValidSecondaryInput(secondaryInput))
                 return recipe;
         return null;
     }
@@ -82,31 +76,31 @@ public class PowerLoomRecipe extends ATTMultiblockRecipe
 
     public boolean isValidPirn(ItemStack stack)
     {
-        return this.inputs[1] != null && this.inputs[1].test(stack);
+        return this.inputs.get(1) != null && this.inputs.get(1).test(stack);
     }
 
     public static boolean isValidPirnInput(Level level, ItemStack stack)
     {
-        for (PowerLoomRecipe recipe : RECIPES.getRecipes(level))
-            if (recipe != null && recipe.isValidPirn(stack))
+        for (RecipeHolder<PowerLoomRecipe> recipe : RECIPES.getRecipes(level))
+            if (recipe.value().isValidPirn(stack))
                 return true;
         return false;
     }
 
     public boolean isValidWeave(ItemStack stack)
     {
-        return this.inputs[0] != null && this.inputs[0].testIgnoringSize(stack);
+        return this.inputs.get(0) != null && this.inputs.get(0).testIgnoringSize(stack);
     }
 
     public boolean isValidWeaveWithSize(ItemStack stack)
     {
-        return this.inputs[0] != null && this.inputs[0].test(stack);
+        return this.inputs.get(0) != null && this.inputs.get(0).test(stack);
     }
 
     public static boolean isValidWeaveInput(Level level, ItemStack stack)
     {
-        for (PowerLoomRecipe recipe : RECIPES.getRecipes(level))
-            if (recipe != null && recipe.isValidWeave(stack))
+        for (RecipeHolder<PowerLoomRecipe> recipe : RECIPES.getRecipes(level))
+            if (recipe.value().isValidWeave(stack))
                 return true;
         return false;
     }
@@ -130,84 +124,27 @@ public class PowerLoomRecipe extends ATTMultiblockRecipe
 
     public static class Serializer extends IERecipeSerializer<PowerLoomRecipe>
     {
+        public static final DualMapCodec<RegistryFriendlyByteBuf, PowerLoomRecipe> CODECS = DualCompositeMapCodecs.composite(
+            TagOutput.CODECS.fieldOf("result"), r -> r.output,
+            DualCodecs.ITEM_STACK.optionalFieldOf("secondary_output", ItemStack.EMPTY), r -> r.secondaryOutput,
+            IngredientWithSize.CODECS.listOf().fieldOf("inputs"), r -> r.inputs,
+            IngredientWithSize.CODECS.fieldOf("secondary_input"), r -> r.secondaryInput,
+            DualCodecs.RESOURCE_LOCATION.fieldOf("in_progress_texture"), r -> r.inProgressTexture,
+            DualCodecs.INT.fieldOf("time"), MultiblockRecipe::getBaseTime,
+            DualCodecs.INT.fieldOf("energy"), MultiblockRecipe::getBaseEnergy,
+            PowerLoomRecipe::new
+        );
+
+        @Override
+        protected DualMapCodec<RegistryFriendlyByteBuf, PowerLoomRecipe> codecs()
+        {
+            return CODECS;
+        }
+
         @Override
         public ItemStack getIcon()
         {
             return ATTMultiblockLogic.POWER_LOOM.iconStack();
-        }
-
-        @Override
-        public PowerLoomRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context)
-        {
-            Lazy<ItemStack> output = readOutput(json.get("result"));
-            IngredientWithSize[] ingredients;
-            if (json.has("input"))
-                ingredients = new IngredientWithSize[] {
-                    IngredientWithSize.deserialize(GsonHelper.getAsJsonObject(json, "input"))
-                };
-            else
-            {
-                JsonArray inputs = json.getAsJsonArray("inputs");
-                ingredients = new IngredientWithSize[inputs.size()];
-                for (int i = 0; i < ingredients.length; i++)
-                    ingredients[i] = IngredientWithSize.deserialize(inputs.get(i));
-            }
-            IngredientWithSize secondaryInput = IngredientWithSize.deserialize(GsonHelper.getAsJsonObject(json, "secondary_input"));
-            ResourceLocation inProgressTexture = new ResourceLocation(GsonHelper.getAsString(json, "in_progress_texture"));
-            int time = GsonHelper.getAsInt(json, "time");
-            int energy = GsonHelper.getAsInt(json, "energy");
-
-            PowerLoomRecipe recipe = ATTConfig.SERVER.powerLoomConfig.apply(new PowerLoomRecipe(recipeId, output, ingredients, secondaryInput, inProgressTexture, time, energy));
-
-            JsonArray array = json.getAsJsonArray("secondaries");
-            for (int i = 0; i < array.size(); i++)
-            {
-                JsonObject element = array.get(i).getAsJsonObject();
-                Lazy<ItemStack> stack = readOutput(element.get("output"));
-                recipe.addToSecondaryOutput(stack);
-            }
-
-            return recipe;
-        }
-
-        @Nullable
-        @Override
-        public PowerLoomRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer)
-        {
-            Lazy<ItemStack> output = readLazyStack(buffer);
-            int inputCount = buffer.readInt();
-            IngredientWithSize[] ingredients = new IngredientWithSize[inputCount];
-            for (int i = 0; i < ingredients.length; i++)
-                ingredients[i] = IngredientWithSize.read(buffer);
-            IngredientWithSize secondaryInput = IngredientWithSize.read(buffer);
-            ResourceLocation inProgressTexture = new ResourceLocation(buffer.readUtf());
-            int time = buffer.readInt();
-            int energy = buffer.readInt();
-
-            PowerLoomRecipe recipe = new PowerLoomRecipe(recipeId, output, ingredients, secondaryInput, inProgressTexture, time, energy);
-
-            int secondaryCount = buffer.readInt();
-            for (int i = 0; i < secondaryCount; i++)
-                recipe.addToSecondaryOutput(readLazyStack(buffer));
-
-            return recipe;
-        }
-
-        @Override
-        public void toNetwork(FriendlyByteBuf buffer, PowerLoomRecipe recipe)
-        {
-            writeLazyStack(buffer, recipe.output);
-            buffer.writeInt(recipe.inputs.length);
-            for (IngredientWithSize ingredient : recipe.inputs)
-                ingredient.write(buffer);
-            recipe.secondaryInput.write(buffer);
-            buffer.writeUtf(recipe.inProgressTexture.toString());
-            buffer.writeInt(recipe.getTotalProcessTime());
-            buffer.writeInt(recipe.getTotalProcessEnergy());
-
-            buffer.writeInt(recipe.secondaryOutputs.size());
-            for (Lazy<ItemStack> secondaryOutput : recipe.secondaryOutputs)
-                buffer.writeItem(secondaryOutput.get());
         }
     }
 }

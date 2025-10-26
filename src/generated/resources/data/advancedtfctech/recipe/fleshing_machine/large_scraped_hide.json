@@ -1,0 +1,19 @@
+{
+  "type": "advancedtfctech:fleshing_machine",
+  "energy": 4000,
+  "input": {
+    "item": "tfc:large_soaked_hide"
+  },
+  "result": {
+    "modifiers": [
+      {
+        "type": "advancedtfctech:copy_machine_made"
+      }
+    ],
+    "stack": {
+      "count": 1,
+      "id": "tfc:large_scraped_hide"
+    }
+  },
+  "time": 200
+}

@@ -1,24 +1,21 @@
 package com.hermitowo.advancedtfctech.config;
 
 import java.util.function.Function;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
-import net.dries007.tfc.util.Helpers;
+import net.dries007.tfc.config.BaseConfig;
 
 public class ATTConfig
 {
-    public static final ATTClientConfig CLIENT = register(ModConfig.Type.CLIENT, ATTClientConfig::new);
-    public static final ATTServerConfig SERVER = register(ModConfig.Type.SERVER, ATTServerConfig::new);
+    public static final ATTClientConfig CLIENT = register(ATTClientConfig::new, ConfigBuilder.ClientValue::new, "common");
+    public static final ATTServerConfig SERVER = register(ATTServerConfig::new, ConfigBuilder.ServerValue::new, "server");
 
-    public static void init() {}
-
-    private static <C> C register(ModConfig.Type type, Function<ForgeConfigSpec.Builder, C> factory)
+    private static <C extends BaseConfig> C register(Function<ConfigBuilder, C> factory, ConfigBuilder.Factory value, String prefix)
     {
-        Pair<C, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(factory);
-        if (!Helpers.BOOTSTRAP_ENVIRONMENT) ModLoadingContext.get().registerConfig(type, specPair.getRight());
-        return specPair.getLeft();
+        final Pair<C, ModConfigSpec> pair = new ModConfigSpec.Builder()
+            .configure(builder -> factory.apply(new ConfigBuilder(builder, value, prefix)));
+        pair.getKey().updateSpec(pair.getValue());
+        return pair.getKey();
     }
 }

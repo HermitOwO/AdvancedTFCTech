@@ -51,7 +51,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "Before the loom can operate, it must be primed with $(thing)16 of the selected yarn/fiber$() by $(item)rightclicking$() with the yarn/fiber on the 'grill' in the $(thing)center$() of the machine.$(br2)Then, $(thing)input yarn/fiber$() can be put with the same method on the $(thing)lower beam on the machine's shorter side$().$(br2)Output may be retrieved by a storage device placed in the $(thing)center of the output side$(), or by $(item)shift-rightclicking$() on the back."
+      "text": "Before the loom can operate, it must be primed with $(thing)16 of the selected yarn/fiber$() by $(item)rightclicking$() with the yarn/fiber on the \"grill\" in the $(thing)center$() of the machine.$(br2)Then, $(thing)input yarn/fiber$() can be put with the same method on the $(thing)lower beam on the machine's shorter side$().$(br2)Output may be retrieved by a storage device placed in the $(thing)center of the output side$(), or by $(item)shift-rightclicking$() on the back."
     },
     {
       "type": "patchouli:text",

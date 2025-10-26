@@ -1,0 +1,31 @@
+{
+  "type": "advancedtfctech:power_loom",
+  "energy": 40000,
+  "in_progress_texture": "advancedtfctech:block/multiblock/power_loom/burlap",
+  "inputs": [
+    {
+      "basePredicate": {
+        "item": "tfc:jute_fiber"
+      },
+      "count": 48
+    },
+    {
+      "item": "advancedtfctech:fiber_winded_pirn"
+    }
+  ],
+  "result": {
+    "count": 8,
+    "id": "tfc:burlap_cloth"
+  },
+  "secondary_input": {
+    "basePredicate": {
+      "item": "tfc:jute_fiber"
+    },
+    "count": 16
+  },
+  "secondary_output": {
+    "count": 1,
+    "id": "advancedtfctech:pirn"
+  },
+  "time": 500
+}

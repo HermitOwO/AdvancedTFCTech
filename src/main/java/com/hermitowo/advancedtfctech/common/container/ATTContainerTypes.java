@@ -4,6 +4,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.common.gui.IEContainerMenu;
 import blusunrize.immersiveengineering.common.register.IEMenuTypes;
+import com.hermitowo.advancedtfctech.AdvancedTFCTech;
 import com.hermitowo.advancedtfctech.common.blockentities.FleshingMachineBlockEntity;
 import com.hermitowo.advancedtfctech.common.multiblocks.logic.BeamhouseLogic;
 import com.hermitowo.advancedtfctech.common.multiblocks.logic.GristMillLogic;
@@ -12,6 +13,7 @@ import com.hermitowo.advancedtfctech.common.multiblocks.logic.ThresherLogic;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -19,18 +21,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
-
-import static com.hermitowo.advancedtfctech.AdvancedTFCTech.*;
 
 @SuppressWarnings("SameParameterValue")
 public class ATTContainerTypes
 {
-    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, MOD_ID);
+    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(Registries.MENU, AdvancedTFCTech.MOD_ID);
 
     public static final ATTMultiblockContainer<ThresherLogic.State, ThresherContainer> THRESHER = registerMultiblock(
         "thresher", ThresherContainer::makeServer, ThresherContainer::makeClient);
@@ -45,17 +44,17 @@ public class ATTContainerTypes
 
     private static <T, C extends IEContainerMenu> ATTArgContainer<T, C> registerArg(String name, IEMenuTypes.ArgContainerConstructor<T, C> container, IEMenuTypes.ClientContainerConstructor<C> client)
     {
-        RegistryObject<MenuType<C>> typeRef = registerType(name, client);
+        DeferredHolder<MenuType<?>, MenuType<C>> typeRef = registerType(name, client);
         return new ATTArgContainer<>(typeRef, container);
     }
 
     public static <S extends IMultiblockState, C extends IEContainerMenu> ATTMultiblockContainer<S, C> registerMultiblock(String name, IEMenuTypes.ArgContainerConstructor<IEContainerMenu.MultiblockMenuContext<S>, C> container, IEMenuTypes.ClientContainerConstructor<C> client)
     {
-        RegistryObject<MenuType<C>> typeRef = registerType(name, client);
+        DeferredHolder<MenuType<?>, MenuType<C>> typeRef = registerType(name, client);
         return new ATTMultiblockContainer<>(typeRef, container);
     }
 
-    private static <C extends IEContainerMenu> RegistryObject<MenuType<C>> registerType(String name, IEMenuTypes.ClientContainerConstructor<C> client)
+    private static <C extends IEContainerMenu> DeferredHolder<MenuType<?>, MenuType<C>> registerType(String name, IEMenuTypes.ClientContainerConstructor<C> client)
     {
         return CONTAINERS.register(
             name, () -> {
@@ -69,10 +68,10 @@ public class ATTContainerTypes
 
     public static class ATTArgContainer<T, C extends IEContainerMenu>
     {
-        private final RegistryObject<MenuType<C>> type;
+        private final DeferredHolder<MenuType<?>, MenuType<C>> type;
         private final IEMenuTypes.ArgContainerConstructor<T, C> factory;
 
-        private ATTArgContainer(RegistryObject<MenuType<C>> type, IEMenuTypes.ArgContainerConstructor<T, C> factory)
+        private ATTArgContainer(DeferredHolder<MenuType<?>, MenuType<C>> type, IEMenuTypes.ArgContainerConstructor<T, C> factory)
         {
             this.type = type;
             this.factory = factory;
@@ -111,7 +110,7 @@ public class ATTContainerTypes
 
     public static class ATTMultiblockContainer<S extends IMultiblockState, C extends IEContainerMenu> extends ATTArgContainer<IEContainerMenu.MultiblockMenuContext<S>, C>
     {
-        private ATTMultiblockContainer(RegistryObject<MenuType<C>> type, IEMenuTypes.ArgContainerConstructor<IEContainerMenu.MultiblockMenuContext<S>, C> factory)
+        private ATTMultiblockContainer(DeferredHolder<MenuType<?>, MenuType<C>> type, IEMenuTypes.ArgContainerConstructor<IEContainerMenu.MultiblockMenuContext<S>, C> factory)
         {
             super(type, factory);
         }

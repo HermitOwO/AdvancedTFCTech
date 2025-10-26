@@ -11,13 +11,16 @@ import com.hermitowo.advancedtfctech.common.container.sync.ATTGenericDataSeriali
 import com.hermitowo.advancedtfctech.common.multiblocks.logic.PowerLoomLogic;
 import com.hermitowo.advancedtfctech.common.multiblocks.process.ATTMultiblockProcess;
 import com.hermitowo.advancedtfctech.common.recipes.PowerLoomRecipe;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
 
 import static java.lang.Math.*;
 
@@ -86,6 +89,11 @@ public class PowerLoomContainer extends ATTContainerMenu
 
     public record ProcessSlot(int processStep)
     {
+        public static final StreamCodec<ByteBuf, ProcessSlot> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT, ProcessSlot::processStep,
+            ProcessSlot::new
+        );
+
         public static ProcessSlot fromCtx(ATTMultiblockProcess<PowerLoomRecipe> process, Level level)
         {
             float mod = process.processTick / (float) process.getMaxTicks(level);

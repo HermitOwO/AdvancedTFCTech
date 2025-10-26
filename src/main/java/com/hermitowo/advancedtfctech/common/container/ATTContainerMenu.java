@@ -5,11 +5,9 @@ import java.util.List;
 import blusunrize.immersiveengineering.common.gui.IEContainerMenu;
 import com.hermitowo.advancedtfctech.common.container.sync.ATTGenericContainerData;
 import com.hermitowo.advancedtfctech.common.container.sync.ATTGenericDataSerializers;
-import com.hermitowo.advancedtfctech.common.network.ATTPacketHandler;
-import com.hermitowo.advancedtfctech.common.network.ContainerDataPacket;
+import com.hermitowo.advancedtfctech.common.network.ATTMessageContainerData;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.PacketDistributor;
 
 public abstract class ATTContainerMenu extends IEContainerMenu
 {
@@ -39,7 +37,7 @@ public abstract class ATTContainerMenu extends IEContainerMenu
         }
         if (!toSync.isEmpty())
             for (ServerPlayer player : usingPlayers)
-                ATTPacketHandler.send(PacketDistributor.PLAYER.with(() -> player), new ContainerDataPacket(toSync));
+                player.connection.send(new ATTMessageContainerData(toSync));
     }
 
     public void receiveSyncATT(List<Pair<Integer, ATTGenericDataSerializers.DataPair<?>>> synced)

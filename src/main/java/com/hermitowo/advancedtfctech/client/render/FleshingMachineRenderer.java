@@ -16,9 +16,9 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class FleshingMachineRenderer extends IEBlockEntityRenderer<FleshingMachineBlockEntity>
 {
@@ -32,7 +32,7 @@ public class FleshingMachineRenderer extends IEBlockEntityRenderer<FleshingMachi
 
         Direction facing = be.getFacing();
         VertexConsumer consumer = buffer.getBuffer(RenderType.solid());
-        TextureAtlasSprite rodTexture = ClientUtils.getSprite(new ResourceLocation("advancedtfctech:block/metal_device/fleshing_machine"));
+        TextureAtlasSprite rodTexture = ClientUtils.getSprite(ResourceLocation.parse("advancedtfctech:block/metal_device/fleshing_machine"));
         float bladeRotation = be.bladeAngle + (be.getIsActive() ? 36F * partialTicks : 0);
         float hideRotation = be.rodAngle + (be.getIsActive() ? 9F * partialTicks : 0);
 
@@ -84,13 +84,17 @@ public class FleshingMachineRenderer extends IEBlockEntityRenderer<FleshingMachi
             hideTextures.put("tfc:large_scraped_hide", "advancedtfctech:block/metal_device/fleshing_machine/scraped");
 
             Map<String, String> configTextures =
-                ATTConfig.CLIENT.additionalFleshingMachineTextures.get().stream().collect(Collectors.toMap(list -> list.get(0), list -> list.get(1)));
+                ATTConfig.CLIENT.additionalFleshingMachineTextures.get().stream().filter(list -> !list.isEmpty()).collect(Collectors.toMap(list -> list.get(0), list -> list.get(1)));
 
             hideTextures.putAll(configTextures);
 
-            TextureAtlasSprite hideTexture = ClientUtils.getSprite(new ResourceLocation(
-                hideTextures.entrySet().stream().filter(entry -> entry.getKey().equals(ForgeRegistries.ITEMS.getKey(hide.getItem()).toString())).map(Map.Entry::getValue).findAny().orElse("forge:white")
-            ));
+            ResourceLocation rl = ResourceLocation.tryParse(
+                hideTextures.entrySet().stream().filter(entry -> entry.getKey().equals(BuiltInRegistries.ITEM.getKey(hide.getItem()).toString())).map(Map.Entry::getValue).findAny().orElse("neoforge:white")
+            );
+
+            rl = rl != null ? rl : ResourceLocation.parse("neoforge:white");
+
+            TextureAtlasSprite hideTexture = ClientUtils.getSprite(rl);
 
             poseStack.pushPose();
 

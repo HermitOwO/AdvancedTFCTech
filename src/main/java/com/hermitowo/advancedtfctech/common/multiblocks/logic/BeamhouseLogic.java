@@ -18,8 +18,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MBInventoryUt
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockFace;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
+import blusunrize.immersiveengineering.api.tool.MachineInterfaceHandler;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
 import blusunrize.immersiveengineering.common.fluids.ArrayFluidHandler;
@@ -35,24 +34,23 @@ import com.hermitowo.advancedtfctech.common.recipes.BeamhouseRecipe;
 import com.hermitowo.advancedtfctech.util.FluidHelper;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.IFluidTank;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.Nullable;
 
 public class BeamhouseLogic implements IMultiblockLogic<BeamhouseLogic.State>, IServerTickableComponent<BeamhouseLogic.State>, IClientTickableComponent<BeamhouseLogic.State>
@@ -119,7 +117,7 @@ public class BeamhouseLogic implements IMultiblockLogic<BeamhouseLogic.State>, I
             ItemStack stack = state.inventory.getStackInSlot(slot);
             if (stack.isEmpty())
                 continue;
-            BeamhouseRecipe recipe = BeamhouseRecipe.findRecipe(level, stack, state.tank.getFluid());
+            RecipeHolder<BeamhouseRecipe> recipe = BeamhouseRecipe.findRecipe(level, stack, state.tank.getFluid());
             if (recipe == null)
                 continue;
             int fluidAmount = 0;
@@ -127,14 +125,14 @@ public class BeamhouseLogic implements IMultiblockLogic<BeamhouseLogic.State>, I
             {
                 BeamhouseRecipe recipeInQueue = processInQueue.getRecipe(level);
                 if (recipeInQueue != null)
-                    fluidAmount += recipeInQueue.fluidInput.getAmount();
+                    fluidAmount += recipeInQueue.fluidInput.amount();
             }
-            fluidAmount += recipe.fluidInput.getAmount();
+            fluidAmount += recipe.value().fluidInput.amount();
             if (state.tank.getFluidAmount() >= fluidAmount)
             {
                 ATTMultiblockProcess<BeamhouseRecipe> process = new ATTMultiblockProcess.ProcessWithItemStackProvider<>(recipe, slot).setInputTanks(0);
                 if (state.processor.addProcessToQueue(process, level, false))
-                    process.setInputAmounts(recipe.input.getCount());
+                    process.setInputAmounts(recipe.value().input.getCount());
             }
         }
     }
@@ -149,7 +147,7 @@ public class BeamhouseLogic implements IMultiblockLogic<BeamhouseLogic.State>, I
         {
             final Vec3 soundPos = context.getLevel().toAbsolute(new Vec3(1.5, 1.5, 1.5));
             state.isPlayingSound = MultiblockSound.startSound(
-                () -> state.active, context.isValid(), soundPos, ATTSounds.BEAMHOUSE, 0.5f
+                () -> state.active, context.isValid(), soundPos, ATTSounds.BEAMHOUSE.holder(), 0.5f
             );
         }
     }
@@ -161,21 +159,19 @@ public class BeamhouseLogic implements IMultiblockLogic<BeamhouseLogic.State>, I
     }
 
     @Override
-    public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap)
+    public void registerCapabilities(CapabilityRegistrar<State> registrar)
     {
-        final State state = ctx.getState();
-        if (cap == ForgeCapabilities.ENERGY && ENERGY_POS.equalsOrNullFace(position))
-            return state.energyCap.cast(ctx);
-        if (cap == ForgeCapabilities.FLUID_HANDLER && FLUID_CAP.equalsOrNullFace(position))
-            return state.fluidInputHandler.cast(ctx);
-        if (cap == ForgeCapabilities.ITEM_HANDLER)
-        {
+        registrar.registerAtOrNull(Capabilities.EnergyStorage.BLOCK, ENERGY_POS, state -> state.energy);
+        registrar.registerAtOrNull(Capabilities.FluidHandler.BLOCK, FLUID_CAP, state -> state.fluidInputHandler);
+        registrar.register(Capabilities.ItemHandler.BLOCK, (state, position) -> {
             if (OUT_CAP.equals(position))
-                return state.outputHandler.cast(ctx);
-            if (IN_CAP.equals(position))
-                return state.insertionHandler.cast(ctx);
-        }
-        return LazyOptional.empty();
+                return state.outputHandler;
+            else if (IN_CAP.equals(position))
+                return state.insertionHandler;
+            else
+                return null;
+        });
+        registrar.registerAtBlockPos(MachineInterfaceHandler.IMachineInterfaceConnection.CAPABILITY, REDSTONE_POS, state -> state.mifHandler);
     }
 
     @Override
@@ -191,10 +187,10 @@ public class BeamhouseLogic implements IMultiblockLogic<BeamhouseLogic.State>, I
     }
 
     @Override
-    public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient)
+    public ItemInteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient)
     {
         if (isClient)
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
 
         final State state = ctx.getState();
         if (FLUID_CAP.posInMultiblock().equals(posInMultiblock))
@@ -209,7 +205,7 @@ public class BeamhouseLogic implements IMultiblockLogic<BeamhouseLogic.State>, I
         }
         else
             player.openMenu(ATTContainerTypes.BEAMHOUSE.provide(ctx, posInMultiblock));
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     public static class State implements IMultiblockState, ATTProcessContext<BeamhouseRecipe>
@@ -220,11 +216,11 @@ public class BeamhouseLogic implements IMultiblockLogic<BeamhouseLogic.State>, I
         public final FluidTank tank = new FluidTank(TANK_CAPACITY);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
 
-        private final CapabilityReference<IItemHandler> output;
-        private final StoredCapability<IEnergyStorage> energyCap;
-        private final StoredCapability<IItemHandler> insertionHandler;
-        private final StoredCapability<IItemHandler> outputHandler;
-        private final StoredCapability<IFluidHandler> fluidInputHandler;
+        private final Supplier<@Nullable IItemHandler> output;
+        private final IItemHandler insertionHandler;
+        private final IItemHandler outputHandler;
+        private final IFluidHandler fluidInputHandler;
+        private final MachineInterfaceHandler.IMachineInterfaceConnection mifHandler;
 
         // Client
         private boolean active;
@@ -244,41 +240,47 @@ public class BeamhouseLogic implements IMultiblockLogic<BeamhouseLogic.State>, I
             this.processor = new MultiblockProcessor<>(
                 12, 0, 12, markDirty, BeamhouseRecipe.RECIPES::getById
             );
-            this.output = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, OUT_POS);
-            this.energyCap = new StoredCapability<>(this.energy);
-            this.insertionHandler = new StoredCapability<>(new BeamhouseInputHandler(inventory, markDirty, getLevel));
-            this.outputHandler = new StoredCapability<>(new WrappingItemHandler(
+            this.output = ctx.getCapabilityAt(Capabilities.ItemHandler.BLOCK, OUT_POS);
+            this.insertionHandler = new BeamhouseInputHandler(inventory, markDirty, getLevel);
+            this.outputHandler = new WrappingItemHandler(
                 inventory, false, true, new WrappingItemHandler.IntRange(FIRST_OUT_SLOT, FIRST_OUT_SLOT + OUT_SLOT_COUNT)
-            ));
-            this.fluidInputHandler = new StoredCapability<>(ArrayFluidHandler.fillOnly(tank, markDirty));
+            );
+            this.fluidInputHandler = ArrayFluidHandler.fillOnly(tank, markDirty);
+            this.mifHandler = () -> new MachineInterfaceHandler.MachineCheckImplementation[] {
+                new MachineInterfaceHandler.MachineCheckImplementation<>((BooleanSupplier) () -> this.active, MachineInterfaceHandler.BASIC_ACTIVE),
+                new MachineInterfaceHandler.MachineCheckImplementation<>(insertionHandler, MachineInterfaceHandler.BASIC_ITEM_IN),
+                new MachineInterfaceHandler.MachineCheckImplementation<>(outputHandler, MachineInterfaceHandler.BASIC_ITEM_OUT),
+                new MachineInterfaceHandler.MachineCheckImplementation<>(fluidInputHandler, MachineInterfaceHandler.BASIC_FLUID_IN),
+                new MachineInterfaceHandler.MachineCheckImplementation<>(energy, MachineInterfaceHandler.BASIC_ENERGY)
+            };
         }
 
         @Override
-        public void writeSaveNBT(CompoundTag nbt)
+        public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider)
         {
-            nbt.put("energy", energy.serializeNBT());
-            nbt.put("processor", processor.toNBT());
-            nbt.put("inventory", inventory.serializeNBT());
-            nbt.put("tank", tank.writeToNBT(new CompoundTag()));
+            nbt.put("energy", energy.serializeNBT(provider));
+            nbt.put("processor", processor.toNBT(provider));
+            nbt.put("inventory", inventory.serializeNBT(provider));
+            nbt.put("tank", tank.writeToNBT(provider, new CompoundTag()));
         }
 
         @Override
-        public void readSaveNBT(CompoundTag nbt)
+        public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider)
         {
-            energy.deserializeNBT(nbt.get("energy"));
-            processor.fromNBT(nbt.get("processor"), ATTMultiblockProcess.ProcessWithItemStackProvider::new);
-            inventory.deserializeNBT(nbt.getCompound("inventory"));
-            tank.readFromNBT(nbt.getCompound("tank"));
+            energy.deserializeNBT(provider, nbt.get("energy"));
+            processor.fromNBT(nbt.get("processor"), (getRecipe, data, p) -> new ATTMultiblockProcess.ProcessWithItemStackProvider<>(getRecipe, data), provider);
+            inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
+            tank.readFromNBT(provider, nbt.getCompound("tank"));
         }
 
         @Override
-        public void writeSyncNBT(CompoundTag nbt)
+        public void writeSyncNBT(CompoundTag nbt, HolderLookup.Provider provider)
         {
             nbt.putBoolean("active", active);
         }
 
         @Override
-        public void readSyncNBT(CompoundTag nbt)
+        public void readSyncNBT(CompoundTag nbt, HolderLookup.Provider provider)
         {
             active = nbt.getBoolean("active");
         }

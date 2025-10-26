@@ -1,0 +1,23 @@
+{
+  "type": "advancedtfctech:beamhouse",
+  "energy": 6000,
+  "fluid": {
+    "amount": 400,
+    "fluid": "tfc:tannin"
+  },
+  "input": {
+    "item": "tfc:medium_prepared_hide"
+  },
+  "result": {
+    "modifiers": [
+      {
+        "type": "advancedtfctech:double_if_machine_made"
+      }
+    ],
+    "stack": {
+      "count": 2,
+      "id": "minecraft:leather"
+    }
+  },
+  "time": 300
+}

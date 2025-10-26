@@ -1,6 +1,6 @@
 {
   "automatic_culling": false,
   "flip_v": true,
-  "loader": "forge:obj",
+  "loader": "neoforge:obj",
   "model": "advancedtfctech:models/block/multiblock/beamhouse_barrel.obj"
 }

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "x": {
+      "item": "tfc:wool_yarn"
+    },
+    "y": {
+      "item": "advancedtfctech:pirn"
+    }
+  },
+  "pattern": [
+    "xxx",
+    "xyx",
+    "xxx"
+  ],
+  "result": {
+    "count": 1,
+    "id": "advancedtfctech:wool_winded_pirn"
+  }
+}

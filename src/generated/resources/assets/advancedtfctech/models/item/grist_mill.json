@@ -88,7 +88,7 @@
     }
   },
   "flip_v": true,
-  "loader": "forge:obj",
+  "loader": "neoforge:obj",
   "model": "advancedtfctech:models/block/multiblock/grist_mill.obj",
   "textures": {
     "texture": "advancedtfctech:block/multiblock/grist_mill"

@@ -7,7 +7,7 @@
     "type": "item_display",
     "items": [
       {
-        "item": "advancedtfctech:fleshing_blades"
+        "id": "advancedtfctech:fleshing_blades"
       }
     ]
   }

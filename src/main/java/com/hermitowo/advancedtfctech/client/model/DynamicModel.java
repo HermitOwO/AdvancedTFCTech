@@ -8,31 +8,31 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.model.data.ModelData;
 
-@EventBusSubscriber(modid = AdvancedTFCTech.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = AdvancedTFCTech.MOD_ID, value = Dist.CLIENT)
 public class DynamicModel
 {
-    private static final List<ResourceLocation> MODELS = new ArrayList<>();
+    private static final List<ModelResourceLocation> MODELS = new ArrayList<>();
 
     @SubscribeEvent
     public static void registerModels(ModelEvent.RegisterAdditional ev)
     {
-        for (ResourceLocation model : MODELS)
+        for (ModelResourceLocation model : MODELS)
             ev.register(model);
     }
 
-    private final ResourceLocation name;
+    private final ModelResourceLocation name;
 
     public DynamicModel(String desc)
     {
-        this.name = AdvancedTFCTech.rl("dynamic/" + desc);
+        this.name = new ModelResourceLocation(AdvancedTFCTech.rl("dynamic/" + desc), "standalone");
         MODELS.add(this.name);
     }
 
@@ -54,6 +54,6 @@ public class DynamicModel
 
     public ResourceLocation getName()
     {
-        return name;
+        return name.id();
     }
 }

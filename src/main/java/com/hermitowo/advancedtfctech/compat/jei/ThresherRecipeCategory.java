@@ -14,8 +14,8 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 
-import net.dries007.tfc.common.recipes.ingredients.ItemStackIngredient;
 import net.dries007.tfc.compat.jei.category.BaseRecipeCategory;
 
 public class ThresherRecipeCategory extends BaseRecipeCategory<ThresherRecipe>
@@ -27,7 +27,7 @@ public class ThresherRecipeCategory extends BaseRecipeCategory<ThresherRecipe>
 
     public ThresherRecipeCategory(RecipeType<ThresherRecipe> type, IGuiHelper helper)
     {
-        super(type, helper, helper.createBlankDrawable(120, 38), ATTMultiblockLogic.THRESHER.iconStack());
+        super(type, helper, 120, 38, ATTMultiblockLogic.THRESHER.iconStack());
         gears = helper.createDrawable(ICONS, 0, 134, 22, 16);
         IDrawableStatic arrowAnimated = helper.createDrawable(ICONS, 22, 134, 22, 16);
         this.gearsAnimated = helper.createAnimatedDrawable(arrowAnimated, 80, IDrawableAnimated.StartDirection.LEFT, false);
@@ -41,9 +41,9 @@ public class ThresherRecipeCategory extends BaseRecipeCategory<ThresherRecipe>
         IRecipeSlotBuilder output = builder.addSlot(RecipeIngredientRole.OUTPUT, 84, 1);
         IRecipeSlotBuilder secondaryOutput = builder.addSlot(RecipeIngredientRole.OUTPUT, 84, 21);
 
-        input.addItemStacks(collapse(new ItemStackIngredient(recipe.input.getBaseIngredient(), recipe.input.getCount())));
+        input.addItemStacks(collapse(new SizedIngredient(recipe.input.getBaseIngredient(), recipe.input.getCount())));
         output.addItemStacks(collapse(recipe.input.getMatchingStackList(), recipe.output));
-        recipe.secondaryOutputs.forEach(lazy -> secondaryOutput.addItemStack(lazy.get()));
+        secondaryOutput.addItemStack(recipe.secondaryOutput);
 
         input.setBackground(slot, -1, -1);
         output.setBackground(slot, -1, -1);

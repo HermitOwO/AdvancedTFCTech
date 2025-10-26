@@ -24,10 +24,11 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 import static com.hermitowo.advancedtfctech.common.multiblocks.logic.PowerLoomLogic.*;
 
@@ -154,13 +155,17 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<MultiblockBlockEnti
         pirnTextures.put("advancedtfctech:pineapple_winded_pirn", "advancedtfctech:block/multiblock/power_loom/pineapple_winded_pirn");
 
         Map<String, String> configTextures =
-            ATTConfig.CLIENT.additionalPowerLoomPirnTextures.get().stream().collect(Collectors.toMap(list -> list.get(0), list -> list.get(1)));
+            ATTConfig.CLIENT.additionalPowerLoomPirnTextures.get().stream().filter(list -> !list.isEmpty()).collect(Collectors.toMap(list -> list.get(0), list -> list.get(1)));
 
         pirnTextures.putAll(configTextures);
 
-        TextureAtlasSprite pirnTexture = ClientUtils.getSprite(new ResourceLocation(
-            pirnTextures.entrySet().stream().filter(entry -> entry.getKey().equals(ForgeRegistries.ITEMS.getKey(pirn.getItem()).toString())).map(Map.Entry::getValue).findAny().orElse("forge:white")
-        ));
+        ResourceLocation rl = ResourceLocation.tryParse(
+            pirnTextures.entrySet().stream().filter(entry -> entry.getKey().equals(BuiltInRegistries.ITEM.getKey(pirn.getItem()).toString())).map(Map.Entry::getValue).findAny().orElse("neoforge:white")
+        );
+
+        rl = rl != null ? rl : ResourceLocation.parse("neoforge:white");
+
+        TextureAtlasSprite pirnTexture = ClientUtils.getSprite(rl);
 
         // Pirns
         for (int i = 0; i < amountPirns; i++)
@@ -198,7 +203,7 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<MultiblockBlockEnti
             poseStack.popPose();
         }
 
-        PowerLoomRecipe recipe = PowerLoomRecipe.findRecipeForRendering(ctx.getLevel().getRawLevel(), state.inventory.getStackInSlot(SECONDARY_WEAVE_IN_SLOT));
+        RecipeHolder<PowerLoomRecipe> recipe = PowerLoomRecipe.findRecipeForRendering(ctx.getLevel().getRawLevel(), state.inventory.getStackInSlot(SECONDARY_WEAVE_IN_SLOT));
         TextureAtlasSprite outputTexture = ClientUtils.getSprite(state.lastTexture);
 
         // Output Rod Cloth
@@ -221,7 +226,7 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<MultiblockBlockEnti
 
         if (recipe != null)
         {
-            TextureAtlasSprite texture = ClientUtils.getSprite(recipe.inProgressTexture);
+            TextureAtlasSprite texture = ClientUtils.getSprite(recipe.value().inProgressTexture);
 
             // Input Rod Cloth
             int amountWeave = 0;
@@ -246,7 +251,7 @@ public class PowerLoomRenderer extends IEBlockEntityRenderer<MultiblockBlockEnti
                 poseStack.popPose();
             }
 
-            if (state.inventory.getStackInSlot(SECONDARY_WEAVE_IN_SLOT).getCount() >= recipe.secondaryInput.getCount())
+            if (state.inventory.getStackInSlot(SECONDARY_WEAVE_IN_SLOT).getCount() >= recipe.value().secondaryInput.getCount())
             {
                 // Rods
                 poseStack.pushPose();

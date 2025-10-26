@@ -2,20 +2,21 @@ package com.hermitowo.advancedtfctech.common.recipes;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IESerializableRecipe;
+import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import com.google.gson.JsonObject;
 import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
+import com.hermitowo.advancedtfctech.util.ATTDualCodecs;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
+import malte0811.dualcodecs.DualCodecs;
+import malte0811.dualcodecs.DualCompositeMapCodecs;
+import malte0811.dualcodecs.DualMapCodec;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.util.Lazy;
 
 import net.dries007.tfc.common.recipes.outputs.ItemStackProvider;
 
@@ -28,9 +29,9 @@ public class FleshingMachineRecipe extends IESerializableRecipe
     public final int time;
     public final int energy;
 
-    public FleshingMachineRecipe(ResourceLocation id, ItemStackProvider output, Ingredient input, int time, int energy)
+    public FleshingMachineRecipe(ItemStackProvider output, Ingredient input, int time, int energy)
     {
-        super(Lazy.of(() -> ItemStack.EMPTY), ATTRecipeTypes.FLESHING_MACHINE, id);
+        super(TagOutput.EMPTY, ATTRecipeTypes.FLESHING_MACHINE);
         this.output = output;
         this.input = input;
         this.time = time;
@@ -43,9 +44,9 @@ public class FleshingMachineRecipe extends IESerializableRecipe
             return null;
         if (hint != null && hint.isValidInput(stack))
             return hint;
-        for (FleshingMachineRecipe recipe : RECIPES.getRecipes(level))
-            if (recipe.input != null && recipe.input.test(stack))
-                return recipe;
+        for (RecipeHolder<FleshingMachineRecipe> recipe : RECIPES.getRecipes(level))
+            if (recipe.value().input.test(stack))
+                return recipe.value();
         return null;
     }
 
@@ -61,8 +62,8 @@ public class FleshingMachineRecipe extends IESerializableRecipe
 
     public static boolean isValidRecipeInput(Level level, ItemStack stack)
     {
-        for (FleshingMachineRecipe recipe : RECIPES.getRecipes(level))
-            if (recipe != null && recipe.isValidInput(stack))
+        for (RecipeHolder<FleshingMachineRecipe> recipe : RECIPES.getRecipes(level))
+            if (recipe.value().isValidInput(stack))
                 return true;
         return false;
     }
@@ -79,7 +80,7 @@ public class FleshingMachineRecipe extends IESerializableRecipe
 
     @Nonnull
     @Override
-    public ItemStack getResultItem(RegistryAccess access)
+    public ItemStack getResultItem(HolderLookup.Provider provider)
     {
         return this.output.getEmptyStack();
     }
@@ -92,42 +93,24 @@ public class FleshingMachineRecipe extends IESerializableRecipe
 
     public static class Serializer extends IERecipeSerializer<FleshingMachineRecipe>
     {
+        public static final DualMapCodec<RegistryFriendlyByteBuf, FleshingMachineRecipe> CODECS = DualCompositeMapCodecs.composite(
+            ATTDualCodecs.ITEM_STACK_PROVIDER.fieldOf("result"), r -> r.output,
+            DualCodecs.INGREDIENT.fieldOf("input"), r -> r.input,
+            DualCodecs.INT.fieldOf("time"), r -> r.time,
+            DualCodecs.INT.fieldOf("energy"), r -> r.energy,
+            FleshingMachineRecipe::new
+        );
+
+        @Override
+        protected DualMapCodec<RegistryFriendlyByteBuf, FleshingMachineRecipe> codecs()
+        {
+            return CODECS;
+        }
+
         @Override
         public ItemStack getIcon()
         {
             return new ItemStack(ATTBlocks.FLESHING_MACHINE.get());
-        }
-
-        @Override
-        public FleshingMachineRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context)
-        {
-            ItemStackProvider output = ItemStackProvider.fromJson(GsonHelper.getAsJsonObject(json, "result"));
-            Ingredient input = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "input"));
-            int time = GsonHelper.getAsInt(json, "time");
-            int energy = GsonHelper.getAsInt(json, "energy");
-
-            return new FleshingMachineRecipe(recipeId, output, input, time, energy);
-        }
-
-        @Nullable
-        @Override
-        public FleshingMachineRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer)
-        {
-            ItemStackProvider output = ItemStackProvider.fromNetwork(buffer);
-            Ingredient input = Ingredient.fromNetwork(buffer);
-            int time = buffer.readInt();
-            int energy = buffer.readInt();
-
-            return new FleshingMachineRecipe(recipeId, output, input, time, energy);
-        }
-
-        @Override
-        public void toNetwork(FriendlyByteBuf buffer, FleshingMachineRecipe recipe)
-        {
-            recipe.output.toNetwork(buffer);
-            recipe.input.toNetwork(buffer);
-            buffer.writeInt(recipe.time);
-            buffer.writeInt(recipe.energy);
         }
     }
 }

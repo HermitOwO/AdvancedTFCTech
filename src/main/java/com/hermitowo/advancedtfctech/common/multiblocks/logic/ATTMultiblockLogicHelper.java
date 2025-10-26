@@ -1,12 +1,13 @@
 package com.hermitowo.advancedtfctech.common.multiblocks.logic;
 
+import java.util.function.Supplier;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import org.jetbrains.annotations.Nullable;
 
 public class ATTMultiblockLogicHelper
 {
@@ -19,7 +20,7 @@ public class ATTMultiblockLogicHelper
             {
                 ItemStack holder1 = inventory.getStackInSlot(i).copy();
                 ItemStack holder2 = inventory.getStackInSlot(j).copy();
-                if (ItemHandlerHelper.canItemStacksStack(holder1, holder2))
+                if (ItemStack.isSameItemSameComponents(holder1, holder2))
                 {
                     int size1 = holder1.getCount();
                     int size2 = holder2.getCount();
@@ -43,7 +44,7 @@ public class ATTMultiblockLogicHelper
                     }
                     else
                     {
-                        ItemStack stack = ItemHandlerHelper.copyStackWithSize(holder1, size1 + size2);
+                        ItemStack stack = holder1.copyWithCount(size1 + size2);
                         inventory.setStackInSlot(i, stack);
                         inventory.setStackInSlot(j, ItemStack.EMPTY);
                     }
@@ -52,9 +53,9 @@ public class ATTMultiblockLogicHelper
         }
     }
 
-    public static <S extends IMultiblockState & ProcessContext<?>> void handleItemOutput(S state, CapabilityReference<IItemHandler> output, int[] outputSlots)
+    public static <S extends IMultiblockState & ProcessContext<?>> void handleItemOutput(S state, Supplier<@Nullable IItemHandler> output, int[] outputSlots)
     {
-        IItemHandler outputHandler = output.getNullable();
+        IItemHandler outputHandler = output.get();
         if (outputHandler != null)
         {
             for (int i : outputSlots)
@@ -62,7 +63,7 @@ public class ATTMultiblockLogicHelper
                 final ItemStack nextStack = state.getInventory().getStackInSlot(i);
                 if (nextStack.isEmpty())
                     continue;
-                ItemStack stack = ItemHandlerHelper.copyStackWithSize(nextStack, 1);
+                ItemStack stack = nextStack.copyWithCount(1);
                 stack = ItemHandlerHelper.insertItem(outputHandler, stack, false);
                 if (stack.isEmpty())
                     nextStack.shrink(1);

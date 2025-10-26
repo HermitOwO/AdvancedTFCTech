@@ -1,0 +1,31 @@
+{
+  "type": "advancedtfctech:power_loom",
+  "energy": 20000,
+  "in_progress_texture": "advancedtfctech:block/multiblock/power_loom/wool",
+  "inputs": [
+    {
+      "basePredicate": {
+        "item": "minecraft:string"
+      },
+      "count": 32
+    },
+    {
+      "item": "advancedtfctech:silk_winded_pirn"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "id": "tfc:silk_cloth"
+  },
+  "secondary_input": {
+    "basePredicate": {
+      "item": "minecraft:string"
+    },
+    "count": 16
+  },
+  "secondary_output": {
+    "count": 1,
+    "id": "advancedtfctech:pirn"
+  },
+  "time": 250
+}

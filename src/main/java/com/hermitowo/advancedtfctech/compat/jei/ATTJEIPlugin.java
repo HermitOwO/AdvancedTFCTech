@@ -1,6 +1,7 @@
 package com.hermitowo.advancedtfctech.compat.jei;
 
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import com.hermitowo.advancedtfctech.AdvancedTFCTech;
 import com.hermitowo.advancedtfctech.client.screen.BeamhouseScreen;
@@ -22,13 +23,14 @@ import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.block.Block;
+
+import net.dries007.tfc.client.ClientHelpers;
 
 @SuppressWarnings("unused")
 @JeiPlugin
@@ -40,13 +42,6 @@ public class ATTJEIPlugin implements IModPlugin
         return AdvancedTFCTech.rl("jei");
     }
 
-    private static <C extends Container, T extends Recipe<C>> List<T> getRecipes(net.minecraft.world.item.crafting.RecipeType<T> type)
-    {
-        ClientLevel level = Minecraft.getInstance().level;
-        assert level != null;
-        return level.getRecipeManager().getAllRecipesFor(type);
-    }
-
     public static final RecipeType<ThresherRecipe> THRESHER = type("thresher", ThresherRecipe.class);
     public static final RecipeType<GristMillRecipe> GRIST_MILL = type("grist_mill", GristMillRecipe.class);
     public static final RecipeType<PowerLoomRecipe> POWER_LOOM = type("power_loom", PowerLoomRecipe.class);
@@ -56,6 +51,21 @@ public class ATTJEIPlugin implements IModPlugin
     private static <T> RecipeType<T> type(String name, Class<T> tClass)
     {
         return RecipeType.create(AdvancedTFCTech.MOD_ID, name, tClass);
+    }
+
+    private static <C extends RecipeInput, T extends Recipe<C>> List<T> recipes(Supplier<net.minecraft.world.item.crafting.RecipeType<T>> type)
+    {
+        return recipes(type, e -> true);
+    }
+
+    private static <C extends RecipeInput, T extends Recipe<C>> List<T> recipes(Supplier<net.minecraft.world.item.crafting.RecipeType<T>> type, Predicate<T> filter)
+    {
+        return ClientHelpers.getLevelOrThrow().getRecipeManager()
+            .getAllRecipesFor(type.get())
+            .stream()
+            .map(RecipeHolder::value)
+            .filter(filter)
+            .toList();
     }
 
     @Override
@@ -73,11 +83,11 @@ public class ATTJEIPlugin implements IModPlugin
     @Override
     public void registerRecipes(IRecipeRegistration r)
     {
-        r.addRecipes(THRESHER, getRecipes(ATTRecipeTypes.THRESHER.get()));
-        r.addRecipes(GRIST_MILL, getRecipes(ATTRecipeTypes.GRIST_MILL.get()));
-        r.addRecipes(POWER_LOOM, getRecipes(ATTRecipeTypes.POWER_LOOM.get()));
-        r.addRecipes(BEAMHOUSE, getRecipes(ATTRecipeTypes.BEAMHOUSE.get()));
-        r.addRecipes(FLESHING_MACHINE, getRecipes(ATTRecipeTypes.FLESHING_MACHINE.get()));
+        r.addRecipes(THRESHER, recipes(ATTRecipeTypes.THRESHER));
+        r.addRecipes(GRIST_MILL, recipes(ATTRecipeTypes.GRIST_MILL));
+        r.addRecipes(POWER_LOOM, recipes(ATTRecipeTypes.POWER_LOOM));
+        r.addRecipes(BEAMHOUSE, recipes(ATTRecipeTypes.BEAMHOUSE));
+        r.addRecipes(FLESHING_MACHINE, recipes(ATTRecipeTypes.FLESHING_MACHINE));
     }
 
     @Override

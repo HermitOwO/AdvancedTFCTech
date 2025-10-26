@@ -19,8 +19,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MBInventoryUt
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockFace;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
+import blusunrize.immersiveengineering.api.tool.MachineInterfaceHandler;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
@@ -34,17 +33,16 @@ import com.hermitowo.advancedtfctech.common.multiblocks.process.ATTProcessContex
 import com.hermitowo.advancedtfctech.common.multiblocks.shapes.ThresherShapes;
 import com.hermitowo.advancedtfctech.common.recipes.ThresherRecipe;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.Nullable;
 
 public class ThresherLogic implements IMultiblockLogic<ThresherLogic.State>, IServerTickableComponent<ThresherLogic.State>, IClientTickableComponent<ThresherLogic.State>
@@ -99,7 +97,7 @@ public class ThresherLogic implements IMultiblockLogic<ThresherLogic.State>, ISe
                 continue;
             stack = stack.copy();
             stack.shrink(usedInvSlots[slot]);
-            ThresherRecipe recipe = ThresherRecipe.findRecipe(level, stack);
+            RecipeHolder<ThresherRecipe> recipe = ThresherRecipe.findRecipe(level, stack);
             if (recipe != null)
                 state.processor.addProcessToQueue(new ATTMultiblockProcess.ProcessWithItemStackProvider<>(recipe, slot), level, false);
         }
@@ -113,7 +111,7 @@ public class ThresherLogic implements IMultiblockLogic<ThresherLogic.State>, ISe
         {
             final Vec3 soundPos = context.getLevel().toAbsolute(new Vec3(1.5, 1.5, 1.5));
             state.isPlayingSound = MultiblockSound.startSound(
-                () -> state.active, context.isValid(), soundPos, ATTSounds.THRESHER, 0.5f
+                () -> state.active, context.isValid(), soundPos, ATTSounds.THRESHER.holder(), 0.5f
             );
         }
     }
@@ -125,19 +123,18 @@ public class ThresherLogic implements IMultiblockLogic<ThresherLogic.State>, ISe
     }
 
     @Override
-    public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap)
+    public void registerCapabilities(CapabilityRegistrar<State> registrar)
     {
-        final State state = ctx.getState();
-        if (cap == ForgeCapabilities.ENERGY && ENERGY_POS.equalsOrNullFace(position))
-            return state.energyCap.cast(ctx);
-        if (cap == ForgeCapabilities.ITEM_HANDLER)
-        {
+        registrar.registerAtOrNull(Capabilities.EnergyStorage.BLOCK, ENERGY_POS, state -> state.energy);
+        registrar.register(Capabilities.ItemHandler.BLOCK, (state, position) -> {
             if (MAIN_OUT_CAP.equals(position))
-                return state.outputHandler.cast(ctx);
-            if (IN_CAP.equals(position))
-                return state.insertionHandler.cast(ctx);
-        }
-        return LazyOptional.empty();
+                return state.outputHandler;
+            else if (IN_CAP.equals(position))
+                return state.insertionHandler;
+            else
+                return null;
+        });
+        registrar.registerAtBlockPos(MachineInterfaceHandler.IMachineInterfaceConnection.CAPABILITY, REDSTONE_POS, state -> state.mifHandler);
     }
 
     @Override
@@ -159,11 +156,11 @@ public class ThresherLogic implements IMultiblockLogic<ThresherLogic.State>, ISe
         public final SlotwiseItemHandler inventory;
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
 
-        private final CapabilityReference<IItemHandler> output;
+        private final Supplier<@Nullable IItemHandler> output;
         private final DroppingMultiblockOutput secondaryOutput;
-        private final StoredCapability<IEnergyStorage> energyCap;
-        private final StoredCapability<IItemHandler> insertionHandler;
-        private final StoredCapability<IItemHandler> outputHandler;
+        private final IItemHandler insertionHandler;
+        private final IItemHandler outputHandler;
+        private final MachineInterfaceHandler.IMachineInterfaceConnection mifHandler;
 
         // Client
         private boolean active;
@@ -180,41 +177,46 @@ public class ThresherLogic implements IMultiblockLogic<ThresherLogic.State>, ISe
             this.processor = new MultiblockProcessor<>(
                 1, 0, 1, markDirty, ThresherRecipe.RECIPES::getById
             );
-            this.output = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, MAIN_OUT_POS);
+            this.output = ctx.getCapabilityAt(Capabilities.ItemHandler.BLOCK, MAIN_OUT_POS);
             this.secondaryOutput = new DroppingMultiblockOutput(SECONDARY_OUT_POS, ctx);
-            this.energyCap = new StoredCapability<>(this.energy);
-            this.insertionHandler = new StoredCapability<>(new WrappingItemHandler(
+            this.insertionHandler = new WrappingItemHandler(
                 inventory, true, false, new WrappingItemHandler.IntRange(FIRST_IN_SLOT, FIRST_IN_SLOT + IN_SLOT_COUNT)
-            ));
-            this.outputHandler = new StoredCapability<>(new WrappingItemHandler(
+            );
+            this.outputHandler = new WrappingItemHandler(
                 inventory, false, true, new WrappingItemHandler.IntRange(FIRST_OUT_SLOT, FIRST_OUT_SLOT + OUT_SLOT_COUNT)
-            ));
+            );
+            this.mifHandler = () -> new MachineInterfaceHandler.MachineCheckImplementation[] {
+                new MachineInterfaceHandler.MachineCheckImplementation<>((BooleanSupplier)() -> this.active, MachineInterfaceHandler.BASIC_ACTIVE),
+                new MachineInterfaceHandler.MachineCheckImplementation<>(insertionHandler, MachineInterfaceHandler.BASIC_ITEM_IN),
+                new MachineInterfaceHandler.MachineCheckImplementation<>(outputHandler, MachineInterfaceHandler.BASIC_ITEM_OUT),
+                new MachineInterfaceHandler.MachineCheckImplementation<>(energy, MachineInterfaceHandler.BASIC_ENERGY)
+            };
         }
 
         @Override
-        public void writeSaveNBT(CompoundTag nbt)
+        public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider)
         {
-            nbt.put("energy", energy.serializeNBT());
-            nbt.put("processor", processor.toNBT());
-            nbt.put("inventory", inventory.serializeNBT());
+            nbt.put("energy", energy.serializeNBT(provider));
+            nbt.put("processor", processor.toNBT(provider));
+            nbt.put("inventory", inventory.serializeNBT(provider));
         }
 
         @Override
-        public void readSaveNBT(CompoundTag nbt)
+        public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider)
         {
-            energy.deserializeNBT(nbt.get("energy"));
-            processor.fromNBT(nbt.get("processor"), ATTMultiblockProcess.ProcessWithItemStackProvider::new);
-            inventory.deserializeNBT(nbt.getCompound("inventory"));
+            energy.deserializeNBT(provider, nbt.get("energy"));
+            processor.fromNBT(nbt.get("processor"), (getRecipe, data, p) -> new ATTMultiblockProcess.ProcessWithItemStackProvider<>(getRecipe, data), provider);
+            inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
         }
 
         @Override
-        public void writeSyncNBT(CompoundTag nbt)
+        public void writeSyncNBT(CompoundTag nbt, HolderLookup.Provider provider)
         {
             nbt.putBoolean("active", active);
         }
 
         @Override
-        public void readSyncNBT(CompoundTag nbt)
+        public void readSyncNBT(CompoundTag nbt, HolderLookup.Provider provider)
         {
             active = nbt.getBoolean("active");
         }

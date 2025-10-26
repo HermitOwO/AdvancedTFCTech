@@ -117,8 +117,8 @@ public class PowerLoomParts extends Model
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha)
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int i, int i1, int i2)
     {
-        powerloom.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+        powerloom.render(poseStack, vertexConsumer, i, i1, i2);
     }
 }

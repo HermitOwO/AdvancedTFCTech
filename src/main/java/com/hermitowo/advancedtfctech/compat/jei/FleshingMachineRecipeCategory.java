@@ -24,7 +24,7 @@ public class FleshingMachineRecipeCategory extends BaseRecipeCategory<FleshingMa
 
     public FleshingMachineRecipeCategory(RecipeType<FleshingMachineRecipe> type, IGuiHelper helper)
     {
-        super(type, helper, helper.createBlankDrawable(120, 38), new ItemStack(ATTBlocks.FLESHING_MACHINE.get()));
+        super(type, helper, 120, 38, new ItemStack(ATTBlocks.FLESHING_MACHINE.get()));
         this.slot = helper.getSlotDrawable();
     }
 

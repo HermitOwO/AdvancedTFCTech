@@ -14,8 +14,8 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 
-import net.dries007.tfc.common.recipes.ingredients.ItemStackIngredient;
 import net.dries007.tfc.compat.jei.category.BaseRecipeCategory;
 
 public class GristMillRecipeCategory extends BaseRecipeCategory<GristMillRecipe>
@@ -27,7 +27,7 @@ public class GristMillRecipeCategory extends BaseRecipeCategory<GristMillRecipe>
 
     public GristMillRecipeCategory(RecipeType<GristMillRecipe> type, IGuiHelper helper)
     {
-        super(type, helper, helper.createBlankDrawable(120, 38), ATTMultiblockLogic.GRIST_MILL.iconStack());
+        super(type, helper, 120, 38, ATTMultiblockLogic.GRIST_MILL.iconStack());
         gears = helper.createDrawable(ICONS, 0, 134, 22, 16);
         IDrawableStatic arrowAnimated = helper.createDrawable(ICONS, 22, 134, 22, 16);
         this.gearsAnimated = helper.createAnimatedDrawable(arrowAnimated, 80, IDrawableAnimated.StartDirection.LEFT, false);
@@ -40,7 +40,7 @@ public class GristMillRecipeCategory extends BaseRecipeCategory<GristMillRecipe>
         IRecipeSlotBuilder input = builder.addSlot(RecipeIngredientRole.INPUT, 20, 11);
         IRecipeSlotBuilder output = builder.addSlot(RecipeIngredientRole.OUTPUT, 84, 11);
 
-        input.addItemStacks(collapse(new ItemStackIngredient(recipe.input.getBaseIngredient(), recipe.input.getCount())));
+        input.addItemStacks(collapse(new SizedIngredient(recipe.input.getBaseIngredient(), recipe.input.getCount())));
         output.addItemStacks(collapse(recipe.input.getMatchingStackList(), recipe.output));
 
         input.setBackground(slot, -1, -1);

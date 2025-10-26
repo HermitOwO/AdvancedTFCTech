@@ -3,6 +3,7 @@ package com.hermitowo.advancedtfctech.common.multiblocks.logic;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -21,8 +22,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MBInventoryUt
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockFace;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
+import blusunrize.immersiveengineering.api.tool.MachineInterfaceHandler;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
 import blusunrize.immersiveengineering.common.util.DroppingMultiblockOutput;
@@ -38,24 +38,24 @@ import com.hermitowo.advancedtfctech.common.recipes.PowerLoomRecipe;
 import com.hermitowo.advancedtfctech.config.ATTConfig;
 import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
 public class PowerLoomLogic implements IMultiblockLogic<PowerLoomLogic.State>, IServerTickableComponent<PowerLoomLogic.State>, IClientTickableComponent<PowerLoomLogic.State>
@@ -127,17 +127,17 @@ public class PowerLoomLogic implements IMultiblockLogic<PowerLoomLogic.State>, I
                 ItemStack weave = state.inventory.getStackInSlot(j);
                 if (weave.isEmpty())
                     continue;
-                PowerLoomRecipe recipe = PowerLoomRecipe.findRecipe(level, pirn, weave);
+                RecipeHolder<PowerLoomRecipe> recipe = PowerLoomRecipe.findRecipe(level, pirn, weave);
                 if (recipe == null)
                     continue;
-                if (!recipe.secondaryInput.test(secondaryWeave))
+                if (!recipe.value().secondaryInput.test(secondaryWeave))
                     continue;
                 ItemStack outputSlot = state.inventory.getStackInSlot(OUT_SLOT);
-                ItemStack output = recipe.output.get();
-                if (outputSlot.isEmpty() || (ItemHandlerHelper.canItemStacksStack(outputSlot, output) && outputSlot.getCount() + output.getCount() <= outputSlot.getMaxStackSize()))
+                ItemStack output = recipe.value().output.get();
+                if (outputSlot.isEmpty() || (ItemStack.isSameItemSameComponents(outputSlot, output) && outputSlot.getCount() + output.getCount() <= outputSlot.getMaxStackSize()))
                 {
                     state.processor.addProcessToQueue(new ATTMultiblockProcess<>(recipe, i, j), level, false);
-                    state.lastTexture = recipe.inProgressTexture;
+                    state.lastTexture = recipe.value().inProgressTexture;
                 }
             }
         }
@@ -285,21 +285,20 @@ public class PowerLoomLogic implements IMultiblockLogic<PowerLoomLogic.State>, I
     }
 
     @Override
-    public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap)
+    public void registerCapabilities(CapabilityRegistrar<State> registrar)
     {
-        final State state = ctx.getState();
-        if (cap == ForgeCapabilities.ENERGY && ENERGY_POS.equalsOrNullFace(position))
-            return state.energyCap.cast(ctx);
-        if (cap == ForgeCapabilities.ITEM_HANDLER)
-        {
+        registrar.registerAtOrNull(Capabilities.EnergyStorage.BLOCK, ENERGY_POS, state -> state.energy);
+        registrar.register(Capabilities.ItemHandler.BLOCK, (state, position) -> {
             if (PIRN_IN_POS.equals(position.posInMultiblock()))
-                return state.pirnInputHandler.cast(ctx);
-            if (WEAVE_IN_POS.contains(position.posInMultiblock()))
-                return state.weaveInputHandler.cast(ctx);
-            if (OUT_CAP.contains(position))
-                return state.outputHandler.cast(ctx);
-        }
-        return LazyOptional.empty();
+                return state.pirnInputHandler;
+            else if (WEAVE_IN_POS.contains(position.posInMultiblock()))
+                return state.weaveInputHandler;
+            else if (OUT_CAP.contains(position))
+                return state.outputHandler;
+            else
+                return null;
+        });
+        registrar.registerAtBlockPos(MachineInterfaceHandler.IMachineInterfaceConnection.CAPABILITY, REDSTONE_POS, state -> state.mifHandler);
     }
 
     @Override
@@ -317,10 +316,10 @@ public class PowerLoomLogic implements IMultiblockLogic<PowerLoomLogic.State>, I
     }
 
     @Override
-    public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient)
+    public ItemInteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient)
     {
         if (isClient)
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
 
         final int bX = posInMultiblock.getX();
         final int bY = posInMultiblock.getY();
@@ -332,104 +331,98 @@ public class PowerLoomLogic implements IMultiblockLogic<PowerLoomLogic.State>, I
 
         if (PIRN_IN_POS.equals(posInMultiblock))
         {
-            IItemHandler insertionHandler = state.pirnInputHandler.getValue();
-            if (insertionHandler != null)
-            {
-                List<ItemStack> list = new ArrayList<>(8);
-                for (int i = FIRST_PIRN_IN_SLOT; i < FIRST_PIRN_IN_SLOT + PIRN_IN_SLOT_COUNT; i++)
-                    list.add(state.inventory.getStackInSlot(i));
-                boolean areAllEmpty = list.stream().allMatch(ItemStack::isEmpty);
-                boolean anyMatch = list.stream().anyMatch(stack -> stack.is(heldItem.getItem()));
+            IItemHandler insertionHandler = state.pirnInputHandler;
+            List<ItemStack> list = new ArrayList<>(8);
+            for (int i = FIRST_PIRN_IN_SLOT; i < FIRST_PIRN_IN_SLOT + PIRN_IN_SLOT_COUNT; i++)
+                list.add(state.inventory.getStackInSlot(i));
+            boolean areAllEmpty = list.stream().allMatch(ItemStack::isEmpty);
+            boolean anyMatch = list.stream().anyMatch(stack -> stack.is(heldItem.getItem()));
 
-                if (areAllEmpty || anyMatch)
+            if (areAllEmpty || anyMatch)
+            {
+                if (PowerLoomRecipe.isValidPirnInput(level, heldItem))
                 {
-                    if (PowerLoomRecipe.isValidPirnInput(level, heldItem))
+                    ItemStack stack = heldItem.copyWithCount(1);
+                    stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
+                    if (stack.isEmpty())
                     {
-                        ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, 1);
-                        stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
-                        if (stack.isEmpty())
-                        {
-                            heldItem.shrink(1);
-                            ctx.markDirtyAndSync();
-                            return InteractionResult.SUCCESS;
-                        }
+                        heldItem.shrink(1);
+                        ctx.markDirtyAndSync();
+                        return ItemInteractionResult.SUCCESS;
                     }
                 }
-                if (player.isShiftKeyDown() && state.processor.getQueueSize() < state.processor.getMaxQueueSize())
+            }
+            if (player.isShiftKeyDown() && state.processor.getQueueSize() < state.processor.getMaxQueueSize())
+            {
+                for (int i = 0; i < 8; i++)
                 {
-                    for (int i = 0; i < 8; i++)
+                    ItemStack stack = state.inventory.getStackInSlot(i);
+                    if (!stack.isEmpty())
                     {
-                        ItemStack stack = state.inventory.getStackInSlot(i);
-                        if (!stack.isEmpty())
-                        {
-                            ItemHandlerHelper.giveItemToPlayer(player, stack.copy());
-                            int size = stack.getCount();
-                            stack.shrink(size);
-                            ctx.markDirtyAndSync();
-                            return InteractionResult.SUCCESS;
-                        }
+                        ItemHandlerHelper.giveItemToPlayer(player, stack.copy());
+                        int size = stack.getCount();
+                        stack.shrink(size);
+                        ctx.markDirtyAndSync();
+                        return ItemInteractionResult.SUCCESS;
                     }
                 }
             }
         }
         else if (bX == 2 && bY == 0 && (bZ == 1 || bZ == 2 || bZ == 3))
         {
-            IItemHandler insertionHandler = state.weaveInputHandler.getValue();
-            if (insertionHandler != null)
+            IItemHandler insertionHandler = state.weaveInputHandler;
+            for (int i = FIRST_WEAVE_IN_SLOT; i < FIRST_WEAVE_IN_SLOT + WEAVE_IN_SLOT_COUNT; i++)
             {
-                for (int i = FIRST_WEAVE_IN_SLOT; i < FIRST_WEAVE_IN_SLOT + WEAVE_IN_SLOT_COUNT; i++)
+                RecipeHolder<PowerLoomRecipe> recipe = PowerLoomRecipe.findRecipeForRendering(level, state.inventory.getStackInSlot(SECONDARY_WEAVE_IN_SLOT));
+                if (recipe != null && recipe.value().inputs.get(0).testIgnoringSize(heldItem))
                 {
-                    PowerLoomRecipe recipe = PowerLoomRecipe.findRecipeForRendering(level, state.inventory.getStackInSlot(SECONDARY_WEAVE_IN_SLOT));
-                    if (recipe != null && recipe.inputs[0].testIgnoringSize(heldItem))
+                    if (state.inventory.getStackInSlot(i).isEmpty())
                     {
-                        if (state.inventory.getStackInSlot(i).isEmpty())
+                        int size = heldItem.getCount();
+                        ItemStack stack = heldItem.copyWithCount(size);
+                        stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
+                        if (stack.isEmpty())
                         {
-                            int size = heldItem.getCount();
-                            ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
+                            heldItem.shrink(size);
+                            ctx.markDirtyAndSync();
+                            return ItemInteractionResult.SUCCESS;
+                        }
+                    }
+                    if (state.inventory.getStackInSlot(i).getCount() < state.inventory.getStackInSlot(i).getMaxStackSize())
+                    {
+                        ItemStack remainder = ItemHandlerHelper.insertItemStacked(insertionHandler, heldItem, true);
+                        if (remainder.isEmpty())
+                        {
+                            int size = heldItem.getCount() - remainder.getCount();
+                            ItemHandlerHelper.insertItemStacked(insertionHandler, heldItem, false);
+                            heldItem.shrink(size);
+                            ctx.markDirtyAndSync();
+                            return ItemInteractionResult.SUCCESS;
+                        }
+                        else
+                        {
+                            int size = remainder.getCount();
+                            ItemStack stack = heldItem.copyWithCount(size);
                             stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
                             if (stack.isEmpty())
                             {
                                 heldItem.shrink(size);
                                 ctx.markDirtyAndSync();
-                                return InteractionResult.SUCCESS;
-                            }
-                        }
-                        if (state.inventory.getStackInSlot(i).getCount() < state.inventory.getStackInSlot(i).getMaxStackSize())
-                        {
-                            ItemStack remainder = ItemHandlerHelper.insertItemStacked(insertionHandler, heldItem, true);
-                            if (remainder.isEmpty())
-                            {
-                                int size = heldItem.getCount() - remainder.getCount();
-                                ItemHandlerHelper.insertItemStacked(insertionHandler, heldItem, false);
-                                heldItem.shrink(size);
-                                ctx.markDirtyAndSync();
-                                return InteractionResult.SUCCESS;
-                            }
-                            else
-                            {
-                                int size = remainder.getCount();
-                                ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
-                                stack = ItemHandlerHelper.insertItem(insertionHandler, stack, false);
-                                if (stack.isEmpty())
-                                {
-                                    heldItem.shrink(size);
-                                    ctx.markDirtyAndSync();
-                                    return InteractionResult.SUCCESS;
-                                }
+                                return ItemInteractionResult.SUCCESS;
                             }
                         }
                     }
-                    if (player.isShiftKeyDown() && state.processor.getQueueSize() < state.processor.getMaxQueueSize())
+                }
+                if (player.isShiftKeyDown() && state.processor.getQueueSize() < state.processor.getMaxQueueSize())
+                {
+                    ItemStack stack = state.inventory.getStackInSlot(i);
+                    if (!stack.isEmpty())
                     {
-                        ItemStack stack = state.inventory.getStackInSlot(i);
-                        if (!stack.isEmpty())
-                        {
-                            ItemHandlerHelper.giveItemToPlayer(player, stack.copy());
-                            int size = stack.getCount();
-                            stack.shrink(size);
-                            ctx.markDirtyAndSync();
-                            return InteractionResult.SUCCESS;
-                        }
+                        ItemHandlerHelper.giveItemToPlayer(player, stack.copy());
+                        int size = stack.getCount();
+                        stack.shrink(size);
+                        ctx.markDirtyAndSync();
+                        return ItemInteractionResult.SUCCESS;
                     }
                 }
             }
@@ -447,34 +440,34 @@ public class PowerLoomLogic implements IMultiblockLogic<PowerLoomLogic.State>, I
                         int size = stack.getCount();
                         stack.shrink(size);
                         ctx.markDirtyAndSync();
-                        return InteractionResult.SUCCESS;
+                        return ItemInteractionResult.SUCCESS;
                     }
                 }
             }
             else
             {
-                PowerLoomRecipe recipe = PowerLoomRecipe.findRecipeForRendering(ctx.getLevel().getRawLevel(), heldItem);
+                RecipeHolder<PowerLoomRecipe> recipe = PowerLoomRecipe.findRecipeForRendering(ctx.getLevel().getRawLevel(), heldItem);
                 if (recipe != null)
                 {
                     ItemStack secondarySlot = state.inventory.getStackInSlot(SECONDARY_WEAVE_IN_SLOT);
                     if (secondarySlot.isEmpty())
                     {
-                        int size = Math.min(heldItem.getCount(), recipe.secondaryInput.getCount());
-                        ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
+                        int size = Math.min(heldItem.getCount(), recipe.value().secondaryInput.getCount());
+                        ItemStack stack = heldItem.copyWithCount(size);
                         state.inventory.setStackInSlot(SECONDARY_WEAVE_IN_SLOT, stack);
                         heldItem.shrink(size);
                         ctx.markDirtyAndSync();
-                        return InteractionResult.SUCCESS;
+                        return ItemInteractionResult.SUCCESS;
                     }
-                    if (secondarySlot.is(heldItem.getItem()) && secondarySlot.getCount() < recipe.secondaryInput.getCount())
+                    if (secondarySlot.is(heldItem.getItem()) && secondarySlot.getCount() < recipe.value().secondaryInput.getCount())
                     {
-                        int remaining = recipe.secondaryInput.getCount() - secondarySlot.getCount();
+                        int remaining = recipe.value().secondaryInput.getCount() - secondarySlot.getCount();
                         int size = Math.min(heldItem.getCount(), remaining);
-                        ItemStack stack = ItemHandlerHelper.copyStackWithSize(heldItem, size);
+                        ItemStack stack = heldItem.copyWithCount(size);
                         state.inventory.insertItem(SECONDARY_WEAVE_IN_SLOT, stack, false);
                         heldItem.shrink(size);
                         ctx.markDirtyAndSync();
-                        return InteractionResult.SUCCESS;
+                        return ItemInteractionResult.SUCCESS;
                     }
                 }
             }
@@ -490,14 +483,14 @@ public class PowerLoomLogic implements IMultiblockLogic<PowerLoomLogic.State>, I
                     int size = stack.getCount();
                     stack.shrink(size);
                     ctx.markDirtyAndSync();
-                    return InteractionResult.SUCCESS;
+                    return ItemInteractionResult.SUCCESS;
                 }
             }
         }
         else if (ATTConfig.SERVER.enablePowerLoomDebug.get())
             if (player.getMainHandItem().is(ATTItems.PIRN.get()))
                 player.openMenu(ATTContainerTypes.POWER_LOOM.provide(ctx, posInMultiblock));
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     public static class State implements IMultiblockState, ATTProcessContext<PowerLoomRecipe>
@@ -507,13 +500,13 @@ public class PowerLoomLogic implements IMultiblockLogic<PowerLoomLogic.State>, I
         public final PowerLoomInventory inventory;
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
 
-        private final CapabilityReference<IItemHandler> output;
+        private final Supplier<@Nullable IItemHandler> output;
         private final DroppingMultiblockOutput secondaryOutput;
-        private final StoredCapability<IEnergyStorage> energyCap;
-        private final StoredCapability<IItemHandler> pirnInputHandler;
-        private final StoredCapability<IItemHandler> weaveInputHandler;
-        //        private final StoredCapability<IItemHandler> secondaryWeaveInputHandler;
-        private final StoredCapability<IItemHandler> outputHandler;
+        private final IItemHandler pirnInputHandler;
+        private final IItemHandler weaveInputHandler;
+        //        private final IItemHandler secondaryWeaveInputHandler;
+        private final IItemHandler outputHandler;
+        private final MachineInterfaceHandler.IMachineInterfaceConnection mifHandler;
 
         // Client
         private boolean active;
@@ -534,7 +527,7 @@ public class PowerLoomLogic implements IMultiblockLogic<PowerLoomLogic.State>, I
         public boolean rackSideBool = true;
         public boolean rack2Bool = true;
         public boolean pirnBool = true;
-        public ResourceLocation lastTexture = new ResourceLocation("forge:white");
+        public ResourceLocation lastTexture = ResourceLocation.parse("neoforge:white");
 
         public State(IInitialMultiblockContext<State> ctx)
         {
@@ -554,62 +547,68 @@ public class PowerLoomLogic implements IMultiblockLogic<PowerLoomLogic.State>, I
             this.processor = new MultiblockProcessor<>(
                 1, 0, 1, markDirty, PowerLoomRecipe.RECIPES::getById
             );
-            this.output = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, MAIN_OUT_POS);
+            this.output = ctx.getCapabilityAt(Capabilities.ItemHandler.BLOCK, MAIN_OUT_POS);
             this.secondaryOutput = new DroppingMultiblockOutput(SECONDARY_OUT_POS, ctx);
-            this.energyCap = new StoredCapability<>(this.energy);
-            this.pirnInputHandler = new StoredCapability<>(new WrappingItemHandler(
+            this.pirnInputHandler = new WrappingItemHandler(
                 inventory, true, false, new WrappingItemHandler.IntRange(FIRST_PIRN_IN_SLOT, FIRST_PIRN_IN_SLOT + PIRN_IN_SLOT_COUNT)
-            ));
-            this.weaveInputHandler = new StoredCapability<>(new WrappingItemHandler(
+            );
+            this.weaveInputHandler = new WrappingItemHandler(
                 inventory, true, false, new WrappingItemHandler.IntRange(FIRST_WEAVE_IN_SLOT, FIRST_WEAVE_IN_SLOT + WEAVE_IN_SLOT_COUNT)
-            ));
-            this.outputHandler = new StoredCapability<>(new WrappingItemHandler(
+            );
+            this.outputHandler = new WrappingItemHandler(
                 inventory, false, true, new WrappingItemHandler.IntRange(OUT_SLOT, 1)
-            ));
+            );
+            this.mifHandler = () -> new MachineInterfaceHandler.MachineCheckImplementation[] {
+                new MachineInterfaceHandler.MachineCheckImplementation<>((BooleanSupplier) () -> this.active, MachineInterfaceHandler.BASIC_ACTIVE),
+                new MachineInterfaceHandler.MachineCheckImplementation<>(pirnInputHandler, MachineInterfaceHandler.BASIC_ITEM_IN),
+                new MachineInterfaceHandler.MachineCheckImplementation<>(weaveInputHandler, MachineInterfaceHandler.BASIC_ITEM_IN),
+                new MachineInterfaceHandler.MachineCheckImplementation<>(outputHandler, MachineInterfaceHandler.BASIC_ITEM_OUT),
+                new MachineInterfaceHandler.MachineCheckImplementation<>(energy, MachineInterfaceHandler.BASIC_ENERGY)
+            };
         }
 
         @Override
-        public void writeSaveNBT(CompoundTag nbt)
+        public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider)
         {
-            writeCommonNBT(nbt);
-            nbt.put("energy", energy.serializeNBT());
+            writeCommonNBT(nbt, provider);
+            nbt.put("energy", energy.serializeNBT(provider));
         }
 
         @Override
-        public void readSaveNBT(CompoundTag nbt)
+        public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider)
         {
-            readCommonNBT(nbt);
-            energy.deserializeNBT(nbt.get("energy"));
+            readCommonNBT(nbt, provider);
+            energy.deserializeNBT(provider, nbt.get("energy"));
         }
 
         @Override
-        public void writeSyncNBT(CompoundTag nbt)
+        public void writeSyncNBT(CompoundTag nbt, HolderLookup.Provider provider)
         {
-            writeCommonNBT(nbt);
+            writeCommonNBT(nbt, provider);
             nbt.putBoolean("active", active);
             nbt.putInt("holderRotation", holderRotation);
         }
 
         @Override
-        public void readSyncNBT(CompoundTag nbt)
+        public void readSyncNBT(CompoundTag nbt, HolderLookup.Provider provider)
         {
-            readCommonNBT(nbt);
+            readCommonNBT(nbt, provider);
             active = nbt.getBoolean("active");
             holderRotation = nbt.getInt("holderRotation");
         }
 
-        private void writeCommonNBT(CompoundTag nbt)
+        private void writeCommonNBT(CompoundTag nbt, HolderLookup.Provider provider)
         {
-            nbt.put("processor", processor.toNBT());
-            nbt.put("inventory", inventory.serializeNBT());
+            nbt.put("processor", processor.toNBT(provider));
+            nbt.put("inventory", inventory.serializeNBT(provider));
             nbt.putString("lastTexture", lastTexture.toString());
         }
 
-        private void readCommonNBT(CompoundTag nbt)
+        private void readCommonNBT(CompoundTag nbt, HolderLookup.Provider provider)
         {
-            processor.fromNBT(nbt.get("processor"), ATTMultiblockProcess::new);
-            inventory.deserializeNBT(nbt.getCompound("inventory"));
-            lastTexture = nbt.contains("lastTexture", Tag.TAG_STRING) ? new ResourceLocation(nbt.getString("lastTexture")) : new ResourceLocation("forge:white");
+            processor.fromNBT(nbt.get("processor"), (getRecipe, data, p) -> new ATTMultiblockProcess<>(getRecipe, data), provider);
+            inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
+            lastTexture = nbt.contains("lastTexture", Tag.TAG_STRING) ? ResourceLocation.parse(nbt.getString("lastTexture")) : ResourceLocation.parse("neoforge:white");
         }
 
         @Override

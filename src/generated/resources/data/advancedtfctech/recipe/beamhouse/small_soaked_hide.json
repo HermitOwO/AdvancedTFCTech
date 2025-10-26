@@ -1,0 +1,23 @@
+{
+  "type": "advancedtfctech:beamhouse",
+  "energy": 4000,
+  "fluid": {
+    "amount": 300,
+    "fluid": "tfc:limewater"
+  },
+  "input": {
+    "item": "tfc:small_raw_hide"
+  },
+  "result": {
+    "modifiers": [
+      {
+        "type": "advancedtfctech:add_machine_made"
+      }
+    ],
+    "stack": {
+      "count": 1,
+      "id": "tfc:small_soaked_hide"
+    }
+  },
+  "time": 200
+}

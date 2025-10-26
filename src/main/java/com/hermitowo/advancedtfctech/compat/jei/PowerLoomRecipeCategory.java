@@ -29,7 +29,7 @@ public class PowerLoomRecipeCategory extends BaseRecipeCategory<PowerLoomRecipe>
 
     public PowerLoomRecipeCategory(RecipeType<PowerLoomRecipe> type, IGuiHelper helper)
     {
-        super(type, helper, helper.createBlankDrawable(150, 38), ATTMultiblockLogic.POWER_LOOM.iconStack());
+        super(type, helper, 150, 38, ATTMultiblockLogic.POWER_LOOM.iconStack());
         arrows = helper.createDrawable(ICONS, 0, 118, 22, 16);
         IDrawableStatic arrowAnimated = helper.createDrawable(ICONS, 22, 118, 22, 16);
         this.arrowsAnimated = helper.createAnimatedDrawable(arrowAnimated, 80, IDrawableAnimated.StartDirection.LEFT, false);
@@ -45,11 +45,11 @@ public class PowerLoomRecipeCategory extends BaseRecipeCategory<PowerLoomRecipe>
         IRecipeSlotBuilder output = builder.addSlot(RecipeIngredientRole.OUTPUT, 114, 1);
         IRecipeSlotBuilder secondaryOutput = builder.addSlot(RecipeIngredientRole.OUTPUT, 114, 21);
 
-        input.addItemStacks(Arrays.asList(recipe.inputs[0].getMatchingStacks()));
-        pirn.addItemStacks(Arrays.asList(recipe.inputs[1].getMatchingStacks()));
+        input.addItemStacks(Arrays.asList(recipe.inputs.get(0).getMatchingStacks()));
+        pirn.addItemStacks(Arrays.asList(recipe.inputs.get(1).getMatchingStacks()));
         secondaryInput.addItemStacks(recipe.secondaryInput.getMatchingStackList());
         output.addItemStack(recipe.output.get());
-        recipe.secondaryOutputs.forEach(lazy -> secondaryOutput.addItemStack(lazy.get()));
+        secondaryOutput.addItemStack(recipe.secondaryOutput);
 
         input.setBackground(slot, -1, -1);
         pirn.setBackground(slot, -1, -1);
@@ -57,7 +57,7 @@ public class PowerLoomRecipeCategory extends BaseRecipeCategory<PowerLoomRecipe>
         output.setBackground(slot, -1, -1);
         secondaryOutput.setBackground(slot, -1, -1);
 
-        secondaryInput.addTooltipCallback((slots, tooltip) -> tooltip.add(Component.translatable("advancedtfctech.jei.not_consumed").withStyle(ChatFormatting.ITALIC)));
+        secondaryInput.addRichTooltipCallback((slots, tooltip) -> tooltip.add(Component.translatable("advancedtfctech.jei.not_consumed").withStyle(ChatFormatting.ITALIC)));
     }
 
     @Override

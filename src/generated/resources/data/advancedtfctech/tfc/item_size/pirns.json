@@ -1,0 +1,21 @@
+{
+  "ingredient": [
+    {
+      "item": "advancedtfctech:pirn"
+    },
+    {
+      "item": "advancedtfctech:fiber_winded_pirn"
+    },
+    {
+      "item": "advancedtfctech:silk_winded_pirn"
+    },
+    {
+      "item": "advancedtfctech:wool_winded_pirn"
+    },
+    {
+      "item": "advancedtfctech:pineapple_winded_pirn"
+    }
+  ],
+  "size": "small",
+  "weight": "light"
+}

@@ -1,0 +1,36 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "parent": "advancedtfctech:story/root",
+  "criteria": {
+    "form_multiblock": {
+      "trigger": "immersiveengineering:multiblock_formed",
+      "conditions": {
+        "multiblock": "advancedtfctech:multiblocks/grist_mill",
+        "hammer": {
+          "items": "immersiveengineering:hammer"
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "advancedtfctech:grist_mill"
+    },
+    "title": {
+      "translate": "advancedtfctech.advancements.story.mb_grist_mill.title"
+    },
+    "description": {
+      "translate": "advancedtfctech.advancements.story.mb_grist_mill.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "background": "immersiveengineering:textures/block/wooden_decoration/treated_wood.png"
+  },
+  "requirements": [
+    [
+      "form_multiblock"
+    ]
+  ]
+}

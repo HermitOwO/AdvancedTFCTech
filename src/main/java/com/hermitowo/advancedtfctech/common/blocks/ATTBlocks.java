@@ -6,29 +6,29 @@ import blusunrize.immersiveengineering.common.blocks.BlockItemIE;
 import com.hermitowo.advancedtfctech.AdvancedTFCTech;
 import com.hermitowo.advancedtfctech.common.items.ATTItems;
 import javax.annotation.Nullable;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+import net.dries007.tfc.common.blocks.TFCBlocks.Id;
+import net.dries007.tfc.util.registry.RegistrationHelpers;
+
 
 public class ATTBlocks
 {
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, AdvancedTFCTech.MOD_ID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, AdvancedTFCTech.MOD_ID);
 
-    public static <T extends Block> RegistryObject<T> register(String name, Supplier<T> blockConstructor, @Nullable Function<T, ? extends BlockItem> blockItem)
+    public static <T extends Block> Id<T> register(String name, Supplier<T> blockConstructor, @Nullable Function<T, ? extends BlockItem> blockItem)
     {
-        RegistryObject<T> block = BLOCKS.register(name, blockConstructor);
-        if (blockItem != null)
-            ATTItems.register(name, () -> blockItem.apply(block.get()));
-        return block;
+        return new Id<>(RegistrationHelpers.registerBlock(ATTBlocks.BLOCKS, ATTItems.ITEMS, name, blockConstructor, blockItem));
     }
 
-    public static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> blockConstructor)
+    public static <T extends Block> Id<T> registerBlock(String name, Supplier<T> blockConstructor)
     {
         return register(name, blockConstructor, block -> new BlockItemIE(block, new Item.Properties()));
     }
 
-    public static final RegistryObject<FleshingMachineBlock> FLESHING_MACHINE = registerBlock("fleshing_machine", FleshingMachineBlock::new);
+    public static final Id<FleshingMachineBlock> FLESHING_MACHINE = registerBlock("fleshing_machine", FleshingMachineBlock::new);
 }
