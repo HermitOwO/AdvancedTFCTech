@@ -21,7 +21,7 @@ val ieVersion: String = "1.21.1-12.4.2-194"
 val dualCodecsVersion: String = "0.1.2"
 
 val modId: String = "advancedtfctech"
-val modVersion: String = "3.0"
+val modVersion: String = "3.1"
 val modJavaVersion: String = "21"
 val modIsInCI: Boolean = !modVersion.contains("-indev")
 val modDataOutput: String = "src/generated/resources"
@@ -45,7 +45,6 @@ val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata"
 neoForge {
     version = neoForgeVersion // this is here because declaring a neoForge version enables 'additionalRuntimeClasspath'
 }
-
 
 base {
     archivesName.set("AdvancedTFCTech-NeoForge-$minecraftVersion")

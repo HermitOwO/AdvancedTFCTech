@@ -1,8 +1,8 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.hermitowo.AdvancedTFCTech.mixin",
-  "refmap": "AdvancedTFCTech.refmap.json",
+  "package": "com.hermitowo.advancedtfctech.mixin",
+  "refmap": "advancedtfctech.refmap.json",
   "mixins": [
   ],
   "client": [
