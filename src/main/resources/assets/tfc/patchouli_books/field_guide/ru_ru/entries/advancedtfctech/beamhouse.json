@@ -1,0 +1,67 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "name": "Кожевенный барабан",
+  "category": "tfc:advancedtfctech",
+  "icon": "advancedtfctech:beamhouse",
+  "pages": [
+    {
+      "type": "patchouli:multiblock",
+      "multiblock": {
+        "pattern": [
+          [
+            "    ",
+            " mmm",
+            " MMM",
+            " mmm"
+          ],
+          [
+            " L L",
+            "RMHM",
+            "LM M",
+            "LMMM"
+          ],
+          [
+            "SPSL",
+            "SP0S",
+            "LPSS",
+            "LSSS"
+          ]
+        ],
+        "mapping": {
+          "S": "immersiveengineering:steel_scaffolding_standard",
+          "M": "immersiveengineering:sheetmetal_iron",
+          "m": "immersiveengineering:slab_sheetmetal_iron",
+          "P": "minecraft:orange_wool",
+          "H": "immersiveengineering:heavy_engineering",
+          "L": "immersiveengineering:light_engineering",
+          "R": "immersiveengineering:rs_engineering",
+          "0": "immersiveengineering:steel_scaffolding_standard"
+        }
+      },
+      "name": "Кожевенный барабан",
+      "text": "Нажмите $(item)$(k:key.use)$() молотком инженера по $(thing)тяжёлому инженерному блоку$(). Оранжевая шерсть$() — жидкостные трубы$().",
+      "enable_visualize": true
+    },
+    {
+      "type": "patchouli:text",
+      "text": "В $(thing)кожевенном барабане$() происходит золение, отмачивание и дубление шкур в процессе их переработки в кожу.$(br2)Для добавления жидкости положите заполненное ведро в интерфейс или нажмите им $(item)$(k:key.use)$() по входу для жикости. Ненужную жидкость можно убрать, нажав $(item)$(k:key.use)$() пустым ведром по входу для жидкости.$(br2)По умолчанию потребляет 20 IF/тик."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "anchor": "machine_made",
+      "item": "tfc:large_prepared_hide{machine_made:1b}",
+      "title": "Фабричное производство",
+      "link_recipes": false,
+      "text": "Сырые шкуры получат статус $(thing)\"Фабричного производства\"$() после обработки в $(thing)кожевенном барабане$(). Этот статус сохранится, если последующие стадии обработки будут также выполнены в $(thing)кожевенном барабане$() и на $(l:tfc:advancedtfctech/fleshing_machine)станке обезволашивания$()."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Использовав только процессы механической обработки, вы получите $(thing)в два раза больше$() кожи.$(br2)Но имейте ввиду, если хотя бы одна стадия проведена вручную, статус $(thing)\"Фабричного производства\"$() будет утерян, как и двукратный бонус на выходе."
+    }
+  ],
+  "read_by_default": true,
+  "sortnum": 3,
+  "extra_recipe_mappings": {
+    "advancedtfctech:beamhouse": 0
+  }
+}
