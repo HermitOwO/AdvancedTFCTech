@@ -5,7 +5,6 @@ import com.hermitowo.advancedtfctech.client.ATTClientForgeEvents;
 import com.hermitowo.advancedtfctech.client.ATTSounds;
 import com.hermitowo.advancedtfctech.common.ATTCreativeTabs;
 import com.hermitowo.advancedtfctech.common.blockentities.ATTBlockEntities;
-import com.hermitowo.advancedtfctech.common.blockentities.FleshingMachineBlockEntity;
 import com.hermitowo.advancedtfctech.common.blocks.ATTBlocks;
 import com.hermitowo.advancedtfctech.common.capabilities.ATTBlockCapabilities;
 import com.hermitowo.advancedtfctech.common.component.ATTComponents;
@@ -26,7 +25,6 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.slf4j.Logger;
 
 @Mod(AdvancedTFCTech.MOD_ID)

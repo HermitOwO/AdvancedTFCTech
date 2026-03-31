@@ -27,7 +27,6 @@ import com.hermitowo.advancedtfctech.common.container.ATTContainerTypes;
 import com.hermitowo.advancedtfctech.common.items.ATTItems;
 import com.hermitowo.advancedtfctech.common.recipes.FleshingMachineRecipe;
 import com.hermitowo.advancedtfctech.config.ATTConfig;
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
