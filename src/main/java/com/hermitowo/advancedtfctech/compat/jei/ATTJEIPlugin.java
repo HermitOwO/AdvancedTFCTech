@@ -42,29 +42,28 @@ public class ATTJEIPlugin implements IModPlugin
         return AdvancedTFCTech.rl("jei");
     }
 
-    public static final RecipeType<ThresherRecipe> THRESHER = type("thresher", ThresherRecipe.class);
-    public static final RecipeType<GristMillRecipe> GRIST_MILL = type("grist_mill", GristMillRecipe.class);
-    public static final RecipeType<PowerLoomRecipe> POWER_LOOM = type("power_loom", PowerLoomRecipe.class);
-    public static final RecipeType<BeamhouseRecipe> BEAMHOUSE = type("beamhouse", BeamhouseRecipe.class);
-    public static final RecipeType<FleshingMachineRecipe> FLESHING_MACHINE = type("fleshing_machine", FleshingMachineRecipe.class);
+    public static final RecipeType<RecipeHolder<ThresherRecipe>> THRESHER = type("thresher", ThresherRecipe.class);
+    public static final RecipeType<RecipeHolder<GristMillRecipe>> GRIST_MILL = type("grist_mill", GristMillRecipe.class);
+    public static final RecipeType<RecipeHolder<PowerLoomRecipe>> POWER_LOOM = type("power_loom", PowerLoomRecipe.class);
+    public static final RecipeType<RecipeHolder<BeamhouseRecipe>> BEAMHOUSE = type("beamhouse", BeamhouseRecipe.class);
+    public static final RecipeType<RecipeHolder<FleshingMachineRecipe>> FLESHING_MACHINE = type("fleshing_machine", FleshingMachineRecipe.class);
 
-    private static <T> RecipeType<T> type(String name, Class<T> tClass)
+    private static <T extends Recipe<?>> RecipeType<RecipeHolder<T>> type(String name, Class<T> kind)
     {
-        return RecipeType.create(AdvancedTFCTech.MOD_ID, name, tClass);
+        return RecipeType.createRecipeHolderType(ResourceLocation.fromNamespaceAndPath(AdvancedTFCTech.MOD_ID, name));
     }
 
-    private static <C extends RecipeInput, T extends Recipe<C>> List<T> recipes(Supplier<net.minecraft.world.item.crafting.RecipeType<T>> type)
+    private static <C extends RecipeInput, T extends Recipe<C>> List<RecipeHolder<T>> recipes(Supplier<net.minecraft.world.item.crafting.RecipeType<T>> type)
     {
         return recipes(type, e -> true);
     }
 
-    private static <C extends RecipeInput, T extends Recipe<C>> List<T> recipes(Supplier<net.minecraft.world.item.crafting.RecipeType<T>> type, Predicate<T> filter)
+    private static <C extends RecipeInput, T extends Recipe<C>> List<RecipeHolder<T>> recipes(Supplier<net.minecraft.world.item.crafting.RecipeType<T>> type, Predicate<T> filter)
     {
         return ClientHelpers.getLevelOrThrow().getRecipeManager()
             .getAllRecipesFor(type.get())
             .stream()
-            .map(RecipeHolder::value)
-            .filter(filter)
+            .filter(holder -> filter.test(holder.value()))
             .toList();
     }
 
@@ -73,11 +72,13 @@ public class ATTJEIPlugin implements IModPlugin
     {
         IGuiHelper guiHelper = r.getJeiHelpers().getGuiHelper();
 
-        r.addRecipeCategories(new ThresherRecipeCategory(THRESHER, guiHelper));
-        r.addRecipeCategories(new GristMillRecipeCategory(GRIST_MILL, guiHelper));
-        r.addRecipeCategories(new PowerLoomRecipeCategory(POWER_LOOM, guiHelper));
-        r.addRecipeCategories(new BeamhouseRecipeCategory(BEAMHOUSE, guiHelper));
-        r.addRecipeCategories(new FleshingMachineRecipeCategory(FLESHING_MACHINE, guiHelper));
+        r.addRecipeCategories(
+            new ThresherRecipeCategory(THRESHER, guiHelper),
+            new GristMillRecipeCategory(GRIST_MILL, guiHelper),
+            new PowerLoomRecipeCategory(POWER_LOOM, guiHelper),
+            new BeamhouseRecipeCategory(BEAMHOUSE, guiHelper),
+            new FleshingMachineRecipeCategory(FLESHING_MACHINE, guiHelper)
+        );
     }
 
     @Override

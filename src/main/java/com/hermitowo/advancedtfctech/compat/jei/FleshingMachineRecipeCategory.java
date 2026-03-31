@@ -15,6 +15,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 import net.dries007.tfc.compat.jei.category.BaseRecipeCategory;
 
@@ -22,7 +23,7 @@ public class FleshingMachineRecipeCategory extends BaseRecipeCategory<FleshingMa
 {
     private final IDrawableStatic slot;
 
-    public FleshingMachineRecipeCategory(RecipeType<FleshingMachineRecipe> type, IGuiHelper helper)
+    public FleshingMachineRecipeCategory(RecipeType<RecipeHolder<FleshingMachineRecipe>> type, IGuiHelper helper)
     {
         super(type, helper, 120, 38, new ItemStack(ATTBlocks.FLESHING_MACHINE.get()));
         this.slot = helper.getSlotDrawable();

@@ -19,6 +19,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 import net.dries007.tfc.compat.jei.category.BaseRecipeCategory;
 
@@ -29,7 +30,7 @@ public class BeamhouseRecipeCategory extends BaseRecipeCategory<BeamhouseRecipe>
     private final IDrawableStatic arrows;
     private final IDrawableAnimated arrowsAnimated;
 
-    public BeamhouseRecipeCategory(RecipeType<BeamhouseRecipe> type, IGuiHelper helper)
+    public BeamhouseRecipeCategory(RecipeType<RecipeHolder<BeamhouseRecipe>> type, IGuiHelper helper)
     {
         super(type, helper, 98, 26, ATTMultiblockLogic.BEAMHOUSE.iconStack());
         arrows = helper.createDrawable(ICONS, 0, 118, 22, 16);

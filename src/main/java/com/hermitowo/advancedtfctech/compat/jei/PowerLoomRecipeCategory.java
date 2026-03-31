@@ -17,6 +17,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 import net.dries007.tfc.compat.jei.category.BaseRecipeCategory;
 
@@ -27,7 +28,7 @@ public class PowerLoomRecipeCategory extends BaseRecipeCategory<PowerLoomRecipe>
     private final IDrawableStatic arrows;
     private final IDrawableAnimated arrowsAnimated;
 
-    public PowerLoomRecipeCategory(RecipeType<PowerLoomRecipe> type, IGuiHelper helper)
+    public PowerLoomRecipeCategory(RecipeType<RecipeHolder<PowerLoomRecipe>> type, IGuiHelper helper)
     {
         super(type, helper, 150, 38, ATTMultiblockLogic.POWER_LOOM.iconStack());
         arrows = helper.createDrawable(ICONS, 0, 118, 22, 16);

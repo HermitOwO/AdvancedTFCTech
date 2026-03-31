@@ -14,6 +14,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 
 import net.dries007.tfc.compat.jei.category.BaseRecipeCategory;
@@ -25,7 +26,7 @@ public class ThresherRecipeCategory extends BaseRecipeCategory<ThresherRecipe>
     private final IDrawableStatic gears;
     private final IDrawableAnimated gearsAnimated;
 
-    public ThresherRecipeCategory(RecipeType<ThresherRecipe> type, IGuiHelper helper)
+    public ThresherRecipeCategory(RecipeType<RecipeHolder<ThresherRecipe>> type, IGuiHelper helper)
     {
         super(type, helper, 120, 38, ATTMultiblockLogic.THRESHER.iconStack());
         gears = helper.createDrawable(ICONS, 0, 134, 22, 16);

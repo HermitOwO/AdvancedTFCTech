@@ -14,6 +14,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 
 import net.dries007.tfc.compat.jei.category.BaseRecipeCategory;
@@ -25,7 +26,7 @@ public class GristMillRecipeCategory extends BaseRecipeCategory<GristMillRecipe>
     private final IDrawableStatic gears;
     private final IDrawableAnimated gearsAnimated;
 
-    public GristMillRecipeCategory(RecipeType<GristMillRecipe> type, IGuiHelper helper)
+    public GristMillRecipeCategory(RecipeType<RecipeHolder<GristMillRecipe>> type, IGuiHelper helper)
     {
         super(type, helper, 120, 38, ATTMultiblockLogic.GRIST_MILL.iconStack());
         gears = helper.createDrawable(ICONS, 0, 134, 22, 16);
