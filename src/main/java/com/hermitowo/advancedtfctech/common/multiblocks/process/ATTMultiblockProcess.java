@@ -107,7 +107,7 @@ public class ATTMultiblockProcess<R extends MultiblockRecipe> extends Multiblock
             if (s.isEmpty())
                 return true;
             final boolean match = ItemStack.isSameItemSameComponents(s, output);
-            if (match && s.getCount() + output.getCount() <= inv.getSlotLimit(iOutputSlot))
+            if (match && s.getCount() + output.getCount() <= Math.min(inv.getSlotLimit(iOutputSlot), s.getMaxStackSize()))
                 return true;
         }
         return false;
@@ -154,7 +154,7 @@ public class ATTMultiblockProcess<R extends MultiblockRecipe> extends Multiblock
                 inv.setStackInSlot(iOutputSlot, output.copy());
                 break;
             }
-            else if (ItemStack.isSameItemSameComponents(s, output) && s.getCount() + output.getCount() <= inv.getSlotLimit(iOutputSlot))
+            else if (ItemStack.isSameItemSameComponents(s, output) && s.getCount() + output.getCount() <= Math.min(inv.getSlotLimit(iOutputSlot), s.getMaxStackSize()))
             {
                 s.grow(output.getCount());
                 break;

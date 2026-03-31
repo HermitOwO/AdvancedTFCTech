@@ -16,12 +16,12 @@ val parchmentMinecraftVersion: String = "1.21.1"
 val emiVersion: String = "1.1.22+1.21.1"
 val jeiVersion: String = "19.25.0.321"
 val patchouliVersion: String = "1.21.1-92-NEOFORGE"
-val tfcVersion: String = "4.0.0-beta"
+val tfcVersion: String = "4.0.16-beta"
 val ieVersion: String = "1.21.1-12.4.2-194"
 val dualCodecsVersion: String = "0.1.2"
 
 val modId: String = "advancedtfctech"
-val modVersion: String = "3.1"
+val modVersion: String = "3.2"
 val modJavaVersion: String = "21"
 val modIsInCI: Boolean = !modVersion.contains("-indev")
 val modDataOutput: String = "src/generated/resources"
@@ -160,9 +160,9 @@ dependencies {
     implementation("vazkii.patchouli:Patchouli:$patchouliVersion")
     "datagenImplementation"("vazkii.patchouli:Patchouli:$patchouliVersion")
 
-    // TFC 4.0.8-beta
-    implementation(group = "curse.maven", name = "terrafirmacraft-302973", version = "7101304")
-    "datagenImplementation"(group = "curse.maven", name = "terrafirmacraft-302973", version = "7101304")
+    // TFC 4.0.19-beta
+    implementation(group = "curse.maven", name = "terrafirmacraft-302973", version = "7634816")
+    "datagenImplementation"(group = "curse.maven", name = "terrafirmacraft-302973", version = "7634816")
 
     // IE
     implementation("blusunrize.immersiveengineering:ImmersiveEngineering:$ieVersion")

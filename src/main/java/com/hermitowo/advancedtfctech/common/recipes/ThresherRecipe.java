@@ -73,7 +73,7 @@ public class ThresherRecipe extends ATTMultiblockRecipe implements IItemStackPro
         for (int i = 0; i < providerList.size(); ++i)
         {
             ItemStackProvider provider = providerList.get(i);
-            actualOutput.set(i, provider.getStack(input));
+            actualOutput.set(i, provider.getSingleStack(input));
         }
         return actualOutput;
     }

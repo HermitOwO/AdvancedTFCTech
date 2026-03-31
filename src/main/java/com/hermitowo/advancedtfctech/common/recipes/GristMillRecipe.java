@@ -6,7 +6,6 @@ import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import blusunrize.immersiveengineering.api.crafting.TagOutputList;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import blusunrize.immersiveengineering.api.utils.SetRestrictedField;
 import com.google.common.collect.Lists;
 import com.hermitowo.advancedtfctech.common.multiblocks.logic.ATTMultiblockLogic;
 import com.hermitowo.advancedtfctech.util.ATTDualCodecs;
@@ -68,7 +67,7 @@ public class GristMillRecipe extends ATTMultiblockRecipe implements IItemStackPr
         for (int i = 0; i < providerList.size(); ++i)
         {
             ItemStackProvider provider = providerList.get(i);
-            actualOutput.set(i, provider.getStack(input));
+            actualOutput.set(i, provider.getSingleStack(input));
         }
         return actualOutput;
     }

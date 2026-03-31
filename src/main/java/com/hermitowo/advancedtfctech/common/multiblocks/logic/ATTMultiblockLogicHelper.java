@@ -24,23 +24,14 @@ public class ATTMultiblockLogicHelper
                 {
                     int size1 = holder1.getCount();
                     int size2 = holder2.getCount();
-                    int sizeMax = holder1.getMaxStackSize();
-                    if (size1 == sizeMax || size2 == sizeMax)
+                    int sizeMax = Math.min(inventory.getSlotLimit(i), holder1.getMaxStackSize());
+                    if (size1 == sizeMax)
                         continue;
                     if (size1 + size2 > sizeMax)
                     {
-                        if (size1 >= size2)
-                        {
-                            int amount = sizeMax - size2;
-                            inventory.getStackInSlot(i).shrink(amount);
-                            inventory.getStackInSlot(j).grow(amount);
-                        }
-                        else
-                        {
-                            int amount = sizeMax - size1;
-                            inventory.getStackInSlot(i).grow(amount);
-                            inventory.getStackInSlot(j).shrink(amount);
-                        }
+                        int amount = sizeMax - size1;
+                        inventory.getStackInSlot(i).grow(amount);
+                        inventory.getStackInSlot(j).shrink(amount);
                     }
                     else
                     {
@@ -58,15 +49,22 @@ public class ATTMultiblockLogicHelper
         IItemHandler outputHandler = output.get();
         if (outputHandler != null)
         {
-            for (int i : outputSlots)
+            for (int i = outputSlots.length - 1; i >= 0; i--)
             {
-                final ItemStack nextStack = state.getInventory().getStackInSlot(i);
-                if (nextStack.isEmpty())
-                    continue;
-                ItemStack stack = nextStack.copyWithCount(1);
-                stack = ItemHandlerHelper.insertItem(outputHandler, stack, false);
-                if (stack.isEmpty())
-                    nextStack.shrink(1);
+                int slot = outputSlots[i];
+                ItemStack extracted = state.getInventory().extractItem(slot, 1, true);
+                if (!extracted.isEmpty())
+                {
+                    ItemStack remainder = ItemHandlerHelper.insertItem(outputHandler, extracted, false);
+
+                    int successfullyMoved = extracted.getCount() - remainder.getCount();
+                    if (successfullyMoved > 0)
+                        state.getInventory().extractItem(slot, extracted.getCount() - remainder.getCount(), false);
+
+                    // If there is no remainder, take from the next "from" slot.
+                    if (remainder.getCount() <= 0)
+                        break;
+                }
             }
         }
     }
