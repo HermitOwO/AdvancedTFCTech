@@ -1,0 +1,31 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "name": "Станок обезволашивания",
+  "category": "tfc:advancedtfctech",
+  "icon": "advancedtfctech:fleshing_machine",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(thing)Станок обезволашивания$() убирает всё лишнее со шкур с помощью вращающегося цилиндра с лезвиями, которые соскабливают шерсть и плоть."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "advancedtfctech:crafting/fleshing_machine"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Для использования $(thing)станка обезволашивания$(), нужно установить $(thing)лезвия для обезволашивания$() на цилиндр, нажав $(item)$(k:key.use)$() по машине с лезвием в руке.$(br2)Результат обработки получит статус $(l:tfc:advancedtfctech/beamhouse#machine_made)\"Фабричного производства\"$(), если на предмет на входе имел такой же статус.$(br2)По умолчанию потребляет 20 IF/тик."
+    },
+    {
+      "type": "tfc:anvil_recipe",
+      "recipe": "advancedtfctech:anvil/fleshing_blades",
+      "text": ""
+    }
+  ],
+  "read_by_default": true,
+  "sortnum": 4,
+  "extra_recipe_mappings": {
+    "advancedtfctech:fleshing_machine": 0,
+    "advancedtfctech:fleshing_blades": 0
+  }
+}
