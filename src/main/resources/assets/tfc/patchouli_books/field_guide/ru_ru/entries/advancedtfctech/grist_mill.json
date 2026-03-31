@@ -1,0 +1,55 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "name": "Мельница",
+  "category": "tfc:advancedtfctech",
+  "icon": "advancedtfctech:grist_mill",
+  "pages": [
+    {
+      "type": "patchouli:multiblock",
+      "multiblock": {
+        "pattern": [
+          [
+            "   ",
+            " H ",
+            "   ",
+            "   "
+          ],
+          [
+            " L ",
+            "RLM",
+            "mTm",
+            "mLm"
+          ],
+          [
+            "SMS",
+            "S0L",
+            "SSS",
+            "SMS"
+          ]
+        ],
+        "mapping": {
+          "S": "immersiveengineering:steel_scaffolding_standard",
+          "M": "immersiveengineering:sheetmetal_steel",
+          "m": "immersiveengineering:slab_sheetmetal_steel",
+          "T": "immersiveengineering:storage_steel",
+          "L": "immersiveengineering:light_engineering",
+          "R": "immersiveengineering:rs_engineering",
+          "H": "minecraft:hopper",
+          "0": "immersiveengineering:steel_scaffolding_standard"
+        }
+      },
+      "name": "Мельница",
+      "text": "Нажмите $(item)$(k:key.use)$() молотком инженера по $(thing)стальному листовому металлу$() с противоположной стороны от редстоунового инженерного блока.",
+      "enable_visualize": true
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(thing)Мельница$() перемалывает зерно в муку.$(br2)Предметы можно положить сверху, используя воронку, жёлоб или сбрасывающую конвейерную ленту.$(br2)По умолчанию потребляет 80 IF/тик."
+    }
+  ],
+  "read_by_default": true,
+  "sortnum": 2,
+  "extra_recipe_mappings": {
+    "advancedtfctech:grist_mill": 0
+  }
+}
