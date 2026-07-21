@@ -1,0 +1,66 @@
+{
+  "__comment__": "This file was automatically created by mcresources",
+  "name": "Ткацкий станок",
+  "category": "tfc:advancedtfctech",
+  "icon": "advancedtfctech:power_loom",
+  "pages": [
+    {
+      "type": "patchouli:multiblock",
+      "multiblock": {
+        "pattern": [
+          [
+            "   ",
+            "SM ",
+            "SM ",
+            "SM ",
+            "   "
+          ],
+          [
+            " L ",
+            "SMS",
+            " F ",
+            "SMS",
+            " L "
+          ],
+          [
+            " L ",
+            "SHS",
+            "S0S",
+            "SHS",
+            "RT "
+          ]
+        ],
+        "mapping": {
+          "S": "immersiveengineering:steel_scaffolding_standard",
+          "M": "immersiveengineering:sheetmetal_steel",
+          "T": "immersiveengineering:storage_steel",
+          "F": "immersiveengineering:steel_fence",
+          "L": "immersiveengineering:light_engineering",
+          "H": "immersiveengineering:heavy_engineering",
+          "R": "immersiveengineering:rs_engineering",
+          "0": "immersiveengineering:heavy_engineering"
+        }
+      },
+      "name": "Ткацкий станок",
+      "text": "Нажмите $(item)$(k:key.use)$() молотком инженера по $(thing)лёгкому инженерному блоку$() над блоком стали.",
+      "enable_visualize": true
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(thing)Ткацкий станок$() — это иновационое решение проблемы растущей потребности в продукции текстильной промышленности.$(br2)Для автоматизации процесса ткачества, челнок с катушкой с намотанной пряжей быстро двигается между двумя перпендикулярными наборами натянутых нитей, проходя поочередно то снизу от них, то всерху."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Для использования механического ткацкого станка, $(thing)шпульки с выбранным волкном$() нужно повесить на держатель $(thing)сбоку$() машины.$(br2)Перед тем, как использовать станок, его нужно подготовить с помощью $(thing)16 выбранных волокон$(), нажав $(item)$(k:key.use)$() этими волокнами по \"решётке\" в $(thing)центре$() машины.$(br2)Затем, $(thing)входные волокна$() тем же способом добавляются на $(thing)нижкюю балку$() на $(thing)короткой стороне$() машины."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Ткань можно забрать с помощью хранилища, установленного в $(thing)центре стороны с выходом$() или нажав $(item)$(k:key.sneak)$() + $(item)$(k:key.use)$() по задней части машины.$(br2)По умолчанию потребляет 80 IF/тик."
+    }
+  ],
+  "read_by_default": true,
+  "sortnum": 0,
+  "extra_recipe_mappings": {
+    "advancedtfctech:power_loom": 0
+  }
+}
