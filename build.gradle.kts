@@ -23,7 +23,7 @@ val modId: String = "advancedtfctech"
 base {
     archivesName.set("AdvancedTFCTech-$minecraftVersion")
     group = "com.hermitowo.advancedtfctech"
-    version = "2.3"
+    version = "2.4"
 }
 
 java {
