@@ -1,5 +1,3 @@
-# Blender 3.6.0 MTL File: 'fleshing_machine.blend'
-# www.blender.org
-
-newmtl base
+# Made in Blockbench 5.1.5
+newmtl fleshing_machine
 map_Kd advancedtfctech:block/metal_device/fleshing_machine
